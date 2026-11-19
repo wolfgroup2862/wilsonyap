@@ -33,6 +33,36 @@ export default function TeamHero({
   const stageRef = useRef<HTMLDivElement>(null);
   const busy = useRef(false);
 
+  // Make the team clip autoplay reliably on phones (iOS shows a play button
+  // when muted autoplay is blocked). Force muted inline playback on mount, when
+  // it scrolls into view, and on the first touch anywhere as a fallback.
+  useEffect(() => {
+    const v = stageRef.current?.querySelector("video");
+    if (!v) return;
+    v.muted = true;
+    v.setAttribute("muted", "");
+    v.setAttribute("playsinline", "");
+    const tryPlay = () => v.play().catch(() => {});
+    tryPlay();
+    const io = new IntersectionObserver(
+      (es) => es.forEach((e) => (e.isIntersecting ? tryPlay() : undefined)),
+      { threshold: 0.2 },
+    );
+    io.observe(v);
+    const onFirst = () => {
+      tryPlay();
+      window.removeEventListener("touchstart", onFirst);
+      window.removeEventListener("click", onFirst);
+    };
+    window.addEventListener("touchstart", onFirst, { passive: true });
+    window.addEventListener("click", onFirst);
+    return () => {
+      io.disconnect();
+      window.removeEventListener("touchstart", onFirst);
+      window.removeEventListener("click", onFirst);
+    };
+  }, []);
+
   // keep the speech bubbles inside the screen (the photo is cropped at the sides on narrow screens)
   const [shifts, setShifts] = useState<Record<string, number>>({});
   useEffect(() => {
@@ -163,7 +193,7 @@ export default function TeamHero({
     <div ref={stageRef} className={`${s.stage} ${video ? s.hasVideo : ""}`} style={{ "--ar": aspect } as CSSProperties}>
       {video ? (
         // AI-generated clip of the same shot where they wave; the photo is its poster
-        <video className={s.photo} poster={photo} autoPlay muted playsInline preload="auto" aria-label="Mandy and Wilson waving hello">
+        <video className={s.photo} poster={photo} autoPlay muted loop playsInline preload="auto" aria-label="Mandy and Wilson waving hello">
           <source src={video} type="video/mp4" />
           <source src={video.replace(/\.mp4$/, ".webm")} type="video/webm" />
         </video>
