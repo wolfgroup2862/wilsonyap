@@ -8,6 +8,7 @@ import { WILSON_LISTINGS as TEAM_LISTINGS } from "../_agent/wilson-listings";
 import FanDeck from "../_agent/FanDeck";
 import ScrollFX from "../_agent/ScrollFX";
 import MandyHero from "../_agent/MandyHero";
+import WilsonHero from "../_agent/WilsonHero";
 import s from "./team.module.css";
 
 // Team landing page (warm studio style). Click a person in the hero photo →
@@ -115,6 +116,7 @@ export default function TeamPage() {
         const p = m.profile;
         const wa = waLink(p);
         if (m.id === "mandy") return <Fragment key={m.id}><MandyHero profile={p} /></Fragment>;
+        if (m.id === "wilson") return <Fragment key={m.id}><WilsonHero profile={p} /></Fragment>;
         const section = (
           <section id={m.id} className={`${s.member} ${i % 2 ? s.flip : ""}`}>
             <figure className={s.portrait} data-landing data-reveal={i % 2 ? "right" : "left"} data-zoom-scroll>

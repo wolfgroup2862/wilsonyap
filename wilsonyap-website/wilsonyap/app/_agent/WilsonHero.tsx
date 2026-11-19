@@ -1,17 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Profile } from "./AgentPage";
-import h from "./wilsonhero.module.css";
+import h from "./mandyhero.module.css"; // same layout/styles as Mandy
 
-// Lando-Norris–style hero for Wilson: big head-and-shoulders in the centre, his
-// name top-left. Move the mouse onto him and a race helmet flickers and
-// assembles onto his head (visor → crown → chin); move away and it drops off.
-// The pointer drives --q (assembly 0→1) and --fk (flicker) on the stack; the
-// slice CSS does the rest.
+// Full-page hero for Wilson, identical to Mandy's: name types in on scroll, a
+// draggable 360° figure, a scrolling areas billboard, and WhatsApp.
 export default function WilsonHero({ profile: p }: { profile: Profile }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const stackRef = useRef<HTMLDivElement>(null);
+  const imgEls = useRef<(HTMLImageElement | null)[]>([]);
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  const [typed, setTyped] = useState(false);
+
+  useEffect(() => {
+    const el = nameRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => setTyped(e.isIntersecting)),
+      { threshold: 0.6 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const FRAMES = Array.from({ length: 36 }, (_, i) => `/agent/wilson360-${String(i).padStart(2, "0")}.webp`);
 
   const wa = p.whatsapp
     ? `https://wa.me/${p.whatsapp}?text=${encodeURIComponent(`Hi ${p.firstName}, I found your website and would like to ask about a property.`)}`
@@ -19,104 +31,156 @@ export default function WilsonHero({ profile: p }: { profile: Profile }) {
 
   useEffect(() => {
     const wrap = wrapRef.current;
-    const stack = stackRef.current;
-    if (!wrap || !stack) return;
+    const imgs = imgEls.current.filter(Boolean) as HTMLImageElement[];
+    const n = imgs.length;
+    if (!wrap || n === 0) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const coarse = window.matchMedia("(hover: none)").matches;
+    const S = {
+      disp: 0, userPos: 0,
+      startX: 0, startY: 0, basePos: 0,
+      axis: "" as "" | "x" | "y",
+      mouseDrag: false,
+      raf: 0,
+    };
+    const widthOf = () => wrap.getBoundingClientRect().width || 360;
+    const sens = () => n / (widthOf() * 1.5);
+    const mod = (v: number) => ((v % n) + n) % n;
 
-    const S = { q: 0, target: 0, raf: 0, lastFlick: 0, fk: 1 };
-
-    const frame = (t: number) => {
-      // ease assembly toward the target
-      S.q += (S.target - S.q) * 0.16;
-      if (S.q < 0.001) S.q = 0;
-
-      // flicker: rapid opacity jitter while the helmet is "putting on"/worn
-      if (!reduce && S.q > 0.04) {
-        if (t - S.lastFlick > 55) {
-          const settled = S.q > 0.92 && S.target >= 1;
-          const amp = settled ? 0.12 : 0.5; // gentle shimmer once worn, strong glitch mid-assembly
-          S.fk = 1 - Math.random() * amp;
-          S.lastFlick = t;
-        }
-      } else {
-        S.fk = 1;
+    const render = () => {
+      const base = mod(S.disp);
+      const lo = Math.floor(base) % n;
+      const hi = (lo + 1) % n;
+      const f = base - Math.floor(base);
+      for (let i = 0; i < n; i++) {
+        let o = 0;
+        if (i === lo) o = 1 - f;
+        if (i === hi) o += f;
+        imgs[i].style.opacity = String(o);
+        imgs[i].style.zIndex = i === hi ? "2" : "1";
       }
+    };
 
-      stack.style.setProperty("--q", S.q.toFixed(3));
-      stack.style.setProperty("--fk", S.fk.toFixed(3));
+    const frame = () => {
+      S.disp += (S.userPos - S.disp) * 0.22;
+      render();
       S.raf = requestAnimationFrame(frame);
     };
 
-    const enter = () => (S.target = 1);
-    const leave = () => (S.target = 0);
+    const tStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      S.startX = t.clientX;
+      S.startY = t.clientY;
+      S.basePos = S.userPos;
+      S.axis = "";
+    };
+    const tMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      const dx = t.clientX - S.startX;
+      const dy = t.clientY - S.startY;
+      if (!S.axis && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+        S.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      }
+      if (S.axis === "x") {
+        e.preventDefault();
+        S.userPos = S.basePos + dx * sens();
+      }
+    };
+    const tEnd = () => {
+      S.axis = "";
+    };
 
-    if (coarse || reduce) {
-      // touch / reduced-motion: reveal the helmet when the hero scrolls into view
-      const io = new IntersectionObserver(
-        (ents) => ents.forEach((e) => (S.target = e.isIntersecting ? 1 : 0)),
-        { threshold: 0.5 },
-      );
-      io.observe(wrap);
-      S.raf = requestAnimationFrame(frame);
-      return () => {
-        io.disconnect();
-        cancelAnimationFrame(S.raf);
-      };
-    }
+    const mDown = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      S.mouseDrag = true;
+      S.startX = e.clientX;
+      S.basePos = S.userPos;
+      wrap.setPointerCapture?.(e.pointerId);
+    };
+    const mMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch" || !S.mouseDrag) return;
+      S.userPos = S.basePos + (e.clientX - S.startX) * sens();
+    };
+    const mUp = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      S.mouseDrag = false;
+    };
 
-    wrap.addEventListener("pointerenter", enter);
-    wrap.addEventListener("pointermove", enter);
-    wrap.addEventListener("pointerleave", leave);
+    wrap.addEventListener("touchstart", tStart, { passive: true });
+    wrap.addEventListener("touchmove", tMove, { passive: false });
+    wrap.addEventListener("touchend", tEnd);
+    wrap.addEventListener("touchcancel", tEnd);
+    wrap.addEventListener("pointerdown", mDown);
+    wrap.addEventListener("pointermove", mMove);
+    wrap.addEventListener("pointerup", mUp);
+    wrap.addEventListener("pointercancel", mUp);
     S.raf = requestAnimationFrame(frame);
     return () => {
-      wrap.removeEventListener("pointerenter", enter);
-      wrap.removeEventListener("pointermove", enter);
-      wrap.removeEventListener("pointerleave", leave);
       cancelAnimationFrame(S.raf);
+      wrap.removeEventListener("touchstart", tStart);
+      wrap.removeEventListener("touchmove", tMove);
+      wrap.removeEventListener("touchend", tEnd);
+      wrap.removeEventListener("touchcancel", tEnd);
+      wrap.removeEventListener("pointerdown", mDown);
+      wrap.removeEventListener("pointermove", mMove);
+      wrap.removeEventListener("pointerup", mUp);
+      wrap.removeEventListener("pointercancel", mUp);
     };
   }, []);
 
   return (
     <section id="wilson" className={h.hero}>
-      <div className={h.bg} aria-hidden="true" />
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+      />
 
-      <div className={h.mark}>
-        <span className={h.markName}>
-          Wilson
-          <br />
-          Yap
-        </span>
-        <span className={h.meta}>REN 07483 · The Roof Realty (TRR)</span>
-      </div>
-
-      {wa && (
-        <a className={h.store} href={wa} target="_blank" rel="noopener noreferrer">
-          WhatsApp <span aria-hidden="true">↗</span>
-        </a>
-      )}
+      <h2 ref={nameRef} className={`${h.nameTop} ${typed ? h.typed : ""}`} aria-label={p.fullName}>
+        {Array.from("Wilson Yap").map((ch, i) => (
+          <span key={i} className={h.letter} style={{ transitionDelay: `${i * 75}ms` }} aria-hidden="true">
+            {ch === " " ? " " : ch}
+          </span>
+        ))}
+        <span className={h.caret} aria-hidden="true" />
+      </h2>
 
       <div className={h.stage} ref={wrapRef}>
-        <figure className={h.portrait}>
-          <div className={h.stack} ref={stackRef}>
-            <img className={h.base} src="/agent/wilson-half.webp" alt={p.fullName} />
-            <img className={`${h.slice} ${h.mid}`} src="/agent/wilson-helmet.webp" alt="" aria-hidden="true" />
-            <img className={`${h.slice} ${h.top}`} src="/agent/wilson-helmet.webp" alt="" aria-hidden="true" />
-            <img className={`${h.slice} ${h.bot}`} src="/agent/wilson-helmet.webp" alt="" aria-hidden="true" />
-          </div>
-        </figure>
-        <p className={h.hint} aria-hidden="true">Hover Wilson</p>
+        <div className={h.frames}>
+          {FRAMES.map((src, i) => (
+            <img
+              key={src}
+              ref={(el) => {
+                imgEls.current[i] = el;
+              }}
+              className={h.frame}
+              src={src}
+              alt={i === 0 ? p.fullName : ""}
+              aria-hidden={i !== 0}
+              draggable={false}
+              style={{ opacity: i === 0 ? 1 : 0 }}
+            />
+          ))}
+        </div>
+        <span className={h.hint} aria-hidden="true">Drag to turn</span>
       </div>
 
-      <div className={h.caption}>
-        <h2 className={h.tag}>{p.tagline}</h2>
-        <p className={h.areas}>{p.areas.join(" · ")}</p>
+      <div className={h.areaMarquee} aria-hidden="true">
+        <div className={h.atrack}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <span key={i} className={h.aword}>
+              {p.areas.join("  ·  ")}
+              {"  ·  "}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className={h.bottombar}>
         {wa && (
-          <a className={h.waBtn} href={wa} target="_blank" rel="noopener noreferrer">
-            WhatsApp {p.firstName}
+          <a className={h.wa} href={wa} target="_blank" rel="noopener noreferrer">
+            WhatsApp <span aria-hidden="true">↗</span>
           </a>
         )}
+        <span className={h.ckicker}>The Roof Realty · Wolf Group</span>
       </div>
     </section>
   );
