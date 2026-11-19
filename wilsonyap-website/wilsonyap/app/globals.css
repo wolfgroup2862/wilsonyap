@@ -37,7 +37,15 @@ img { display: block; max-width: 100%; }
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--p, 0) * 132% - 16%), rgba(0,0,0,0) calc(var(--p, 0) * 132%));
   mask-image: linear-gradient(to bottom, #000 calc(var(--p, 0) * 132% - 16%), rgba(0,0,0,0) calc(var(--p, 0) * 132%));
 }
+/* The base portrait is wiped AWAY in lockstep (opposite of the morph layer), so
+   the figure is only ever one person — suit up top fades to rider — and by the
+   end only the rider remains, with no suit peeking through its cut-out edges. */
+[data-demorph] {
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) calc(var(--p, 0) * 132% - 16%), #000 calc(var(--p, 0) * 132%));
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) calc(var(--p, 0) * 132% - 16%), #000 calc(var(--p, 0) * 132%));
+}
 @media (prefers-reduced-motion: reduce) {
   [data-zoom-scroll] img { transform: none; }
   [data-morph] { -webkit-mask-image: linear-gradient(#0000, #0000); mask-image: linear-gradient(#0000, #0000); }
+  [data-demorph] { -webkit-mask-image: none; mask-image: none; }
 }

@@ -35,8 +35,7 @@ export default function WilsonHero({ profile: p }: { profile: Profile }) {
       )}
 
       <figure className={h.portrait} data-zoom-scroll>
-        <img src={p.realImage} alt={p.fullName} />
-        {p.heroImage && <img src={p.heroImage} alt="" aria-hidden="true" data-morph />}
+        <img className={h.rider} src={p.heroImage ?? p.realImage} alt={p.fullName} />
       </figure>
 
       <div className={h.caption}>

@@ -37,7 +37,9 @@
   filter: drop-shadow(0 40px 50px rgba(60, 35, 0, 0.22));
 }
 .portrait img { grid-area: 1 / 1; height: 100%; width: auto; max-width: none; display: block; object-fit: contain; }
-.portrait img[data-morph] { position: relative; }
+/* Wilson's hero is the helmeted rider (a wide bust-on-bike shot): size it by
+   width and centre it so the whole crop shows, no clipping. */
+.portrait img.rider { height: auto; width: 128%; max-width: none; align-self: center; justify-self: center; object-fit: contain; }
 
 .caption { position: relative; z-index: 3; text-align: center; margin-top: clamp(14px, 3vh, 30px); max-width: 640px; }
 .tag { font-family: var(--display, "Helvetica Neue"), sans-serif; font-weight: 800; font-style: italic; font-size: clamp(18px, 2.6vw, 28px); line-height: 1.12; color: #241810; margin: 0; }
