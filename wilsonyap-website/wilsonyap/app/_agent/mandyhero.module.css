@@ -1,0 +1,79 @@
+/* Full-page editorial hero for Mandy (prmpt-style). Big centred figure that
+   tilts in 3D toward the pointer; minimal labels in the corners. */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  background: #f3efe6;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(84px, 12vh, 140px) clamp(16px, 4vw, 56px) clamp(48px, 8vh, 96px);
+  scroll-margin-top: 60px;
+}
+
+.topbar {
+  position: absolute; top: clamp(74px, 11vh, 118px); left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(16px, 4vw, 56px); z-index: 5;
+}
+.brand {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 800; font-style: italic; letter-spacing: -0.02em;
+  font-size: clamp(18px, 2.2vw, 28px); color: #241810;
+}
+.menu {
+  display: inline-flex; align-items: center; gap: 7px; text-decoration: none;
+  font-weight: 700; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #241810;
+  border: 1px solid rgba(36, 24, 16, 0.3); border-radius: 999px; padding: 9px 16px;
+  transition: background 0.2s, color 0.2s;
+}
+.menu:hover { background: #241810; color: #f3efe6; }
+
+.blurb {
+  position: absolute; left: clamp(16px, 4vw, 56px); top: 34%;
+  max-width: 230px; margin: 0; z-index: 4;
+  font-size: 12.5px; line-height: 1.55; color: #6f5a3e; letter-spacing: 0.01em;
+}
+
+/* centre stage: perspective wrapper + the tilting figure */
+.stage {
+  position: relative; z-index: 2;
+  perspective: 1100px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.tilt {
+  transform-style: preserve-3d;
+  will-change: transform;
+  filter: drop-shadow(0 46px 54px rgba(60, 35, 0, 0.26));
+}
+.tilt img {
+  height: clamp(360px, 72svh, 820px); width: auto; max-width: none; display: block;
+  object-fit: contain;
+  -webkit-user-drag: none;
+}
+.hint {
+  margin-top: 14px; font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
+  color: #b09a77;
+}
+
+.corner {
+  position: absolute; right: clamp(16px, 4vw, 56px); bottom: clamp(40px, 7vh, 88px);
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; z-index: 4;
+}
+.ckicker { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #a98f63; }
+.cname {
+  font-family: "Helvetica Neue", "Arial Black", Arial, sans-serif;
+  font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -0.02em;
+  font-size: clamp(22px, 3vw, 40px); color: #241810; line-height: 0.95;
+}
+.careas { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a6d45; max-width: 24ch; }
+
+@media (max-width: 720px) {
+  .blurb { display: none; }
+  .corner { bottom: clamp(26px, 5vh, 54px); }
+  .tilt img { height: clamp(320px, 58svh, 600px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tilt { transform: none !important; }
+}
