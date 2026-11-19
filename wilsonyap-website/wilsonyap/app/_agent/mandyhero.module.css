@@ -1,5 +1,5 @@
-/* Full-page editorial hero for Mandy (prmpt-style). Big centred figure that
-   tilts in 3D toward the pointer; minimal labels in the corners. */
+/* Full-page hero for Mandy. A big "MANDY LEE" billboard scrolls left→right
+   behind her; her 360° figure turns on drag in front of it. */
 .hero {
   position: relative;
   min-height: 100svh;
@@ -8,36 +8,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(84px, 12vh, 140px) clamp(16px, 4vw, 56px) clamp(48px, 8vh, 96px);
+  padding: clamp(84px, 12vh, 140px) clamp(16px, 4vw, 56px) clamp(96px, 16vh, 150px);
   scroll-margin-top: 60px;
 }
 
-.topbar {
-  position: absolute; top: clamp(74px, 11vh, 118px); left: 0; right: 0;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 clamp(16px, 4vw, 56px); z-index: 5;
+/* billboard marquee — huge name sliding left → right, behind the figure */
+.marquee {
+  position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+  z-index: 1; pointer-events: none; overflow: hidden; white-space: nowrap;
 }
-.brand {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  font-weight: 800; font-style: italic; letter-spacing: -0.02em;
-  font-size: clamp(18px, 2.2vw, 28px); color: #241810;
+.mtrack {
+  display: inline-block; white-space: nowrap; will-change: transform;
+  animation: slideRight 26s linear infinite;
 }
-.menu {
-  display: inline-flex; align-items: center; gap: 7px; text-decoration: none;
-  font-weight: 700; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #241810;
-  border: 1px solid rgba(36, 24, 16, 0.3); border-radius: 999px; padding: 9px 16px;
-  transition: background 0.2s, color 0.2s;
+.mword {
+  font-family: "Helvetica Neue", "Arial Black", Arial, sans-serif;
+  font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -0.02em;
+  font-size: clamp(64px, 17vw, 200px); line-height: 1; color: #241810; opacity: 0.82;
 }
-.menu:hover { background: #241810; color: #f3efe6; }
-
-.blurb {
-  position: absolute; left: clamp(16px, 4vw, 56px); top: 34%;
-  max-width: 230px; margin: 0; z-index: 4;
-  font-size: 12.5px; line-height: 1.55; color: #6f5a3e; letter-spacing: 0.01em;
+@keyframes slideRight {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
 }
 
-/* centre stage: a stack of real angle photos; JS cross-fades between them as
-   you drag, so she actually turns (front → 3/4 → profile → back). */
+/* centre stage: the draggable 360° figure, in front of the billboard */
 .stage {
   position: relative; z-index: 2;
   display: flex; flex-direction: column; align-items: center;
@@ -63,23 +57,34 @@
   color: #b09a77;
 }
 
+/* bottom bar: WhatsApp (left) + credits & areas on one line (right) */
+.bottombar {
+  position: absolute; left: 0; right: 0; bottom: clamp(26px, 5vh, 64px);
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+  padding: 0 clamp(16px, 4vw, 56px); z-index: 5;
+}
+.wa {
+  display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+  font-weight: 700; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: #241810;
+  background: #ecd34a; border-radius: 999px; padding: 12px 22px; box-shadow: 0 10px 26px rgba(120, 90, 0, 0.28);
+  transition: transform 0.2s;
+}
+.wa:hover { transform: translateY(-2px); }
+
 .corner {
-  position: absolute; right: clamp(16px, 4vw, 56px); bottom: clamp(40px, 7vh, 88px);
-  display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; z-index: 4;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right;
 }
 .ckicker { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #a98f63; }
-.cname {
-  font-family: "Helvetica Neue", "Arial Black", Arial, sans-serif;
-  font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -0.02em;
-  font-size: clamp(22px, 3vw, 40px); color: #241810; line-height: 0.95;
+.careas {
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a6d45;
+  white-space: nowrap;            /* keep Puchong · Bukit Jalil · PJ on one line */
 }
-.careas { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a6d45; max-width: 24ch; }
 
 @media (max-width: 720px) {
-  .blurb { display: none; }
-  .corner { bottom: clamp(26px, 5vh, 54px); }
-  .tilt img { height: clamp(320px, 58svh, 600px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tilt { transform: none !important; }
+  .hero { padding: clamp(64px, 9vh, 100px) 14px clamp(78px, 12vh, 104px); }
+  .frames { height: clamp(300px, 54svh, 560px); }
+  .careas { font-size: 9px; letter-spacing: 0.06em; }
+  .ckicker { font-size: 9px; letter-spacing: 0.12em; }
+  .wa { font-size: 11px; padding: 10px 16px; }
+  .bottombar { bottom: clamp(18px, 3.5vh, 40px); align-items: center; }
 }

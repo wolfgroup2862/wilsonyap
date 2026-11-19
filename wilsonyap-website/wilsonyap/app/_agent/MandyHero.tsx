@@ -123,16 +123,16 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
 
   return (
     <section id="mandy" className={h.hero}>
-      <div className={h.topbar}>
-        <span className={h.brand}>Mandy Lee</span>
-        {wa && (
-          <a className={h.menu} href={wa} target="_blank" rel="noopener noreferrer">
-            WhatsApp <span aria-hidden="true">↗</span>
-          </a>
-        )}
+      {/* big billboard name scrolling left → right behind her */}
+      <div className={h.marquee} aria-hidden="true">
+        <div className={h.mtrack}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <span key={i} className={h.mword}>
+              Mandy Lee&nbsp;&middot;&nbsp;
+            </span>
+          ))}
+        </div>
       </div>
-
-      <p className={h.blurb}>{p.tagline}</p>
 
       <div className={h.stage} ref={wrapRef}>
         <div className={h.frames}>
@@ -154,10 +154,16 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
         <span className={h.hint} aria-hidden="true">Drag to turn</span>
       </div>
 
-      <div className={h.corner}>
-        <span className={h.ckicker}>The Roof Realty · Wolf Group</span>
-        <span className={h.cname}>Mandy Lee</span>
-        <span className={h.careas}>{p.areas.join(" · ")}</span>
+      <div className={h.bottombar}>
+        {wa && (
+          <a className={h.wa} href={wa} target="_blank" rel="noopener noreferrer">
+            WhatsApp <span aria-hidden="true">↗</span>
+          </a>
+        )}
+        <div className={h.corner}>
+          <span className={h.ckicker}>The Roof Realty · Wolf Group</span>
+          <span className={h.careas}>{p.areas.join(" · ")}</span>
+        </div>
       </div>
     </section>
   );
