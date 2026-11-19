@@ -26,94 +26,38 @@
 }
 .title span { color: #ecc96b; }
 
+/* Swipeable fan: the cards keep the fan arrangement; JS (FanDeck.tsx) sets each
+   card's transform/opacity from its distance to the current centre. Drag or
+   swipe left/right spins the fan so other cards come to the front. */
 .deck {
   position: relative; margin: clamp(30px, 4vw, 54px) auto 0;
-  width: 100%; max-width: 1800px; height: clamp(360px, 42vw, 620px);
+  width: 100%; max-width: 1800px; height: clamp(360px, 52vw, 620px);
+  touch-action: pan-y;            /* horizontal gesture → our drag; vertical → page scroll */
+  cursor: grab;
+  -webkit-user-select: none; user-select: none;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .revealed { animation: sway 12s ease-in-out infinite; transform-origin: 50% 95%; }
-}
-@keyframes sway { 0%, 100% { transform: rotate(-0.6deg); } 50% { transform: rotate(0.6deg); } }
+.deck:active { cursor: grabbing; }
 
 .card {
-  --tx: 0px; --ty: 0px; --rot: 0deg; --sc: 1;
-  position: absolute; left: 50%; top: 6%;
-  width: clamp(130px, 14vw, 230px); aspect-ratio: 10 / 17;
-  margin-left: calc(clamp(130px, 14vw, 230px) / -2);
+  position: absolute; left: 50%; top: 7%;
+  width: clamp(150px, 15vw, 240px); aspect-ratio: 10 / 15;
   border-radius: 18px; overflow: hidden; text-decoration: none; background: #e9e2d4;
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
-  /* hidden state: pulled into the centre of the tornado */
-  opacity: 0; transform: translateY(40px) scale(0.42) rotate(0deg);
-  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+  transform-origin: 50% 88%;
+  opacity: 0; /* JS positions & fades every frame */
+  transform: translate(-50%, 0) scale(0.42);
+  will-change: transform, opacity;
+  -webkit-user-drag: none;
 }
-.card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
 .ph { position: absolute; inset: 0; display: grid; place-items: center; color: #b7a98e; font-weight: 800; font-size: 11px; letter-spacing: 0.1em; }
 .meta { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 12px 11px; background: linear-gradient(transparent, rgba(18, 11, 5, 0.94)); color: #fff; text-align: left; }
 .price { font-weight: 800; font-size: clamp(12px, 1.3vw, 15px); }
 .area { display: block; font-size: 10px; color: #e9d9b4; margin-top: 2px; letter-spacing: 0.03em; }
 
-/* revealed: cards fan out to their positions, then float */
-.revealed .card {
-  opacity: 1;
-  transform: translateX(var(--tx)) translateY(var(--ty)) rotate(var(--rot)) scale(var(--sc));
-  animation: bob 5.2s ease-in-out infinite;
-}
-@keyframes bob { 0%, 100% { top: 6%; } 50% { top: calc(6% - 14px); } }
-@media (prefers-reduced-motion: reduce) { .card { opacity: 1; animation: none; } .revealed { animation: none; } }
-
-/* ten-card fan — offsets stay inside the viewport; outward cards burst later */
-.card:nth-child(1)  { --tx: -34vw; --ty: 140px; --rot: -27deg; --sc: 0.76; z-index: 2; transition-delay: 0.24s; animation-delay: -0.3s; }
-.card:nth-child(2)  { --tx: -27vw; --ty: 96px;  --rot: -21deg; --sc: 0.82; z-index: 3; transition-delay: 0.18s; animation-delay: -1.4s; }
-.card:nth-child(3)  { --tx: -20vw; --ty: 58px;  --rot: -15deg; --sc: 0.88; z-index: 4; transition-delay: 0.12s; animation-delay: -2.6s; }
-.card:nth-child(4)  { --tx: -12vw; --ty: 28px;  --rot: -9deg;  --sc: 0.94; z-index: 5; transition-delay: 0.06s; animation-delay: -3.7s; }
-.card:nth-child(5)  { --tx: -4vw;  --ty: 6px;   --rot: -3deg;  --sc: 1;    z-index: 6; transition-delay: 0s;    animation-delay: -0.9s; }
-.card:nth-child(6)  { --tx: 4vw;   --ty: 6px;   --rot: 3deg;   --sc: 1;    z-index: 6; transition-delay: 0s;    animation-delay: -2.1s; }
-.card:nth-child(7)  { --tx: 12vw;  --ty: 28px;  --rot: 9deg;   --sc: 0.94; z-index: 5; transition-delay: 0.06s; animation-delay: -3.2s; }
-.card:nth-child(8)  { --tx: 20vw;  --ty: 58px;  --rot: 15deg;  --sc: 0.88; z-index: 4; transition-delay: 0.12s; animation-delay: -1.0s; }
-.card:nth-child(9)  { --tx: 27vw;  --ty: 96px;  --rot: 21deg;  --sc: 0.82; z-index: 3; transition-delay: 0.18s; animation-delay: -2.8s; }
-.card:nth-child(10) { --tx: 34vw;  --ty: 140px; --rot: 27deg;  --sc: 0.76; z-index: 2; transition-delay: 0.24s; animation-delay: -3.5s; }
-
-.revealed .card:hover, .revealed .card:focus-visible {
-  transform: translateX(var(--tx)) translateY(calc(var(--ty) - 40px)) rotate(0deg) scale(calc(var(--sc) + 0.14));
-  z-index: 20; box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6); animation-play-state: paused;
-}
-
-/* On phones the fan becomes a swipeable carousel: swipe left/right through every
-   card, tap one to open its area. */
 @media (max-width: 620px) {
-  .deck {
-    height: auto;
-    max-width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 14px;
-    overflow-x: auto;
-    overflow-y: visible;
-    scroll-snap-type: x mandatory;
-    scroll-padding: 0 19vw;
-    padding: 10px 19vw 14px;
-    margin-top: clamp(24px, 6vw, 40px);
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    animation: none !important; /* no sway while scrolling */
-  }
-  .deck::-webkit-scrollbar { display: none; }
-
-  .card,
-  .revealed .card {
-    position: relative;
-    left: auto; top: auto; margin-left: 0;
-    flex: 0 0 62vw;
-    width: 62vw; max-width: 300px;
-    aspect-ratio: 10 / 14;
-    display: block !important; /* unhide every card for the carousel */
-    scroll-snap-align: center;
-    opacity: 1 !important;
-    transform: none !important;
-    animation: none !important;
-    transition: box-shadow 0.25s ease, transform 0.25s ease;
-  }
-  .card:active { transform: scale(0.97) !important; }
+  .deck { height: clamp(330px, 84vw, 460px); }
+  .card { width: clamp(150px, 44vw, 220px); }
 }
 
 .hint { margin-top: 16px; color: rgba(255,255,255,0.82); font-size: 13px; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
