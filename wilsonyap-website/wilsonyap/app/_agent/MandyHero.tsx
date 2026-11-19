@@ -29,20 +29,26 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
     const n = imgs.length;
     if (!wrap || n === 0) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const fine = window.matchMedia("(pointer: fine)").matches;
 
     const S = {
-      pos: 0, disp: 0, userPos: 0,
-      dragging: false, startX: 0, basePos: 0,
-      lastInput: -9999, raf: 0,
+      disp: 0, userPos: 0,
+      startX: 0, startY: 0, basePos: 0,
+      axis: "" as "" | "x" | "y",
+      mouseDrag: false,
+      raf: 0,
     };
     const clamp = (v: number) => Math.max(0, Math.min(n - 1, v));
+    const widthOf = () => wrap.getBoundingClientRect().width || 360;
 
+    // show only the nearest angle, with a short blend to its neighbour while
+    // mid-turn — no permanent two-pose overlap (that looked like flicker).
     const render = () => {
       const lo = Math.floor(S.disp);
       const hi = Math.min(n - 1, lo + 1);
-      const f = S.disp - lo;
+      let f = S.disp - lo;
+      // bias toward a single clean frame near the integers
+      f = f < 0.15 ? 0 : f > 0.85 ? 1 : (f - 0.15) / 0.7;
       for (let i = 0; i < n; i++) {
         let o = 0;
         if (i === lo) o = 1 - f;
@@ -52,59 +58,76 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
       }
     };
 
-    const frame = (t: number) => {
-      const active = S.dragging || t - S.lastInput < 1200;
-      let target: number;
-      if (active) {
-        target = S.userPos;
-      } else if (reduce) {
-        target = 0;
-      } else {
-        // gentle autonomous turn: front → back → front, slowly
-        target = ((n - 1) / 2) * (1 - Math.cos((t / 1000) * 0.4));
-      }
-      S.disp += (target - S.disp) * 0.12;
+    const frame = () => {
+      S.disp += (S.userPos - S.disp) * 0.2;
+      if (Math.abs(S.userPos - S.disp) < 0.001) S.disp = S.userPos;
       render();
       S.raf = requestAnimationFrame(frame);
     };
 
-    // drag / swipe — works for touch and mouse — turns her through the angles
-    const down = (e: PointerEvent) => {
-      S.dragging = true;
-      S.startX = e.clientX;
-      S.basePos = S.disp;
-      S.userPos = S.disp;
-      S.lastInput = performance.now();
-      wrap.setPointerCapture?.(e.pointerId);
+    // TOUCH — own only horizontal drags; let vertical scroll the page
+    const tStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      S.startX = t.clientX;
+      S.startY = t.clientY;
+      S.basePos = S.userPos;
+      S.axis = "";
     };
-    const move = (e: PointerEvent) => {
-      S.lastInput = performance.now();
-      const w = wrap.getBoundingClientRect().width || 360;
-      if (S.dragging) {
-        // drag across ~1/3 of the width = one angle step
-        S.userPos = clamp(S.basePos - ((e.clientX - S.startX) / (w * 0.3)));
+    const tMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      const dx = t.clientX - S.startX;
+      const dy = t.clientY - S.startY;
+      if (!S.axis && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+        S.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      }
+      if (S.axis === "x") {
+        e.preventDefault(); // we own this gesture → turn, don't scroll
+        S.userPos = clamp(S.basePos - dx / (widthOf() * 0.32));
+      }
+    };
+    const tEnd = () => {
+      if (S.axis === "x") S.userPos = clamp(Math.round(S.userPos)); // settle on a clean angle
+      S.axis = "";
+    };
+
+    // MOUSE (desktop): drag to turn, or hover to turn toward the cursor
+    const mDown = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      S.mouseDrag = true;
+      S.startX = e.clientX;
+      S.basePos = S.userPos;
+    };
+    const mMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      if (S.mouseDrag) {
+        S.userPos = clamp(S.basePos - (e.clientX - S.startX) / (widthOf() * 0.32));
       } else if (fine) {
-        // desktop hover: map cursor x across the whole rotation
-        const nx = (e.clientX - wrap.getBoundingClientRect().left) / w;
+        const nx = (e.clientX - wrap.getBoundingClientRect().left) / widthOf();
         S.userPos = clamp(nx * (n - 1));
       }
     };
-    const up = () => {
-      S.dragging = false;
-      S.lastInput = performance.now();
+    const mUp = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      S.mouseDrag = false;
     };
 
-    wrap.addEventListener("pointerdown", down);
-    wrap.addEventListener("pointermove", move);
-    wrap.addEventListener("pointerup", up);
-    wrap.addEventListener("pointercancel", up);
+    wrap.addEventListener("touchstart", tStart, { passive: true });
+    wrap.addEventListener("touchmove", tMove, { passive: false });
+    wrap.addEventListener("touchend", tEnd);
+    wrap.addEventListener("touchcancel", tEnd);
+    wrap.addEventListener("pointerdown", mDown);
+    wrap.addEventListener("pointermove", mMove);
+    wrap.addEventListener("pointerup", mUp);
     S.raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(S.raf);
-      wrap.removeEventListener("pointerdown", down);
-      wrap.removeEventListener("pointermove", move);
-      wrap.removeEventListener("pointerup", up);
-      wrap.removeEventListener("pointercancel", up);
+      wrap.removeEventListener("touchstart", tStart);
+      wrap.removeEventListener("touchmove", tMove);
+      wrap.removeEventListener("touchend", tEnd);
+      wrap.removeEventListener("touchcancel", tEnd);
+      wrap.removeEventListener("pointerdown", mDown);
+      wrap.removeEventListener("pointermove", mMove);
+      wrap.removeEventListener("pointerup", mUp);
     };
   }, []);
 
