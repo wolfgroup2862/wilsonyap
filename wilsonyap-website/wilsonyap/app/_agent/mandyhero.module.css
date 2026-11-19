@@ -10,8 +10,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: clamp(6px, 1.2vh, 16px);
-  padding: clamp(54px, 8vh, 96px) clamp(16px, 4vw, 56px) clamp(28px, 5vh, 64px);
+  gap: clamp(2px, 0.6vh, 10px);
+  padding: clamp(38px, 5vh, 68px) clamp(16px, 4vw, 56px) clamp(26px, 4.5vh, 60px);
   scroll-margin-top: 60px;
 }
 
@@ -34,7 +34,7 @@
 .stage:active { cursor: grabbing; }
 .frames {
   position: relative;
-  height: clamp(360px, 62svh, 680px);
+  height: clamp(400px, 68svh, 760px);
   aspect-ratio: 900 / 1250;
   filter: drop-shadow(0 40px 48px rgba(60, 35, 0, 0.24));
 }
@@ -84,7 +84,7 @@
 .ckicker { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #a98f63; text-align: right; }
 
 @media (max-width: 720px) {
-  .frames { height: clamp(320px, 56svh, 560px); }
+  .frames { height: clamp(360px, 62svh, 620px); }
   .aword { font-size: clamp(24px, 7.2vw, 48px); }
   .wa { font-size: 11px; padding: 10px 16px; }
   .ckicker { font-size: 9px; letter-spacing: 0.1em; }
