@@ -103,7 +103,7 @@ export default function FanDeck({
           ))}
         </div>
 
-        <p className={s.hint}>Tap a card to open that area</p>
+        <p className={s.hint}>Swipe to browse · tap a card to open its area</p>
         <div className={s.cta}>
           <Link className={s.btn} href={baseHref}>
             View all {listings.length} listings →

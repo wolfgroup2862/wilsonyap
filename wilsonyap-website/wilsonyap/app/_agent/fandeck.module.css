@@ -78,16 +78,42 @@
   z-index: 20; box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6); animation-play-state: paused;
 }
 
+/* On phones the fan becomes a swipeable carousel: swipe left/right through every
+   card, tap one to open its area. */
 @media (max-width: 620px) {
-  .deck { height: clamp(320px, 88vw, 430px); }
-  .card { width: clamp(130px, 37vw, 190px); margin-left: calc(clamp(130px, 37vw, 190px) / -2); }
-  .card:nth-child(1), .card:nth-child(2), .card:nth-child(9), .card:nth-child(10) { display: none; }
-  .card:nth-child(3) { --tx: -26vw; --ty: 74px; --rot: -15deg; --sc: 0.80; }
-  .card:nth-child(4) { --tx: -16vw; --ty: 34px; --rot: -9deg;  --sc: 0.88; }
-  .card:nth-child(5) { --tx: -5vw;  --ty: 7px;  --rot: -3deg;  --sc: 1; }
-  .card:nth-child(6) { --tx: 5vw;   --ty: 7px;  --rot: 3deg;   --sc: 1; }
-  .card:nth-child(7) { --tx: 16vw;  --ty: 34px; --rot: 9deg;   --sc: 0.88; }
-  .card:nth-child(8) { --tx: 26vw;  --ty: 74px; --rot: 15deg;  --sc: 0.80; }
+  .deck {
+    height: auto;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 14px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 19vw;
+    padding: 10px 19vw 14px;
+    margin-top: clamp(24px, 6vw, 40px);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    animation: none !important; /* no sway while scrolling */
+  }
+  .deck::-webkit-scrollbar { display: none; }
+
+  .card,
+  .revealed .card {
+    position: relative;
+    left: auto; top: auto; margin-left: 0;
+    flex: 0 0 62vw;
+    width: 62vw; max-width: 300px;
+    aspect-ratio: 10 / 14;
+    display: block !important; /* unhide every card for the carousel */
+    scroll-snap-align: center;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .card:active { transform: scale(0.97) !important; }
 }
 
 .hint { margin-top: 16px; color: rgba(255,255,255,0.82); font-size: 13px; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
