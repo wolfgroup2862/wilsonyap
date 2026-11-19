@@ -52,7 +52,7 @@ const TEAM: Member[] = [
 function PropertiesSection() {
   if (TEAM_LISTINGS.length === 0) return null;
   return (
-    <section id="properties" className={s.listings} data-reveal="zoom">
+    <section id="properties" data-reveal="zoom" style={{ scrollMarginTop: 60 }}>
       <FanDeck listings={TEAM_LISTINGS} baseHref="/properties" />
     </section>
   );
