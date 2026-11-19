@@ -1,50 +1,42 @@
-/* Full-page hero for Mandy. A big "MANDY LEE" billboard scrolls left→right
-   behind her; her 360° figure turns on drag in front of it. */
+/* Full-page hero for Mandy, stacked & centred so it doesn't feel empty:
+   big still name on top → her 360° figure (drag to turn) → a scrolling areas
+   billboard → WhatsApp + credits. */
 .hero {
   position: relative;
   min-height: 100svh;
   background: #f3efe6;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(84px, 12vh, 140px) clamp(16px, 4vw, 56px) clamp(96px, 16vh, 150px);
+  gap: clamp(8px, 1.6vh, 20px);
+  padding: clamp(78px, 11vh, 128px) clamp(16px, 4vw, 56px) clamp(32px, 6vh, 72px);
   scroll-margin-top: 60px;
 }
 
-/* billboard marquee — huge name sliding left → right, behind the figure */
-.marquee {
-  position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
-  z-index: 1; pointer-events: none; overflow: hidden; white-space: nowrap;
-}
-.mtrack {
-  display: inline-block; white-space: nowrap; will-change: transform;
-  animation: slideRight 26s linear infinite;
-}
-.mword {
-  font-family: "Helvetica Neue", "Arial Black", Arial, sans-serif;
-  font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -0.02em;
-  font-size: clamp(64px, 17vw, 200px); line-height: 1; color: #241810; opacity: 0.82;
-}
-@keyframes slideRight {
-  from { transform: translateX(-50%); }
-  to { transform: translateX(0); }
+/* big, still name — elegant serif */
+.nameTop {
+  margin: 0; text-align: center; z-index: 4;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-weight: 700; font-style: italic; letter-spacing: 0.01em;
+  font-size: clamp(44px, 11vw, 112px); line-height: 0.95; color: #241810;
 }
 
-/* centre stage: the draggable 360° figure, in front of the billboard */
+/* draggable 360° figure */
 .stage {
   position: relative; z-index: 2;
   display: flex; flex-direction: column; align-items: center;
-  touch-action: pan-y;            /* horizontal drag turns her; vertical scrolls the page */
+  touch-action: pan-y;
   cursor: grab;
   -webkit-user-select: none; user-select: none;
 }
 .stage:active { cursor: grabbing; }
 .frames {
   position: relative;
-  height: clamp(360px, 72svh, 820px);
+  height: clamp(300px, 50svh, 540px);
   aspect-ratio: 900 / 1250;
-  filter: drop-shadow(0 46px 54px rgba(60, 35, 0, 0.26));
+  filter: drop-shadow(0 40px 48px rgba(60, 35, 0, 0.24));
 }
 .frame {
   position: absolute; inset: 0;
@@ -53,15 +45,34 @@
   will-change: opacity;
 }
 .hint {
-  margin-top: 14px; font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
+  margin-top: 10px; font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
   color: #b09a77;
 }
 
-/* bottom bar: WhatsApp (left) + credits & areas on one line (right) */
+/* moving billboard: areas sliding left → right, right below her */
+.areaMarquee {
+  position: relative; width: 100%; z-index: 3;
+  pointer-events: none; overflow: hidden; white-space: nowrap;
+}
+.atrack {
+  display: inline-block; white-space: nowrap; will-change: transform;
+  animation: slideRight 22s linear infinite;
+}
+.aword {
+  font-family: "Helvetica Neue", "Arial Black", Arial, sans-serif;
+  font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: 0.01em;
+  font-size: clamp(26px, 6.2vw, 60px); line-height: 1; color: #c6a24e;
+}
+@keyframes slideRight {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+/* WhatsApp + credits row */
 .bottombar {
-  position: absolute; left: 0; right: 0; bottom: clamp(26px, 5vh, 64px);
-  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
-  padding: 0 clamp(16px, 4vw, 56px); z-index: 5;
+  position: relative; width: 100%; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  margin-top: clamp(4px, 1vh, 14px);
 }
 .wa {
   display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
@@ -70,21 +81,11 @@
   transition: transform 0.2s;
 }
 .wa:hover { transform: translateY(-2px); }
-
-.corner {
-  display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right;
-}
-.ckicker { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #a98f63; }
-.careas {
-  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a6d45;
-  white-space: nowrap;            /* keep Puchong · Bukit Jalil · PJ on one line */
-}
+.ckicker { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #a98f63; text-align: right; }
 
 @media (max-width: 720px) {
-  .hero { padding: clamp(64px, 9vh, 100px) 14px clamp(78px, 12vh, 104px); }
-  .frames { height: clamp(300px, 54svh, 560px); }
-  .careas { font-size: 9px; letter-spacing: 0.06em; }
-  .ckicker { font-size: 9px; letter-spacing: 0.12em; }
+  .frames { height: clamp(260px, 44svh, 430px); }
+  .aword { font-size: clamp(24px, 7.2vw, 48px); }
   .wa { font-size: 11px; padding: 10px 16px; }
-  .bottombar { bottom: clamp(18px, 3.5vh, 40px); align-items: center; }
+  .ckicker { font-size: 9px; letter-spacing: 0.1em; }
 }

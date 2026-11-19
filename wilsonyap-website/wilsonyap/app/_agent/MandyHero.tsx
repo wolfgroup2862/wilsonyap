@@ -123,16 +123,14 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
 
   return (
     <section id="mandy" className={h.hero}>
-      {/* big billboard name scrolling left → right behind her */}
-      <div className={h.marquee} aria-hidden="true">
-        <div className={h.mtrack}>
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className={h.mword}>
-              Mandy Lee&nbsp;&middot;&nbsp;
-            </span>
-          ))}
-        </div>
-      </div>
+      {/* elegant display font for her name (Next hoists this link into <head>) */}
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+      />
+
+      {/* big, still name at the top */}
+      <h2 className={h.nameTop}>Mandy Lee</h2>
 
       <div className={h.stage} ref={wrapRef}>
         <div className={h.frames}>
@@ -154,16 +152,25 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
         <span className={h.hint} aria-hidden="true">Drag to turn</span>
       </div>
 
+      {/* the moving billboard is the areas, scrolling below her */}
+      <div className={h.areaMarquee} aria-hidden="true">
+        <div className={h.atrack}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <span key={i} className={h.aword}>
+              {p.areas.join("  ·  ")}
+              {"  ·  "}
+            </span>
+          ))}
+        </div>
+      </div>
+
       <div className={h.bottombar}>
         {wa && (
           <a className={h.wa} href={wa} target="_blank" rel="noopener noreferrer">
             WhatsApp <span aria-hidden="true">↗</span>
           </a>
         )}
-        <div className={h.corner}>
-          <span className={h.ckicker}>The Roof Realty · Wolf Group</span>
-          <span className={h.careas}>{p.areas.join(" · ")}</span>
-        </div>
+        <span className={h.ckicker}>The Roof Realty · Wolf Group</span>
       </div>
     </section>
   );
