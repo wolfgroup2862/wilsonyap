@@ -11,7 +11,7 @@ export const PROFILE: Profile = {
     "Tell visitors in two or three sentences who you are, which areas you know best, and why people enjoy working with you.", // TODO
   areas: ["Puchong", "Bukit Jalil", "Petaling Jaya"],
   specialties: ["Puchong commercial", "Bukit Jalil", "Petaling Jaya (PJ)"],
-  whatsapp: "", // TODO: digits only, e.g. "60123456789". Empty = button hidden.
+  whatsapp: "60193988966",
   photo: "/agent/mandy.jpg",
   realImage: "/agent/mandy-real.webp",
   // heroImage: "/agent/mandy-hero.webp", // TODO: add once her hero-character image is ready

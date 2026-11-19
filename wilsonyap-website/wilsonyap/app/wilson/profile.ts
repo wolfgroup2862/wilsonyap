@@ -9,10 +9,10 @@ export const PROFILE: Profile = {
   agency: "The Roof Realty (TRR) · Wolf Group",
   tagline: "Straight answers and real numbers for buyers, sellers and tenants — no pressure, just good homework.", // TODO: confirm wording
   intro:
-    "Tell visitors in two or three sentences who you are, which areas you know best, and why people enjoy working with you.", // TODO
+    "Commercial REN with more than 8 years in the industry, focused on Puchong. I specialise in commercial property — shop lots, retail space, Grade A offices, standalone buildings, factories and land — with shop-lots as my strongest area.",
   areas: ["Puchong", "Bukit Jalil", "Petaling Jaya"],
   specialties: ["Puchong commercial", "Bukit Jalil", "Petaling Jaya (PJ)"],
-  whatsapp: "", // TODO
+  whatsapp: "60166207590",
   photo: "/agent/wilson.jpg",
   realImage: "/agent/wilson-real.webp",
   halfImage: "/agent/wilson-half.webp",

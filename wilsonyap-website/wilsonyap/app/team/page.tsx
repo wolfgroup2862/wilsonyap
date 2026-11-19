@@ -5,6 +5,7 @@ import { PROFILE as WILSON } from "../wilson/profile";
 import type { Profile } from "../_agent/AgentPage";
 import TeamHero, { type HeroMember } from "./TeamHero";
 import { WILSON_LISTINGS as TEAM_LISTINGS } from "../_agent/wilson-listings";
+import ForSale from "../_agent/ForSale";
 import s from "./team.module.css";
 
 // Team landing page (warm studio style). Click a person in the hero photo →
@@ -48,33 +49,12 @@ const TEAM: Member[] = [
 function PropertiesSection() {
   if (TEAM_LISTINGS.length === 0) return null;
   return (
-        <section id="properties" className={s.listings}>
+    <section id="properties" className={s.listings}>
       <p className={s.kicker}>Commercial · For sale</p>
       <h2 className={s.listingsTitle}>
         Properties<span>.</span>
       </h2>
-      <div className={s.listingGrid}>
-        {TEAM_LISTINGS.map((l, i) => (
-          <article key={i} className={s.listing}>
-            <div className={s.listingImg}>
-              {l.image ? <img src={l.image} alt={l.title} loading="lazy" /> : <span>{l.type}</span>}
-              <em>{l.type}</em>
-            </div>
-            <div className={s.listingBody}>
-              <p className={s.listingLoc}>{l.location}</p>
-              <h3>{l.title}</h3>
-              <p className={s.listingPrice}>{l.price}</p>
-              <ul className={s.listingFacts}>
-                {l.builtUp && <li>Built-up {l.builtUp}</li>}
-                {l.land && <li>Land {l.land}</li>}
-                {l.psf && <li>{l.psf}</li>}
-                {l.tenure && <li>{l.tenure}</li>}
-                {l.notes?.map((n) => <li key={n}>{n}</li>)}
-              </ul>
-            </div>
-          </article>
-        ))}
-      </div>
+      <ForSale listings={TEAM_LISTINGS} whatsapp={WILSON.whatsapp} limit={10} viewAllHref="/properties" />
     </section>
   );
 }
