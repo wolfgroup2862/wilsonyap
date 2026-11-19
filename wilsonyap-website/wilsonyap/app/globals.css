@@ -30,13 +30,14 @@ img { display: block; max-width: 100%; }
   transform: translateY(calc(var(--p, 0.35) * 3%)) scale(calc(1 + var(--p, 0.35) * 0.14));
   will-change: transform;
 }
-/* Scroll "morph": the hero layer (field gear) wipes in from the top over the
-   suit photo as you scroll the section — like the Lando helmet effect. */
+/* Scroll "morph" (Lando-style): the hero layer replaces the base photo with a
+   soft, feathered edge that sweeps down as you scroll — a full transformation
+   by the time the section leaves. */
 [data-morph] {
-  clip-path: inset(0 0 calc((1 - var(--p, 0)) * 100%) 0);
-  -webkit-clip-path: inset(0 0 calc((1 - var(--p, 0)) * 100%) 0);
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--p, 0) * 132% - 16%), rgba(0,0,0,0) calc(var(--p, 0) * 132%));
+  mask-image: linear-gradient(to bottom, #000 calc(var(--p, 0) * 132% - 16%), rgba(0,0,0,0) calc(var(--p, 0) * 132%));
 }
 @media (prefers-reduced-motion: reduce) {
   [data-zoom-scroll] img { transform: none; }
-  [data-morph] { clip-path: inset(0 0 100% 0); -webkit-clip-path: inset(0 0 100% 0); }
+  [data-morph] { -webkit-mask-image: linear-gradient(#0000, #0000); mask-image: linear-gradient(#0000, #0000); }
 }
