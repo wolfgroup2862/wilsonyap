@@ -264,6 +264,48 @@
   max-width: none;
   translate: -50% 0;
 }
+
+/* Lando-style helmet build-on (Wilson): his head-and-shoulders photo sits in the
+   arch; a race helmet materialises onto his head as --p (from ScrollFX) rises. */
+.portrait .stack {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 96%;
+  aspect-ratio: 554 / 920;
+  translate: -50% 0;
+  /* slow enlarge of the whole head+helmet together, so they stay aligned */
+  transform-origin: 50% 100%;
+  transform: scale(calc(1 + var(--p, 0) * 0.1));
+  --q: clamp(0, calc(var(--p, 0) * 2.4), 1); /* fully formed by the time it's centred */
+}
+.portrait .stack .mbase {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  translate: 0 0 !important; /* !important: minifier drops a plain `translate:none`, letting .portrait img's -50% leak back in */
+  transform: none;
+  object-fit: contain;
+}
+.portrait .stack .helmet {
+  position: absolute;
+  left: 15.1%;
+  top: 0;
+  bottom: auto;
+  width: 73.1%;
+  height: auto;
+  translate: none;
+  transform-origin: 50% 58%;
+  transform: scale(calc(1.14 - var(--q) * 0.14));
+  opacity: var(--q);
+  -webkit-mask-image: radial-gradient(132% 116% at 50% 40%, #000 calc(var(--q) * 100% - 12%), rgba(0, 0, 0, 0) calc(var(--q) * 100%));
+          mask-image: radial-gradient(132% 116% at 50% 40%, #000 calc(var(--q) * 100% - 12%), rgba(0, 0, 0, 0) calc(var(--q) * 100%));
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .portrait .stack .helmet { opacity: 1; transform: none; -webkit-mask-image: none; mask-image: none; }
+}
 .memberText { min-width: 0; }
 .kicker { margin: 0 0 10px; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brown); }
 .name {
