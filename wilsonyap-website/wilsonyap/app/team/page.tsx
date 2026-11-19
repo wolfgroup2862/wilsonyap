@@ -6,6 +6,7 @@ import type { Profile } from "../_agent/AgentPage";
 import TeamHero, { type HeroMember } from "./TeamHero";
 import { WILSON_LISTINGS as TEAM_LISTINGS } from "../_agent/wilson-listings";
 import FanDeck from "../_agent/FanDeck";
+import ScrollFX from "../_agent/ScrollFX";
 import s from "./team.module.css";
 
 // Team landing page (warm studio style). Click a person in the hero photo →
@@ -51,7 +52,7 @@ const TEAM: Member[] = [
 function PropertiesSection() {
   if (TEAM_LISTINGS.length === 0) return null;
   return (
-    <section id="properties" className={s.listings}>
+    <section id="properties" className={s.listings} data-reveal="zoom">
       <FanDeck listings={TEAM_LISTINGS} baseHref="/properties" />
     </section>
   );
@@ -66,6 +67,7 @@ function waLink(p: Profile) {
 export default function TeamPage() {
   return (
     <main className={s.page}>
+      <ScrollFX />
       <header className={s.nav}>
         <a href="#top" className={s.brand} aria-label="Wolf Group home">
           <img src="/wolf-group-logo-transparent.png" alt="Wolf Group" width={3050} height={721} />
@@ -113,10 +115,10 @@ export default function TeamPage() {
         const wa = waLink(p);
         const section = (
           <section id={m.id} className={`${s.member} ${i % 2 ? s.flip : ""}`}>
-            <figure className={s.portrait} data-landing>
+            <figure className={s.portrait} data-landing data-reveal={i % 2 ? "right" : "left"}>
               <img src={p.halfImage ?? p.realImage} alt={`${p.fullName}`} loading="lazy" />
             </figure>
-            <div className={s.memberText}>
+            <div className={s.memberText} data-reveal="up">
               <p className={s.kicker}>
                 {String(i + 1).padStart(2, "0")} · {p.agency}
               </p>
@@ -154,7 +156,7 @@ export default function TeamPage() {
 
       <PropertiesSection />
 
-      <section id="contact" className={s.contact}>
+      <section id="contact" className={s.contact} data-reveal="up">
         <h2>
           Let&rsquo;s find your <span>next place.</span>
         </h2>

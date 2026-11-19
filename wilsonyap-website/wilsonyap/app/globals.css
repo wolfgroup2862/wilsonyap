@@ -4,3 +4,19 @@ body { margin: 0; -webkit-font-smoothing: antialiased; text-rendering: optimizeL
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
 :focus-visible { outline: 2px solid #e2b400; outline-offset: 4px; }
+
+/* Scroll-reveal: elements animate in as they enter the viewport. ScrollFX
+   toggles [data-inview]; variants set the starting transform (zoom / slide). */
+[data-reveal] {
+  opacity: 0;
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+[data-reveal="up"]   { transform: translateY(48px) scale(0.98); }
+[data-reveal="zoom"] { transform: scale(0.85); }
+[data-reveal="left"] { transform: translateX(-9vw) scale(0.95); }
+[data-reveal="right"]{ transform: translateX(9vw) scale(0.95); }
+[data-reveal][data-inview] { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
