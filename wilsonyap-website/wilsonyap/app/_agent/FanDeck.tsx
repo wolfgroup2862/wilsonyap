@@ -14,7 +14,7 @@ function spread(list: TeamListing[], n: number): TeamListing[] {
 export default function FanDeck({
   listings,
   baseHref = "/properties",
-  count = 7,
+  count = 10,
 }: {
   listings: TeamListing[];
   baseHref?: string;
