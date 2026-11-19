@@ -288,23 +288,46 @@
   transform: none;
   object-fit: contain;
 }
-.portrait .stack .helmet {
+/* Three copies of the same helmet, each masked to one horizontal band. They fly
+   in on their own staggered sub-progress and lock together into one helmet. */
+.portrait .stack .hslice {
   position: absolute;
   left: 15.1%;
   top: 0;
   bottom: auto;
   width: 73.1%;
   height: auto;
-  translate: none;
-  transform-origin: 50% 58%;
-  transform: scale(calc(1.14 - var(--q) * 0.14));
-  opacity: var(--q);
-  -webkit-mask-image: radial-gradient(132% 116% at 50% 40%, #000 calc(var(--q) * 100% - 12%), rgba(0, 0, 0, 0) calc(var(--q) * 100%));
-          mask-image: radial-gradient(132% 116% at 50% 40%, #000 calc(var(--q) * 100% - 12%), rgba(0, 0, 0, 0) calc(var(--q) * 100%));
+  max-width: none;
+  translate: 0 0 !important;
+  transform-origin: 50% 50%;
   will-change: transform, opacity;
 }
+/* visor / mid band — materialises first, expanding horizontally */
+.portrait .stack .hMid {
+  --lp: clamp(0, calc(var(--q) / 0.4), 1);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 37%, #000 40% 61%, transparent 64%);
+          mask-image: linear-gradient(to bottom, transparent 37%, #000 40% 61%, transparent 64%);
+  transform: scaleX(calc(0.5 + var(--lp) * 0.5));
+  opacity: var(--lp);
+}
+/* crown / top band — drops down from above */
+.portrait .stack .hTop {
+  --lp: clamp(0, calc((var(--q) - 0.22) / 0.5), 1);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0 38%, transparent 41%);
+          mask-image: linear-gradient(to bottom, #000 0 38%, transparent 41%);
+  transform: translateY(calc((1 - var(--lp)) * -48%));
+  opacity: var(--lp);
+}
+/* chin bar / bottom band — rises up from below */
+.portrait .stack .hBot {
+  --lp: clamp(0, calc((var(--q) - 0.4) / 0.6), 1);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 60%, #000 63% 100%);
+          mask-image: linear-gradient(to bottom, transparent 60%, #000 63% 100%);
+  transform: translateY(calc((1 - var(--lp)) * 48%));
+  opacity: var(--lp);
+}
 @media (prefers-reduced-motion: reduce) {
-  .portrait .stack .helmet { opacity: 1; transform: none; -webkit-mask-image: none; mask-image: none; }
+  .portrait .stack .hslice { opacity: 1; transform: none; }
 }
 .memberText { min-width: 0; }
 .kicker { margin: 0 0 10px; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brown); }

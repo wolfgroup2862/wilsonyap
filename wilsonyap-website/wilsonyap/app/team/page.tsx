@@ -121,7 +121,11 @@ export default function TeamPage() {
                 // head as the section scrolls into view (driven by --p from ScrollFX).
                 <span className={s.stack}>
                   <img className={s.mbase} src="/agent/wilson-half.webp" alt={p.fullName} />
-                  <img className={s.helmet} src="/agent/wilson-helmet.webp" alt="" aria-hidden="true" />
+                  {/* same helmet drawn as three slices that fly in and lock together
+                      (visor first, then crown, then chin) — Lando-style assembly */}
+                  <img className={`${s.hslice} ${s.hMid}`} src="/agent/wilson-helmet.webp" alt="" aria-hidden="true" />
+                  <img className={`${s.hslice} ${s.hTop}`} src="/agent/wilson-helmet.webp" alt="" aria-hidden="true" />
+                  <img className={`${s.hslice} ${s.hBot}`} src="/agent/wilson-helmet.webp" alt="" aria-hidden="true" />
                 </span>
               ) : p.heroImage ? (
                 <>
