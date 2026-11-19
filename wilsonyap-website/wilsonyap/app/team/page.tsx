@@ -5,7 +5,7 @@ import { PROFILE as WILSON } from "../wilson/profile";
 import type { Profile } from "../_agent/AgentPage";
 import TeamHero, { type HeroMember } from "./TeamHero";
 import { WILSON_LISTINGS as TEAM_LISTINGS } from "../_agent/wilson-listings";
-import AreaMap, { type AreaStat } from "../_agent/AreaMap";
+import FanDeck from "../_agent/FanDeck";
 import s from "./team.module.css";
 
 // Team landing page (warm studio style). Click a person in the hero photo →
@@ -50,14 +50,9 @@ const TEAM: Member[] = [
 // opens that area's listings on /properties.
 function PropertiesSection() {
   if (TEAM_LISTINGS.length === 0) return null;
-  const byArea = new Map<string, number>();
-  for (const l of TEAM_LISTINGS) byArea.set(l.area, (byArea.get(l.area) ?? 0) + 1);
-  const areas: AreaStat[] = [...byArea.entries()]
-    .map(([name, count]) => ({ name, count }))
-    .sort((a, b) => b.count - a.count);
   return (
     <section id="properties" className={s.listings}>
-      <AreaMap areas={areas} baseHref="/properties" />
+      <FanDeck listings={TEAM_LISTINGS} baseHref="/properties" />
     </section>
   );
 }
