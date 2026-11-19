@@ -10,8 +10,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: clamp(2px, 0.6vh, 10px);
-  padding: clamp(38px, 5vh, 68px) clamp(16px, 4vw, 56px) clamp(26px, 4.5vh, 60px);
+  gap: clamp(0px, 0.4vh, 8px);
+  padding: clamp(22px, 3vh, 52px) clamp(16px, 4vw, 56px) clamp(16px, 3vh, 48px);
   scroll-margin-top: 60px;
 }
 
@@ -60,8 +60,10 @@
   -webkit-user-drag: none;
   will-change: opacity;
 }
+/* Wilson's figure is bigger than Mandy's (id-scoped so it only affects him) */
+:global(#wilson) .frames { height: clamp(420px, 67svh, 840px); }
 .hint {
-  margin-top: 10px; font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
+  margin-top: 6px; font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
   color: #b09a77;
 }
 
