@@ -9,7 +9,15 @@ import h from "./mandyhero.module.css";
 // pointer (pseudo-360 head-turn); on touch it drifts gently on its own.
 export default function MandyHero({ profile: p }: { profile: Profile }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const tiltRef = useRef<HTMLDivElement>(null);
+  const imgEls = useRef<(HTMLImageElement | null)[]>([]);
+
+  const FRAMES = [
+    "/agent/mandy-rot-0.webp",
+    "/agent/mandy-rot-1.webp",
+    "/agent/mandy-rot-2.webp",
+    "/agent/mandy-rot-3.webp",
+    "/agent/mandy-rot-4.webp",
+  ];
 
   const wa = p.whatsapp
     ? `https://wa.me/${p.whatsapp}?text=${encodeURIComponent(`Hi ${p.firstName}, I found your website and would like to ask about a property.`)}`
@@ -17,65 +25,68 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
 
   useEffect(() => {
     const wrap = wrapRef.current;
-    const tilt = tiltRef.current;
-    if (!wrap || !tilt) return;
+    const imgs = imgEls.current.filter(Boolean) as HTMLImageElement[];
+    const n = imgs.length;
+    if (!wrap || n === 0) return;
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const fine = window.matchMedia("(pointer: fine)").matches;
 
     const S = {
-      rx: 0, ry: 0, tx: 0, ty: 0, // current (eased)
-      trx: 0, tryy: 0, // targets
-      dragging: false, startX: 0, startY: 0, baseRY: 0, baseRX: 0,
+      pos: 0, disp: 0, userPos: 0,
+      dragging: false, startX: 0, basePos: 0,
       lastInput: -9999, raf: 0,
     };
-    const MAXY = 20; // hover/sway left-right
-    const MAXX = 13; // hover/sway up-down
-    const DRAGMAX = 34; // drag can turn further
+    const clamp = (v: number) => Math.max(0, Math.min(n - 1, v));
 
-    const clamp = (v: number, m: number) => Math.max(-m, Math.min(m, v));
-    const apply = () => {
-      tilt.style.transform = `rotateX(${S.rx.toFixed(2)}deg) rotateY(${S.ry.toFixed(2)}deg) translate3d(${S.tx.toFixed(1)}px, ${S.ty.toFixed(1)}px, 0)`;
+    const render = () => {
+      const lo = Math.floor(S.disp);
+      const hi = Math.min(n - 1, lo + 1);
+      const f = S.disp - lo;
+      for (let i = 0; i < n; i++) {
+        let o = 0;
+        if (i === lo) o = 1 - f;
+        if (i === hi) o += f;
+        imgs[i].style.opacity = String(o);
+        imgs[i].style.zIndex = i === hi ? "2" : "1";
+      }
     };
 
     const frame = (t: number) => {
-      const idle = !S.dragging && t - S.lastInput > 900;
-      if (idle && !reduce) {
-        // gentle autonomous turn so it always reads as 3D, even untouched
-        const s = t / 1000;
-        S.tryy = Math.sin(s * 0.55) * MAXY * 0.85;
-        S.trx = Math.sin(s * 0.4 + 1) * MAXX * 0.5;
+      const active = S.dragging || t - S.lastInput < 1200;
+      let target: number;
+      if (active) {
+        target = S.userPos;
+      } else if (reduce) {
+        target = 0;
+      } else {
+        // gentle autonomous turn: front → back → front, slowly
+        target = ((n - 1) / 2) * (1 - Math.cos((t / 1000) * 0.4));
       }
-      S.ry += (S.tryy - S.ry) * 0.09;
-      S.rx += (S.trx - S.rx) * 0.09;
-      S.tx += (S.ry * 0.9 - S.tx) * 0.09; // parallax drift with the turn
-      S.ty += (-S.rx * 0.8 - S.ty) * 0.09;
-      apply();
+      S.disp += (target - S.disp) * 0.12;
+      render();
       S.raf = requestAnimationFrame(frame);
     };
 
-    // DRAG — works for touch and mouse: grab the figure and turn it
+    // drag / swipe — works for touch and mouse — turns her through the angles
     const down = (e: PointerEvent) => {
       S.dragging = true;
       S.startX = e.clientX;
-      S.startY = e.clientY;
-      S.baseRY = S.tryy;
-      S.baseRX = S.trx;
+      S.basePos = S.disp;
+      S.userPos = S.disp;
       S.lastInput = performance.now();
       wrap.setPointerCapture?.(e.pointerId);
     };
     const move = (e: PointerEvent) => {
       S.lastInput = performance.now();
+      const w = wrap.getBoundingClientRect().width || 360;
       if (S.dragging) {
-        S.tryy = clamp(S.baseRY + (e.clientX - S.startX) * 0.35, DRAGMAX);
-        S.trx = clamp(S.baseRX - (e.clientY - S.startY) * 0.3, DRAGMAX * 0.6);
+        // drag across ~1/3 of the width = one angle step
+        S.userPos = clamp(S.basePos - ((e.clientX - S.startX) / (w * 0.3)));
       } else if (fine) {
-        // desktop hover: turn toward the cursor
-        const r = wrap.getBoundingClientRect();
-        const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
-        const ny = ((e.clientY - r.top) / r.height) * 2 - 1;
-        S.tryy = clamp(nx, 1) * MAXY;
-        S.trx = clamp(-ny, 1) * MAXX;
+        // desktop hover: map cursor x across the whole rotation
+        const nx = (e.clientX - wrap.getBoundingClientRect().left) / w;
+        S.userPos = clamp(nx * (n - 1));
       }
     };
     const up = () => {
@@ -87,7 +98,7 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
     wrap.addEventListener("pointermove", move);
     wrap.addEventListener("pointerup", up);
     wrap.addEventListener("pointercancel", up);
-    if (!reduce) S.raf = requestAnimationFrame(frame);
+    S.raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(S.raf);
       wrap.removeEventListener("pointerdown", down);
@@ -111,8 +122,21 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
       <p className={h.blurb}>{p.tagline}</p>
 
       <div className={h.stage} ref={wrapRef}>
-        <div className={h.tilt} ref={tiltRef}>
-          <img src={p.realImage} alt={p.fullName} draggable={false} />
+        <div className={h.frames}>
+          {FRAMES.map((src, i) => (
+            <img
+              key={src}
+              ref={(el) => {
+                imgEls.current[i] = el;
+              }}
+              className={h.frame}
+              src={src}
+              alt={i === 0 ? p.fullName : ""}
+              aria-hidden={i !== 0}
+              draggable={false}
+              style={{ opacity: i === 0 ? 1 : 0 }}
+            />
+          ))}
         </div>
         <span className={h.hint} aria-hidden="true">Drag to turn</span>
       </div>

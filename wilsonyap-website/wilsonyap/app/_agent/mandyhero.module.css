@@ -36,25 +36,27 @@
   font-size: 12.5px; line-height: 1.55; color: #6f5a3e; letter-spacing: 0.01em;
 }
 
-/* centre stage: perspective wrapper + the tilting figure */
+/* centre stage: a stack of real angle photos; JS cross-fades between them as
+   you drag, so she actually turns (front → 3/4 → profile → back). */
 .stage {
   position: relative; z-index: 2;
-  perspective: 950px;
   display: flex; flex-direction: column; align-items: center;
   touch-action: pan-y;            /* horizontal drag turns her; vertical scrolls the page */
   cursor: grab;
   -webkit-user-select: none; user-select: none;
 }
 .stage:active { cursor: grabbing; }
-.tilt {
-  transform-style: preserve-3d;
-  will-change: transform;
+.frames {
+  position: relative;
+  height: clamp(360px, 72svh, 820px);
+  aspect-ratio: 900 / 1250;
   filter: drop-shadow(0 46px 54px rgba(60, 35, 0, 0.26));
 }
-.tilt img {
-  height: clamp(360px, 72svh, 820px); width: auto; max-width: none; display: block;
-  object-fit: contain;
+.frame {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: contain; display: block;
   -webkit-user-drag: none;
+  will-change: opacity;
 }
 .hint {
   margin-top: 14px; font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
