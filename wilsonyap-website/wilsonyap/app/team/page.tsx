@@ -7,7 +7,6 @@ import TeamHero, { type HeroMember } from "./TeamHero";
 import { WILSON_LISTINGS as TEAM_LISTINGS } from "../_agent/wilson-listings";
 import FanDeck from "../_agent/FanDeck";
 import ScrollFX from "../_agent/ScrollFX";
-import WilsonHero from "../_agent/WilsonHero";
 import s from "./team.module.css";
 
 // Team landing page (warm studio style). Click a person in the hero photo →
@@ -114,22 +113,10 @@ export default function TeamPage() {
       {TEAM.map((m, i) => {
         const p = m.profile;
         const wa = waLink(p);
-        if (m.id === "wilson") return <Fragment key={m.id}><WilsonHero profile={p} /></Fragment>;
         const section = (
           <section id={m.id} className={`${s.member} ${i % 2 ? s.flip : ""}`}>
             <figure className={s.portrait} data-landing data-reveal={i % 2 ? "right" : "left"} data-zoom-scroll>
-              {m.id === "wilson" ? (
-                // Lando-style: his face stays, a race helmet materialises onto his
-                // head as the section scrolls into view (driven by --p from ScrollFX).
-                <span className={s.stack}>
-                  <img className={s.mbase} src="/agent/wilson-half.webp" alt={p.fullName} />
-                  {/* same helmet drawn as three slices that fly in and lock together
-                      (visor first, then crown, then chin) — Lando-style assembly */}
-                  <img className={`${s.hslice} ${s.hMid}`} src="/agent/wilson-helmet.webp" alt="" aria-hidden="true" />
-                  <img className={`${s.hslice} ${s.hTop}`} src="/agent/wilson-helmet.webp" alt="" aria-hidden="true" />
-                  <img className={`${s.hslice} ${s.hBot}`} src="/agent/wilson-helmet.webp" alt="" aria-hidden="true" />
-                </span>
-              ) : p.heroImage ? (
+              {p.heroImage ? (
                 <>
                   <img src={p.realImage} alt={`${p.fullName}`} loading="lazy" />
                   <img src={p.heroImage} alt="" aria-hidden="true" data-morph loading="lazy" />

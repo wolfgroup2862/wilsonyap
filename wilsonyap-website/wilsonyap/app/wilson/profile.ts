@@ -16,7 +16,7 @@ export const PROFILE: Profile = {
   photo: "/agent/wilson.jpg",
   realImage: "/agent/wilson-real.webp",
   halfImage: "/agent/wilson-half.webp",
-  heroImage: "/agent/wilson-hero.webp",
+  // heroImage removed — Wilson shows a plain portrait (no effect), like Mandy
 };
 
 // His listings come from the shared list (also shown on /team).
