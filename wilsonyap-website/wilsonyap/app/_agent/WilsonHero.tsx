@@ -9,15 +9,15 @@ import h from "./mandyhero.module.css"; // same layout/styles as Mandy
 export default function WilsonHero({ profile: p }: { profile: Profile }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const imgEls = useRef<(HTMLImageElement | null)[]>([]);
-  const nameRef = useRef<HTMLHeadingElement>(null);
-  const [typed, setTyped] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [inview, setInview] = useState(false);
 
   useEffect(() => {
-    const el = nameRef.current;
+    const el = sectionRef.current;
     if (!el) return;
     const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => setTyped(e.isIntersecting)),
-      { threshold: 0.6 },
+      (entries) => entries.forEach((e) => setInview(e.isIntersecting)),
+      { threshold: 0.35 },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -128,13 +128,13 @@ export default function WilsonHero({ profile: p }: { profile: Profile }) {
   }, []);
 
   return (
-    <section id="wilson" className={h.hero}>
+    <section id="wilson" ref={sectionRef} className={`${h.hero} ${inview ? h.inview : ""}`}>
       <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
       />
 
-      <h2 ref={nameRef} className={`${h.nameTop} ${typed ? h.typed : ""}`} aria-label={p.fullName}>
+      <h2 className={`${h.nameTop} ${inview ? h.typed : ""}`} aria-label={p.fullName}>
         {Array.from("Wilson Yap").map((ch, i) => (
           <span key={i} className={h.letter} style={{ transitionDelay: `${i * 75}ms` }} aria-hidden="true">
             {ch === " " ? " " : ch}
@@ -144,7 +144,8 @@ export default function WilsonHero({ profile: p }: { profile: Profile }) {
       </h2>
 
       <div className={h.stage} ref={wrapRef}>
-        <div className={h.frames}>
+        <div className={h.frames} data-landing>
+
           {FRAMES.map((src, i) => (
             <img
               key={src}

@@ -9,16 +9,16 @@ import h from "./mandyhero.module.css";
 export default function MandyHero({ profile: p }: { profile: Profile }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const imgEls = useRef<(HTMLImageElement | null)[]>([]);
-  const nameRef = useRef<HTMLHeadingElement>(null);
-  const [typed, setTyped] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [inview, setInview] = useState(false);
 
-  // type the name in each time it scrolls into view
+  // reveal the whole section (name types in, figure & stats rise) on scroll-in
   useEffect(() => {
-    const el = nameRef.current;
+    const el = sectionRef.current;
     if (!el) return;
     const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => setTyped(e.isIntersecting)),
-      { threshold: 0.6 },
+      (entries) => entries.forEach((e) => setInview(e.isIntersecting)),
+      { threshold: 0.35 },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -135,7 +135,7 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
   }, []);
 
   return (
-    <section id="mandy" className={h.hero}>
+    <section id="mandy" ref={sectionRef} className={`${h.hero} ${inview ? h.inview : ""}`}>
       {/* elegant display font for her name (Next hoists this link into <head>) */}
       <link
         rel="stylesheet"
@@ -143,7 +143,7 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
       />
 
       {/* big name that types in, letter by letter, on scroll */}
-      <h2 ref={nameRef} className={`${h.nameTop} ${typed ? h.typed : ""}`} aria-label={p.fullName}>
+      <h2 className={`${h.nameTop} ${inview ? h.typed : ""}`} aria-label={p.fullName}>
         {Array.from("Mandy Lee").map((ch, i) => (
           <span key={i} className={h.letter} style={{ transitionDelay: `${i * 75}ms` }} aria-hidden="true">
             {ch === " " ? " " : ch}
@@ -153,7 +153,8 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
       </h2>
 
       <div className={h.stage} ref={wrapRef}>
-        <div className={h.frames}>
+        <div className={h.frames} data-landing>
+
           {FRAMES.map((src, i) => (
             <img
               key={src}

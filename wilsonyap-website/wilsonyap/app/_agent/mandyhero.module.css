@@ -37,6 +37,7 @@
 @media (prefers-reduced-motion: reduce) {
   .letter { opacity: 1; transform: none; transition: none; }
   .caret { display: none; }
+  .frames, .stats, .areaMarquee, .bottombar { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
 
 /* draggable 360° figure */
@@ -62,6 +63,10 @@
 }
 /* Wilson's figure is bigger than Mandy's (id-scoped so it only affects him) */
 :global(#wilson) .frames { height: clamp(420px, 67svh, 840px); }
+
+/* section entrance: figure rises & fades, stats / marquee / WhatsApp follow */
+.frames { opacity: 0; transform: translateY(46px) scale(0.965); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+.inview .frames { opacity: 1; transform: none; }
 .hint {
   margin-top: 6px; font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
   color: #b09a77;
@@ -71,7 +76,10 @@
 .areaMarquee {
   position: relative; width: 100%; z-index: 3;
   pointer-events: none; overflow: hidden; white-space: nowrap;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease 0.25s, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
 }
+.inview .areaMarquee { opacity: 1; transform: none; }
 .atrack {
   display: inline-block; white-space: nowrap; will-change: transform;
   animation: slideRight 22s linear infinite;
@@ -91,7 +99,10 @@
   position: relative; width: 100%; z-index: 3;
   display: flex; align-items: flex-start; justify-content: center;
   gap: clamp(14px, 5vw, 56px);
+  opacity: 0; transform: translateY(26px);
+  transition: opacity 0.6s ease 0.25s, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
 }
+.inview .stats { opacity: 1; transform: none; }
 .stat { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .statNum {
   font-family: "Helvetica Neue", "Arial Black", Arial, sans-serif;
@@ -108,7 +119,10 @@
   position: relative; width: 100%; z-index: 5;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   margin-top: clamp(4px, 1vh, 14px);
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease 0.4s, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
 }
+.inview .bottombar { opacity: 1; transform: none; }
 .wa {
   display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
   font-weight: 700; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: #241810;
