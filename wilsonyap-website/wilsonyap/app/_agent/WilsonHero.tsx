@@ -163,14 +163,18 @@ export default function WilsonHero({ profile: p }: { profile: Profile }) {
         <span className={h.hint} aria-hidden="true">Drag to turn</span>
       </div>
 
-      <div className={h.areaMarquee} aria-hidden="true">
-        <div className={h.atrack}>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className={h.aword}>
-              {p.areas.join("  ·  ")}
-              {"  ·  "}
-            </span>
-          ))}
+      <div className={h.stats}>
+        <div className={h.stat}>
+          <span className={h.statNum}>8+</span>
+          <span className={h.statLabel}>Years of Experience</span>
+        </div>
+        <div className={h.stat}>
+          <span className={h.statNum}>700+</span>
+          <span className={h.statLabel}>Property Purchase Deals Closed</span>
+        </div>
+        <div className={h.stat}>
+          <span className={h.statNum}>100%</span>
+          <span className={h.statLabel}>Puchong Commercial Coverage</span>
         </div>
       </div>
 
