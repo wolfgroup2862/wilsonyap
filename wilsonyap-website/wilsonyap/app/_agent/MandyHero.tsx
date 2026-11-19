@@ -11,13 +11,8 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const imgEls = useRef<(HTMLImageElement | null)[]>([]);
 
-  const FRAMES = [
-    "/agent/mandy-rot-0.webp",
-    "/agent/mandy-rot-1.webp",
-    "/agent/mandy-rot-2.webp",
-    "/agent/mandy-rot-3.webp",
-    "/agent/mandy-rot-4.webp",
-  ];
+  // full 360° turn, 36 cut-out frames (10° apart)
+  const FRAMES = Array.from({ length: 36 }, (_, i) => `/agent/mandy360-${String(i).padStart(2, "0")}.webp`);
 
   const wa = p.whatsapp
     ? `https://wa.me/${p.whatsapp}?text=${encodeURIComponent(`Hi ${p.firstName}, I found your website and would like to ask about a property.`)}`
@@ -29,8 +24,6 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
     const n = imgs.length;
     if (!wrap || n === 0) return;
 
-    const fine = window.matchMedia("(pointer: fine)").matches;
-
     const S = {
       disp: 0, userPos: 0,
       startX: 0, startY: 0, basePos: 0,
@@ -38,17 +31,18 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
       mouseDrag: false,
       raf: 0,
     };
-    const clamp = (v: number) => Math.max(0, Math.min(n - 1, v));
     const widthOf = () => wrap.getBoundingClientRect().width || 360;
+    // ~1.5 screen-widths of drag = a full 360° turn; drag RIGHT turns one way,
+    // LEFT the other, and it wraps around forever (continuous spin).
+    const sens = () => n / (widthOf() * 1.5);
+    const mod = (v: number) => ((v % n) + n) % n;
 
-    // show only the nearest angle, with a short blend to its neighbour while
-    // mid-turn — no permanent two-pose overlap (that looked like flicker).
+    // cross-fade the two nearest frames (10° apart → always smooth)
     const render = () => {
-      const lo = Math.floor(S.disp);
-      const hi = Math.min(n - 1, lo + 1);
-      let f = S.disp - lo;
-      // bias toward a single clean frame near the integers
-      f = f < 0.15 ? 0 : f > 0.85 ? 1 : (f - 0.15) / 0.7;
+      const base = mod(S.disp);
+      const lo = Math.floor(base) % n;
+      const hi = (lo + 1) % n;
+      const f = base - Math.floor(base);
       for (let i = 0; i < n; i++) {
         let o = 0;
         if (i === lo) o = 1 - f;
@@ -59,13 +53,12 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
     };
 
     const frame = () => {
-      S.disp += (S.userPos - S.disp) * 0.2;
-      if (Math.abs(S.userPos - S.disp) < 0.001) S.disp = S.userPos;
+      S.disp += (S.userPos - S.disp) * 0.22;
       render();
       S.raf = requestAnimationFrame(frame);
     };
 
-    // TOUCH — own only horizontal drags; let vertical scroll the page
+    // TOUCH — own only horizontal drags; vertical scrolls the page
     const tStart = (e: TouchEvent) => {
       const t = e.touches[0];
       S.startX = t.clientX;
@@ -81,30 +74,25 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
         S.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
       }
       if (S.axis === "x") {
-        e.preventDefault(); // we own this gesture → turn, don't scroll
-        S.userPos = clamp(S.basePos - dx / (widthOf() * 0.32));
+        e.preventDefault();
+        S.userPos = S.basePos + dx * sens(); // drag right → turn right
       }
     };
     const tEnd = () => {
-      if (S.axis === "x") S.userPos = clamp(Math.round(S.userPos)); // settle on a clean angle
       S.axis = "";
     };
 
-    // MOUSE (desktop): drag to turn, or hover to turn toward the cursor
+    // MOUSE (desktop): click-drag to turn — pull right → right, pull left → left
     const mDown = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
       S.mouseDrag = true;
       S.startX = e.clientX;
       S.basePos = S.userPos;
+      wrap.setPointerCapture?.(e.pointerId);
     };
     const mMove = (e: PointerEvent) => {
-      if (e.pointerType === "touch") return;
-      if (S.mouseDrag) {
-        S.userPos = clamp(S.basePos - (e.clientX - S.startX) / (widthOf() * 0.32));
-      } else if (fine) {
-        const nx = (e.clientX - wrap.getBoundingClientRect().left) / widthOf();
-        S.userPos = clamp(nx * (n - 1));
-      }
+      if (e.pointerType === "touch" || !S.mouseDrag) return;
+      S.userPos = S.basePos + (e.clientX - S.startX) * sens();
     };
     const mUp = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
@@ -118,6 +106,7 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
     wrap.addEventListener("pointerdown", mDown);
     wrap.addEventListener("pointermove", mMove);
     wrap.addEventListener("pointerup", mUp);
+    wrap.addEventListener("pointercancel", mUp);
     S.raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(S.raf);
@@ -128,6 +117,7 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
       wrap.removeEventListener("pointerdown", mDown);
       wrap.removeEventListener("pointermove", mMove);
       wrap.removeEventListener("pointerup", mUp);
+      wrap.removeEventListener("pointercancel", mUp);
     };
   }, []);
 
