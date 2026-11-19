@@ -1,15 +1,28 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Profile } from "./AgentPage";
 import h from "./mandyhero.module.css";
 
-// Full-page editorial hero for Mandy (prmpt-style): big centred figure, name
-// top-left, small labels in the corners. The figure tilts in 3D toward the
-// pointer (pseudo-360 head-turn); on touch it drifts gently on its own.
+// Full-page hero for Mandy: big name that types in on scroll, her draggable
+// 360° figure, a scrolling areas billboard, and WhatsApp.
 export default function MandyHero({ profile: p }: { profile: Profile }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const imgEls = useRef<(HTMLImageElement | null)[]>([]);
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  const [typed, setTyped] = useState(false);
+
+  // type the name in each time it scrolls into view
+  useEffect(() => {
+    const el = nameRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => setTyped(e.isIntersecting)),
+      { threshold: 0.6 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   // full 360° turn, 36 cut-out frames (10° apart)
   const FRAMES = Array.from({ length: 36 }, (_, i) => `/agent/mandy360-${String(i).padStart(2, "0")}.webp`);
@@ -129,8 +142,15 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
       />
 
-      {/* big, still name at the top */}
-      <h2 className={h.nameTop}>Mandy Lee</h2>
+      {/* big name that types in, letter by letter, on scroll */}
+      <h2 ref={nameRef} className={`${h.nameTop} ${typed ? h.typed : ""}`} aria-label={p.fullName}>
+        {Array.from("Mandy Lee").map((ch, i) => (
+          <span key={i} className={h.letter} style={{ transitionDelay: `${i * 75}ms` }} aria-hidden="true">
+            {ch === " " ? " " : ch}
+          </span>
+        ))}
+        <span className={h.caret} aria-hidden="true" />
+      </h2>
 
       <div className={h.stage} ref={wrapRef}>
         <div className={h.frames}>

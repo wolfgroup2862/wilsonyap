@@ -22,6 +22,22 @@
   font-weight: 700; font-style: italic; letter-spacing: -0.01em;
   font-size: clamp(52px, 19vw, 170px); line-height: 0.92; color: #241810;
 }
+/* typewriter: letters pop in one by one when the section scrolls into view */
+.letter {
+  display: inline-block; opacity: 0; transform: translateY(0.3em);
+  transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.typed .letter { opacity: 1; transform: none; }
+.caret {
+  display: inline-block; width: 0.06em; height: 0.8em; margin-left: 0.04em;
+  background: #c6a24e; vertical-align: -0.02em; opacity: 0;
+}
+.typed .caret { opacity: 1; animation: blink 0.9s step-end infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .letter { opacity: 1; transform: none; transition: none; }
+  .caret { display: none; }
+}
 
 /* draggable 360° figure */
 .stage {
