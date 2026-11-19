@@ -116,7 +116,7 @@ export default function TeamPage() {
         const section = (
           <section id={m.id} className={`${s.member} ${i % 2 ? s.flip : ""}`}>
             <figure className={s.portrait} data-landing data-reveal={i % 2 ? "right" : "left"}>
-              <img src={p.halfImage ?? p.realImage} alt={`${p.fullName}`} loading="lazy" />
+              <img src={p.halfImage ?? p.realImage} alt={`${p.fullName}`} loading="lazy" data-zoom-scroll />
             </figure>
             <div className={s.memberText} data-reveal="up">
               <p className={s.kicker}>

@@ -20,3 +20,13 @@ img { display: block; max-width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
+
+/* Scroll-LINKED zoom: the photo scales up and drifts as you scroll the section
+   through the viewport. ScrollFX scrubs --p (0→1) from each element's position;
+   works on every browser. */
+[data-zoom-scroll] {
+  transform-origin: 50% 100%;
+  transform: translateY(calc((var(--p, 0.4) - 0.5) * 10%)) scale(calc(1 + var(--p, 0.4) * 0.28));
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) { [data-zoom-scroll] { transform: none; } }
