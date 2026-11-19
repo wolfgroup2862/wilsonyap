@@ -21,52 +21,79 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
     if (!wrap || !tilt) return;
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const coarse = window.matchMedia("(hover: none)").matches;
+    const fine = window.matchMedia("(pointer: fine)").matches;
 
-    const S = { rx: 0, ry: 0, tx: 0, ty: 0, trx: 0, tryy: 0, raf: 0, t: 0 };
-    const MAXY = 16; // deg left/right
-    const MAXX = 10; // deg up/down
+    const S = {
+      rx: 0, ry: 0, tx: 0, ty: 0, // current (eased)
+      trx: 0, tryy: 0, // targets
+      dragging: false, startX: 0, startY: 0, baseRY: 0, baseRX: 0,
+      lastInput: -9999, raf: 0,
+    };
+    const MAXY = 20; // hover/sway left-right
+    const MAXX = 13; // hover/sway up-down
+    const DRAGMAX = 34; // drag can turn further
 
+    const clamp = (v: number, m: number) => Math.max(-m, Math.min(m, v));
     const apply = () => {
       tilt.style.transform = `rotateX(${S.rx.toFixed(2)}deg) rotateY(${S.ry.toFixed(2)}deg) translate3d(${S.tx.toFixed(1)}px, ${S.ty.toFixed(1)}px, 0)`;
     };
 
     const frame = (t: number) => {
-      if ((reduce ? false : coarse)) {
-        // touch / no pointer: gentle autonomous drift so it still feels 3D
-        S.t = t / 1000;
-        S.tryy = Math.sin(S.t * 0.6) * MAXY * 0.7;
-        S.trx = Math.sin(S.t * 0.45 + 1) * MAXX * 0.5;
+      const idle = !S.dragging && t - S.lastInput > 900;
+      if (idle && !reduce) {
+        // gentle autonomous turn so it always reads as 3D, even untouched
+        const s = t / 1000;
+        S.tryy = Math.sin(s * 0.55) * MAXY * 0.85;
+        S.trx = Math.sin(s * 0.4 + 1) * MAXX * 0.5;
       }
-      S.ry += (S.tryy - S.ry) * 0.08;
-      S.rx += (S.trx - S.rx) * 0.08;
-      S.tx += (S.tryy * 0.6 - S.tx) * 0.08;
-      S.ty += (-S.trx * 0.5 - S.ty) * 0.08;
+      S.ry += (S.tryy - S.ry) * 0.09;
+      S.rx += (S.trx - S.rx) * 0.09;
+      S.tx += (S.ry * 0.9 - S.tx) * 0.09; // parallax drift with the turn
+      S.ty += (-S.rx * 0.8 - S.ty) * 0.09;
       apply();
       S.raf = requestAnimationFrame(frame);
     };
 
-    const onMove = (e: PointerEvent) => {
-      const r = wrap.getBoundingClientRect();
-      const nx = ((e.clientX - r.left) / r.width) * 2 - 1; // -1..1
-      const ny = ((e.clientY - r.top) / r.height) * 2 - 1;
-      S.tryy = Math.max(-1, Math.min(1, nx)) * MAXY;
-      S.trx = -Math.max(-1, Math.min(1, ny)) * MAXX;
+    // DRAG — works for touch and mouse: grab the figure and turn it
+    const down = (e: PointerEvent) => {
+      S.dragging = true;
+      S.startX = e.clientX;
+      S.startY = e.clientY;
+      S.baseRY = S.tryy;
+      S.baseRX = S.trx;
+      S.lastInput = performance.now();
+      wrap.setPointerCapture?.(e.pointerId);
     };
-    const onLeave = () => {
-      S.tryy = 0;
-      S.trx = 0;
+    const move = (e: PointerEvent) => {
+      S.lastInput = performance.now();
+      if (S.dragging) {
+        S.tryy = clamp(S.baseRY + (e.clientX - S.startX) * 0.35, DRAGMAX);
+        S.trx = clamp(S.baseRX - (e.clientY - S.startY) * 0.3, DRAGMAX * 0.6);
+      } else if (fine) {
+        // desktop hover: turn toward the cursor
+        const r = wrap.getBoundingClientRect();
+        const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
+        const ny = ((e.clientY - r.top) / r.height) * 2 - 1;
+        S.tryy = clamp(nx, 1) * MAXY;
+        S.trx = clamp(-ny, 1) * MAXX;
+      }
+    };
+    const up = () => {
+      S.dragging = false;
+      S.lastInput = performance.now();
     };
 
-    if (!reduce && !coarse) {
-      wrap.addEventListener("pointermove", onMove);
-      wrap.addEventListener("pointerleave", onLeave);
-    }
+    wrap.addEventListener("pointerdown", down);
+    wrap.addEventListener("pointermove", move);
+    wrap.addEventListener("pointerup", up);
+    wrap.addEventListener("pointercancel", up);
     if (!reduce) S.raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(S.raf);
-      wrap.removeEventListener("pointermove", onMove);
-      wrap.removeEventListener("pointerleave", onLeave);
+      wrap.removeEventListener("pointerdown", down);
+      wrap.removeEventListener("pointermove", move);
+      wrap.removeEventListener("pointerup", up);
+      wrap.removeEventListener("pointercancel", up);
     };
   }, []);
 
@@ -87,7 +114,7 @@ export default function MandyHero({ profile: p }: { profile: Profile }) {
         <div className={h.tilt} ref={tiltRef}>
           <img src={p.realImage} alt={p.fullName} draggable={false} />
         </div>
-        <span className={h.hint} aria-hidden="true">Move to turn</span>
+        <span className={h.hint} aria-hidden="true">Drag to turn</span>
       </div>
 
       <div className={h.corner}>
