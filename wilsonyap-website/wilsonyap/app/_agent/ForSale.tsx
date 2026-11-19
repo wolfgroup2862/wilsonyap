@@ -28,13 +28,17 @@ export default function ForSale({
   whatsapp,
   limit,
   viewAllHref,
+  initialArea,
 }: {
   listings: TeamListing[];
   whatsapp: string;
   limit?: number;
   viewAllHref?: string;
+  initialArea?: string;
 }) {
-  const [area, setArea] = useState("");
+  const [area, setArea] = useState(
+    initialArea && listings.some((l) => l.area === initialArea) ? initialArea : "",
+  );
   const [type, setType] = useState("");
   const [band, setBand] = useState("");
   const [open, setOpen] = useState<TeamListing | null>(null);

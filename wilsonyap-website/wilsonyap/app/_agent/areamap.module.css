@@ -1,0 +1,79 @@
+/* Cinematic "where Wilson works" map — a dark map backdrop with a lit
+   commercial tower rising for each area; tap a tower to open that area's
+   listings. Gold + deep-green to feel premium, gold ties to the site accent. */
+.band {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  margin-top: 8px;
+  padding: clamp(40px, 7vw, 80px) clamp(18px, 4vw, 56px) clamp(52px, 8vw, 96px);
+  background:
+    radial-gradient(120% 90% at 50% 120%, rgba(214, 170, 60, 0.18), transparent 60%),
+    radial-gradient(90% 70% at 50% -10%, rgba(80, 160, 120, 0.22), transparent 70%),
+    linear-gradient(180deg, #0a1c15 0%, #081713 55%, #0a130f 100%);
+  color: #f3ecd8;
+  isolation: isolate;
+}
+.band::before { /* soft starfield */
+  content: "";
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(1.4px 1.4px at 12% 22%, rgba(255,255,255,.7), transparent),
+    radial-gradient(1.2px 1.2px at 78% 16%, rgba(255,255,255,.6), transparent),
+    radial-gradient(1.5px 1.5px at 42% 10%, rgba(255,248,210,.7), transparent),
+    radial-gradient(1.1px 1.1px at 64% 30%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1.2px 1.2px at 28% 34%, rgba(255,255,255,.5), transparent);
+}
+.map { /* faint peninsular-Malaysia silhouette behind the towers */
+  position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%;
+  opacity: 0.5; pointer-events: none;
+}
+.inner { position: relative; z-index: 2; }
+.head { text-align: center; margin-bottom: clamp(26px, 5vw, 46px); }
+.eyebrow { font-weight: 700; letter-spacing: 0.26em; font-size: 11px; text-transform: uppercase; color: #d9b85a; margin: 0 0 10px; }
+.title { font-weight: 800; font-size: clamp(30px, 6vw, 56px); line-height: 1; margin: 0; letter-spacing: -0.01em; }
+.title span { color: #d9b85a; }
+.hint { color: #a9b7a3; font-size: 14px; margin: 14px 0 0; }
+
+.row { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: clamp(14px, 3vw, 34px); }
+.tower {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px;
+  text-decoration: none; color: inherit; cursor: pointer; flex: 0 1 160px; min-width: 130px;
+  opacity: 0; transform: translateY(26px);
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.tower:nth-child(1) { animation-delay: 0.05s; }
+.tower:nth-child(2) { animation-delay: 0.18s; }
+.tower:nth-child(3) { animation-delay: 0.31s; }
+.tower:nth-child(4) { animation-delay: 0.44s; }
+.tower:nth-child(5) { animation-delay: 0.57s; }
+@keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+.svgWrap { position: relative; width: 100%; display: grid; place-items: end center; }
+.svgWrap svg { width: auto; height: clamp(130px, 22vw, 210px); filter: drop-shadow(0 10px 26px rgba(217, 184, 90, 0.28)); transition: transform 0.25s, filter 0.25s; }
+.tower:hover .svgWrap svg, .tower:focus-visible .svgWrap svg { transform: translateY(-6px) scale(1.03); filter: drop-shadow(0 16px 34px rgba(217, 184, 90, 0.5)); }
+.base { /* glowing gold disc the tower stands on */
+  position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+  width: 108%; height: 26px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(217,184,90,.55), rgba(217,184,90,0) 72%);
+  filter: blur(2px);
+}
+.label { text-align: center; }
+.area { font-weight: 700; font-size: 15px; letter-spacing: 0.01em; }
+.count {
+  display: inline-block; margin-top: 6px; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #0a130f; background: #d9b85a; border-radius: 999px; padding: 3px 11px; font-weight: 700;
+}
+.go { display: block; margin-top: 7px; font-size: 12px; color: #a9b7a3; }
+.tower:hover .go, .tower:focus-visible .go { color: #d9b85a; }
+
+.clouds { position: absolute; left: 0; right: 0; bottom: 0; height: 120px; z-index: 1; pointer-events: none;
+  background:
+    radial-gradient(60% 80% at 20% 100%, rgba(255,255,255,.1), transparent 70%),
+    radial-gradient(60% 80% at 55% 100%, rgba(255,255,255,.12), transparent 70%),
+    radial-gradient(60% 80% at 85% 100%, rgba(255,255,255,.09), transparent 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tower { opacity: 1; transform: none; animation: none; }
+}

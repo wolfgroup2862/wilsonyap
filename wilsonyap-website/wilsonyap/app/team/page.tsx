@@ -5,7 +5,7 @@ import { PROFILE as WILSON } from "../wilson/profile";
 import type { Profile } from "../_agent/AgentPage";
 import TeamHero, { type HeroMember } from "./TeamHero";
 import { WILSON_LISTINGS as TEAM_LISTINGS } from "../_agent/wilson-listings";
-import ForSale from "../_agent/ForSale";
+import AreaMap, { type AreaStat } from "../_agent/AreaMap";
 import s from "./team.module.css";
 
 // Team landing page (warm studio style). Click a person in the hero photo →
@@ -45,16 +45,19 @@ const TEAM: Member[] = [
   },
 ];
 
-// Wilson's properties, shown right after his introduction (hidden while empty).
+// Wilson's properties — an interactive map of the areas he covers, shown after
+// the team introductions (hidden while there are no listings). Tapping an area
+// opens that area's listings on /properties.
 function PropertiesSection() {
   if (TEAM_LISTINGS.length === 0) return null;
+  const byArea = new Map<string, number>();
+  for (const l of TEAM_LISTINGS) byArea.set(l.area, (byArea.get(l.area) ?? 0) + 1);
+  const areas: AreaStat[] = [...byArea.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
   return (
     <section id="properties" className={s.listings}>
-      <p className={s.kicker}>Commercial · For sale</p>
-      <h2 className={s.listingsTitle}>
-        Properties<span>.</span>
-      </h2>
-      <ForSale listings={TEAM_LISTINGS} whatsapp={WILSON.whatsapp} limit={10} viewAllHref="/properties" />
+      <AreaMap areas={areas} baseHref="/properties" />
     </section>
   );
 }
@@ -151,14 +154,10 @@ export default function TeamPage() {
             </div>
           </section>
         );
-        return (
-          <Fragment key={m.id}>
-            {section}
-            {m.id === "wilson" && <PropertiesSection />}
-          </Fragment>
-        );
+        return <Fragment key={m.id}>{section}</Fragment>;
       })}
 
+      <PropertiesSection />
 
       <section id="contact" className={s.contact}>
         <h2>
