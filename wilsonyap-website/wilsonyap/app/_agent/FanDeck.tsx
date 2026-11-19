@@ -50,8 +50,17 @@ export default function FanDeck({
       (entries) => {
         for (const en of entries) {
           if (en.isIntersecting) {
-            v.play().catch(() => setRevealed(true));
-            if (!fallback) fallback = window.setTimeout(() => setRevealed(true), 4600);
+            // play the clip from the start; the fan only bursts out at the
+            // tornado (via timeupdate). Don't reveal on a blocked autoplay —
+            // that caused the fan to pop up before the video ever played.
+            v.muted = true;
+            try {
+              v.currentTime = 0;
+            } catch {}
+            v.play().catch(() => {});
+            // safety net only: reveal a touch after the tornado would have hit,
+            // so a stalled/blocked video still ends up showing the cards.
+            if (!fallback) fallback = window.setTimeout(() => setRevealed(true), (TORNADO + 1.4) * 1000);
           } else {
             v.pause();
           }
@@ -171,6 +180,7 @@ export default function FanDeck({
         className={s.bgVideo}
         src="/agent/properties-bg.mp4"
         poster="/agent/properties-bg-poster.jpg"
+        autoPlay
         muted
         playsInline
         preload="auto"
