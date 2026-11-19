@@ -115,8 +115,15 @@ export default function TeamPage() {
         const wa = waLink(p);
         const section = (
           <section id={m.id} className={`${s.member} ${i % 2 ? s.flip : ""}`}>
-            <figure className={s.portrait} data-landing data-reveal={i % 2 ? "right" : "left"}>
-              <img src={p.halfImage ?? p.realImage} alt={`${p.fullName}`} loading="lazy" data-zoom-scroll />
+            <figure className={s.portrait} data-landing data-reveal={i % 2 ? "right" : "left"} data-zoom-scroll>
+              {p.heroImage ? (
+                <>
+                  <img src={p.realImage} alt={`${p.fullName}`} loading="lazy" />
+                  <img src={p.heroImage} alt="" aria-hidden="true" data-morph loading="lazy" />
+                </>
+              ) : (
+                <img src={p.halfImage ?? p.realImage} alt={`${p.fullName}`} loading="lazy" />
+              )}
             </figure>
             <div className={s.memberText} data-reveal="up">
               <p className={s.kicker}>

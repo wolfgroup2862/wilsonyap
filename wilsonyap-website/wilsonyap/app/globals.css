@@ -24,10 +24,19 @@ img { display: block; max-width: 100%; }
 /* Scroll-LINKED zoom: the photo scales up and drifts as you scroll the section
    through the viewport. ScrollFX scrubs --p (0→1) from each element's position;
    works on every browser. */
-[data-zoom-scroll] {
+[data-zoom-scroll] img {
   /* anchor the top so the head is never cropped; growth goes downward */
   transform-origin: 50% 0%;
-  transform: translateY(calc(var(--p, 0.4) * 3%)) scale(calc(1 + var(--p, 0.4) * 0.16));
+  transform: translateY(calc(var(--p, 0.35) * 3%)) scale(calc(1 + var(--p, 0.35) * 0.14));
   will-change: transform;
 }
-@media (prefers-reduced-motion: reduce) { [data-zoom-scroll] { transform: none; } }
+/* Scroll "morph": the hero layer (field gear) wipes in from the top over the
+   suit photo as you scroll the section — like the Lando helmet effect. */
+[data-morph] {
+  clip-path: inset(0 0 calc((1 - var(--p, 0)) * 100%) 0);
+  -webkit-clip-path: inset(0 0 calc((1 - var(--p, 0)) * 100%) 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-zoom-scroll] img { transform: none; }
+  [data-morph] { clip-path: inset(0 0 100% 0); -webkit-clip-path: inset(0 0 100% 0); }
+}
