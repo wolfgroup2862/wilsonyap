@@ -433,12 +433,17 @@
   .links { display: none; }
   .navCta { margin-left: auto; padding: 8px 14px; font-size: 0.82rem; }
   .brand img { height: 24px; }
-  /* match desktop on phones: full-screen team video with the Hello text
-     overlaid inside it (the .hero / .stage / .shade desktop rules now apply) */
-  .heroText { left: clamp(16px, 5vw, 40px); bottom: 8.5%; max-width: 88%; }
-  .hello { font-size: clamp(4.4rem, 22vw, 8rem); }
-  .lede { font-size: 1.02rem; }
-  .cta { margin-top: 1em; }
+  /* phones: full-width video on top so BOTH people stay fully visible; the Hello
+     text starts over the video's lower edge and flows into the dark area below,
+     so it still reads as "inside" the photo. */
+  .hero { height: clamp(460px, 66svh, 600px); min-height: 0; background: linear-gradient(#2a1a0c, #1b1009); }
+  .stage { position: absolute; left: 50%; top: clamp(58px, 9vh, 94px); translate: -50% 0; width: 100vw; height: auto; aspect-ratio: var(--ar); }
+  .shade { background: linear-gradient(transparent 50%, rgba(26, 14, 5, 0.55) 72%, rgba(26, 14, 5, 0.96)); }
+  .heroText { position: absolute; left: clamp(16px, 5vw, 36px); right: 14px; top: calc(clamp(58px, 9vh, 94px) + 44vw); bottom: auto; max-width: none; }
+  .hello { font-size: clamp(3.6rem, 18vw, 6.4rem); }
+  .lede { font-size: 0.98rem; }
+  .cta { margin-top: 0.9em; }
+  .hint { margin-top: 10px; }
   .bubble { left: var(--mbl); top: var(--mbt); padding: 6px 10px 6px 7px; gap: 5px; }
   .bubble em { display: none; }
   .member,
