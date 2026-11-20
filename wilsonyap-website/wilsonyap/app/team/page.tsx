@@ -62,17 +62,12 @@ function PropertiesSection() {
           <FanDeck listings={TEAM_LISTINGS} baseHref="/properties" title="for sale" />
         </section>
       )}
-      {TEAM_RENT_LISTINGS.length > 0 && (
+      {[...TEAM_RENT_LISTINGS, ...MANDY_RENT_LISTINGS].length > 0 && (
         <section id="properties-rent" data-reveal="zoom" style={{ scrollMarginTop: 60 }}>
-          <FanDeck listings={TEAM_RENT_LISTINGS} baseHref="/for-rent?agent=wilson" title="for rent" />
-        </section>
-      )}
-      {MANDY_RENT_LISTINGS.length > 0 && (
-        <section id="properties-mandy-rent" data-reveal="zoom" style={{ scrollMarginTop: 60 }}>
           <FanDeck
-            listings={MANDY_RENT_LISTINGS}
-            baseHref="/for-rent?agent=mandy"
-            eyebrow="Mandy Lee · Commercial"
+            listings={[...TEAM_RENT_LISTINGS, ...MANDY_RENT_LISTINGS]}
+            baseHref="/for-rent"
+            eyebrow="Wilson & Mandy · Commercial"
             title="for rent"
           />
         </section>
