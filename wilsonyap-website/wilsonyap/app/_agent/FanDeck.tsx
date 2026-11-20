@@ -208,7 +208,7 @@ export default function FanDeck({
                 cardEls.current[i] = el;
               }}
               className={s.card}
-              href={`${baseHref}?area=${encodeURIComponent(l.area)}`}
+              href={`${baseHref}${baseHref.includes("?") ? "&" : "?"}area=${encodeURIComponent(l.area)}`}
               draggable={false}
             >
               <span className={s.ph}>WOLF GROUP</span>

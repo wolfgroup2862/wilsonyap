@@ -64,14 +64,14 @@ function PropertiesSection() {
       )}
       {TEAM_RENT_LISTINGS.length > 0 && (
         <section id="properties-rent" data-reveal="zoom" style={{ scrollMarginTop: 60 }}>
-          <FanDeck listings={TEAM_RENT_LISTINGS} baseHref="/properties" title="for rent" />
+          <FanDeck listings={TEAM_RENT_LISTINGS} baseHref="/for-rent?agent=wilson" title="for rent" />
         </section>
       )}
       {MANDY_RENT_LISTINGS.length > 0 && (
         <section id="properties-mandy-rent" data-reveal="zoom" style={{ scrollMarginTop: 60 }}>
           <FanDeck
             listings={MANDY_RENT_LISTINGS}
-            baseHref="/properties"
+            baseHref="/for-rent?agent=mandy"
             eyebrow="Mandy Lee · Commercial"
             title="for rent"
           />
