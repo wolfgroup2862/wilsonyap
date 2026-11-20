@@ -6,6 +6,7 @@ import type { Profile } from "../_agent/AgentPage";
 import TeamHero, { type HeroMember } from "./TeamHero";
 import { WILSON_LISTINGS as TEAM_LISTINGS } from "../_agent/wilson-listings";
 import { WILSON_RENT_LISTINGS as TEAM_RENT_LISTINGS } from "../_agent/wilson-rent-listings";
+import { MANDY_RENT_LISTINGS } from "../_agent/mandy-rent-listings";
 import FanDeck from "../_agent/FanDeck";
 import ScrollFX from "../_agent/ScrollFX";
 import MandyHero from "../_agent/MandyHero";
@@ -64,6 +65,16 @@ function PropertiesSection() {
       {TEAM_RENT_LISTINGS.length > 0 && (
         <section id="properties-rent" data-reveal="zoom" style={{ scrollMarginTop: 60 }}>
           <FanDeck listings={TEAM_RENT_LISTINGS} baseHref="/properties" title="for rent" />
+        </section>
+      )}
+      {MANDY_RENT_LISTINGS.length > 0 && (
+        <section id="properties-mandy-rent" data-reveal="zoom" style={{ scrollMarginTop: 60 }}>
+          <FanDeck
+            listings={MANDY_RENT_LISTINGS}
+            baseHref="/properties"
+            eyebrow="Mandy Lee · Commercial"
+            title="for rent"
+          />
         </section>
       )}
     </>

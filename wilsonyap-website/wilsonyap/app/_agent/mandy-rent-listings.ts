@@ -1,0 +1,61 @@
+// Mandy Lee's commercial listings FOR RENT, scraped from iProperty
+// (agent id 3391994, commercial rentals). Mirrors wilson-rent-listings.ts.
+import type { TeamListing } from "./wilson-listings";
+
+export const MANDY_RENT_LISTINGS: TeamListing[] = [
+  {
+    title: "[GROUND FLOOR] BANDAR PUTERI 1 | PUCHONG'S MOST PRIME LOCATION | PFCC OFFICE TOWER | HERO MARKET, Puchong",
+    type: "Shop",
+    location: "Puchong, Selangor",
+    area: "Puchong",
+    price: "RM 9,500/mo",
+    priceValue: 9500,
+    builtUp: "2,275 sqft",
+    psf: "RM 4.18 psf",
+    image: "https://ipp1-cdn.pgimgs.com/listing/502451360/UPHO.394830464.V800/x.jpg",
+  },
+  {
+    title: "1.5 STOREY SHOPLOT | FULLY FURNISHED | BANDAR PUTERI 5 | STORAGE | WAREHOUSE | RETAIL, Puchong",
+    type: "Shop / Office",
+    location: "Puchong, Selangor",
+    area: "Puchong",
+    price: "RM 5,200/mo",
+    priceValue: 5200,
+    builtUp: "1,852 sqft",
+    psf: "RM 2.81 psf",
+    image: "https://ipp1-cdn.pgimgs.com/listing/502451052/UPHO.394827015.V800/x.jpg",
+  },
+  {
+    title: "Skyloft Avenue @ Bandar Puchong Jaya, Puchong",
+    type: "Shop / Office",
+    location: "Puchong, Selangor",
+    area: "Puchong",
+    price: "RM 4,500/mo",
+    priceValue: 4500,
+    builtUp: "1,539 sqft",
+    psf: "RM 2.92 psf",
+    image: "https://ipp1-cdn.pgimgs.com/listing/502449718/UPHO.394810364.V800/x.jpg",
+  },
+  {
+    title: "NEW SHOPLOT IN PUCHONG | GLOMAC LAKESIDE BOULEVARD | BANDAR METRO PUCHONG, Puchong",
+    type: "Shop",
+    location: "Puchong, Selangor",
+    area: "Puchong",
+    price: "RM 5,500/mo",
+    priceValue: 5500,
+    builtUp: "2,389 sqft",
+    psf: "RM 2.30 psf",
+    image: "https://ipp1-cdn.pgimgs.com/listing/502337925/UPHO.393459643.V800/x.jpg",
+  },
+  {
+    title: "[Ground Floor & Basement] | One Puchong | Puchong Jaya | Retail & Storage, Puchong",
+    type: "Shop",
+    location: "Puchong, Selangor",
+    area: "Puchong",
+    price: "RM 6,000/mo",
+    priceValue: 6000,
+    builtUp: "3,080 sqft",
+    psf: "RM 1.95 psf",
+    image: "https://ipp1-cdn.pgimgs.com/listing/502332696/UPHO.393446627.V800/x.jpg",
+  },
+];
