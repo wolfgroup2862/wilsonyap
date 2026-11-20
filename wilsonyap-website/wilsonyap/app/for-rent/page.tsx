@@ -70,7 +70,7 @@ export default async function ForRentPage({
           {intro} — shoplots, offices &amp; shop-offices around Puchong, Bandar Puteri &amp; IOI Boulevard.
           Filter by area, type or price, then WhatsApp to arrange a viewing.
         </p>
-        <ForRent listings={listings} initialArea={area} initialView={view} />
+        <ForRent listings={listings} initialArea={area} initialView={view} shareWhatsapp={WILSON.whatsapp ?? ""} />
       </section>
 
       <section id="contact" className={s.contact}>

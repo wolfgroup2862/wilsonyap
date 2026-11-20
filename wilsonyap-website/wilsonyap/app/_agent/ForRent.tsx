@@ -48,12 +48,14 @@ export default function ForRent({
   viewAllHref,
   initialArea,
   initialView,
+  shareWhatsapp,
 }: {
   listings: RentListing[];
   limit?: number;
   viewAllHref?: string;
   initialArea?: string;
   initialView?: string;
+  shareWhatsapp: string; // all Share links go to this WhatsApp (Wilson)
 }) {
   const [area, setArea] = useState(
     initialArea && listings.some((l) => l.area === initialArea) ? initialArea : "",
@@ -72,7 +74,10 @@ export default function ForRent({
 
   const share = async (l: RentListing, i: number) => {
     const id = listingId(l, i);
-    const url = `${window.location.origin}${window.location.pathname}?view=${id}`;
+    // A WhatsApp deep link: whoever opens it lands straight in Wilson's DM,
+    // with the listing and an "I'm interested" message pre-filled.
+    const text = `I'm interested in this listing: ${l.title} (${l.price}) at ${l.location}`;
+    const url = `https://wa.me/${shareWhatsapp}?text=${encodeURIComponent(text)}`;
     try {
       await navigator.clipboard.writeText(url);
     } catch {

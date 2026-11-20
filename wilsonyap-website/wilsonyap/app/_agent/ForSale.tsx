@@ -69,7 +69,10 @@ export default function ForSale({
 
   const share = async (l: TeamListing, i: number) => {
     const id = listingId(l, i);
-    const url = `${window.location.origin}${window.location.pathname}?view=${id}`;
+    // A WhatsApp deep link: whoever opens it lands straight in Wilson's DM,
+    // with the listing and an "I'm interested" message pre-filled.
+    const text = `I'm interested in this listing: ${l.title} (${l.price}) at ${l.location}`;
+    const url = `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`;
     try {
       await navigator.clipboard.writeText(url);
     } catch {
