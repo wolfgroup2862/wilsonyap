@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { TeamListing } from "./wilson-listings";
 import s from "./forsale.module.css";
@@ -28,16 +28,32 @@ function waLink(l: RentListing) {
   return `https://wa.me/${l.whatsapp}?text=${encodeURIComponent(text)}`;
 }
 
+// A stable per-listing id so each card has a shareable deep link. iProperty
+// image URLs embed the listing id (/listing/<id>/…); fall back to the index.
+function listingId(l: TeamListing, i: number) {
+  const m = l.image && l.image.match(/\/listing\/(\d+)\//);
+  return m ? m[1] : `i${i}`;
+}
+
+const SHARE_ICON = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+  </svg>
+);
+
 export default function ForRent({
   listings,
   limit,
   viewAllHref,
   initialArea,
+  initialView,
 }: {
   listings: RentListing[];
   limit?: number;
   viewAllHref?: string;
   initialArea?: string;
+  initialView?: string;
 }) {
   const [area, setArea] = useState(
     initialArea && listings.some((l) => l.area === initialArea) ? initialArea : "",
@@ -45,6 +61,33 @@ export default function ForRent({
   const [type, setType] = useState("");
   const [band, setBand] = useState("");
   const [open, setOpen] = useState<RentListing | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
+
+  // a shared link (?view=<id>) opens that listing's details on load
+  useEffect(() => {
+    if (!initialView) return;
+    const match = listings.find((l, i) => listingId(l, i) === initialView);
+    if (match) setOpen(match);
+  }, [initialView, listings]);
+
+  const share = async (l: RentListing, i: number) => {
+    const id = listingId(l, i);
+    const url = `${window.location.origin}${window.location.pathname}?view=${id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = url;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch {}
+      ta.remove();
+    }
+    setCopied(id);
+    window.setTimeout(() => setCopied((c) => (c === id ? null : c)), 1800);
+  };
 
   const areas = useMemo(() => [...new Set(listings.map((l) => l.area))].sort(), [listings]);
   const types = useMemo(() => [...new Set(listings.map((l) => l.type))].sort(), [listings]);
@@ -136,6 +179,20 @@ export default function ForRent({
               <button className={`${s.btn} ${s.det}`} type="button" onClick={() => setOpen(l)}>
                 Details
               </button>
+              {(() => {
+                const idx = listings.indexOf(l);
+                const id = listingId(l, idx);
+                return (
+                  <button
+                    className={`${s.btn} ${s.share} ${copied === id ? s.shared : ""}`}
+                    type="button"
+                    onClick={() => share(l, idx)}
+                    aria-label="Copy share link"
+                  >
+                    {SHARE_ICON}{copied === id ? "Copied!" : "Share"}
+                  </button>
+                );
+              })()}
             </div>
           </article>
         ))}

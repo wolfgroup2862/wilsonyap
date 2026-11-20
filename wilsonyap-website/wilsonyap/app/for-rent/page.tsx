@@ -27,9 +27,9 @@ const MANDY_RENT: RentListing[] = MANDY_RENT_LISTINGS.map((l) => ({
 export default async function ForRentPage({
   searchParams,
 }: {
-  searchParams: Promise<{ area?: string; agent?: string }>;
+  searchParams: Promise<{ area?: string; agent?: string; view?: string }>;
 }) {
-  const { area, agent } = await searchParams;
+  const { area, agent, view } = await searchParams;
 
   let listings: RentListing[];
   let intro: string;
@@ -70,7 +70,7 @@ export default async function ForRentPage({
           {intro} — shoplots, offices &amp; shop-offices around Puchong, Bandar Puteri &amp; IOI Boulevard.
           Filter by area, type or price, then WhatsApp to arrange a viewing.
         </p>
-        <ForRent listings={listings} initialArea={area} />
+        <ForRent listings={listings} initialArea={area} initialView={view} />
       </section>
 
       <section id="contact" className={s.contact}>

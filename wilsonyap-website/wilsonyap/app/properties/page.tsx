@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 export default async function PropertiesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ area?: string }>;
+  searchParams: Promise<{ area?: string; view?: string }>;
 }) {
-  const { area } = await searchParams;
+  const { area, view } = await searchParams;
   return (
     <main className={s.page}>
       <header className={s.nav}>
@@ -42,7 +42,7 @@ export default async function PropertiesPage({
           Every commercial unit Wilson is selling right now — shoplots, offices &amp; shop-offices around
           Puchong, Bandar Puteri &amp; IOI Boulevard. Filter by area, type or price, then WhatsApp to arrange a viewing.
         </p>
-        <ForSale listings={WILSON_LISTINGS} whatsapp={WILSON.whatsapp} initialArea={area} />
+        <ForSale listings={WILSON_LISTINGS} whatsapp={WILSON.whatsapp} initialArea={area} initialView={view} />
       </section>
 
       <section id="contact" className={s.contact}>
