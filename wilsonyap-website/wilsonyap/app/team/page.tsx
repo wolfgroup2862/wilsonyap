@@ -5,6 +5,7 @@ import { PROFILE as WILSON } from "../wilson/profile";
 import type { Profile } from "../_agent/AgentPage";
 import TeamHero, { type HeroMember } from "./TeamHero";
 import { WILSON_LISTINGS as TEAM_LISTINGS } from "../_agent/wilson-listings";
+import { WILSON_RENT_LISTINGS as TEAM_RENT_LISTINGS } from "../_agent/wilson-rent-listings";
 import FanDeck from "../_agent/FanDeck";
 import ScrollFX from "../_agent/ScrollFX";
 import MandyHero from "../_agent/MandyHero";
@@ -52,11 +53,20 @@ const TEAM: Member[] = [
 // the team introductions (hidden while there are no listings). Tapping an area
 // opens that area's listings on /properties.
 function PropertiesSection() {
-  if (TEAM_LISTINGS.length === 0) return null;
+  if (TEAM_LISTINGS.length === 0 && TEAM_RENT_LISTINGS.length === 0) return null;
   return (
-    <section id="properties" data-reveal="zoom" style={{ scrollMarginTop: 60 }}>
-      <FanDeck listings={TEAM_LISTINGS} baseHref="/properties" />
-    </section>
+    <>
+      {TEAM_LISTINGS.length > 0 && (
+        <section id="properties" data-reveal="zoom" style={{ scrollMarginTop: 60 }}>
+          <FanDeck listings={TEAM_LISTINGS} baseHref="/properties" title="for sale" />
+        </section>
+      )}
+      {TEAM_RENT_LISTINGS.length > 0 && (
+        <section id="properties-rent" data-reveal="zoom" style={{ scrollMarginTop: 60 }}>
+          <FanDeck listings={TEAM_RENT_LISTINGS} baseHref="/properties" title="for rent" />
+        </section>
+      )}
+    </>
   );
 }
 

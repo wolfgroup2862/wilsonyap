@@ -19,10 +19,14 @@ export default function FanDeck({
   listings,
   baseHref = "/properties",
   count = 10,
+  eyebrow = "Wilson Yap · Commercial",
+  title = "for sale",
 }: {
   listings: TeamListing[];
   baseHref?: string;
   count?: number;
+  eyebrow?: string;
+  title?: string;
 }) {
   const cards = pick(listings, count);
   const bandRef = useRef<HTMLDivElement>(null);
@@ -189,11 +193,11 @@ export default function FanDeck({
       <div className={s.scrim} />
 
       <div className={s.inner}>
-        <p className={s.eyebrow}>Wilson Yap · Commercial</p>
+        <p className={s.eyebrow}>{eyebrow}</p>
         <h2 className={s.title}>
           What&rsquo;s
           <br />
-          <span>for sale</span>
+          <span>{title}</span>
         </h2>
 
         <div className={`${s.deck} ${revealed ? s.revealed : ""}`} ref={deckRef}>
