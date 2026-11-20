@@ -42,7 +42,7 @@ export default async function PropertiesPage({
           Every commercial unit Wilson is selling right now — shoplots, offices &amp; shop-offices around
           Puchong, Bandar Puteri &amp; IOI Boulevard. Filter by area, type or price, then WhatsApp to arrange a viewing.
         </p>
-        <ForSale listings={WILSON_LISTINGS} whatsapp={WILSON.whatsapp} initialArea={area} initialView={view} />
+        <ForSale listings={WILSON_LISTINGS} whatsapp={WILSON.whatsapp} initialArea={area} initialView={view} shareBase="https://wilsonyap.vercel.app/properties" />
       </section>
 
       <section id="contact" className={s.contact}>

@@ -44,6 +44,7 @@ export default function ForSale({
   viewAllHref,
   initialArea,
   initialView,
+  shareBase,
 }: {
   listings: TeamListing[];
   whatsapp: string;
@@ -51,6 +52,7 @@ export default function ForSale({
   viewAllHref?: string;
   initialArea?: string;
   initialView?: string;
+  shareBase: string; // absolute URL of this page, for the listing deep link
 }) {
   const [area, setArea] = useState(
     initialArea && listings.some((l) => l.area === initialArea) ? initialArea : "",
@@ -58,7 +60,6 @@ export default function ForSale({
   const [type, setType] = useState("");
   const [band, setBand] = useState("");
   const [open, setOpen] = useState<TeamListing | null>(null);
-  const [copied, setCopied] = useState<string | null>(null);
 
   // a shared link (?view=<id>) opens that listing's details on load
   useEffect(() => {
@@ -67,26 +68,11 @@ export default function ForSale({
     if (match) setOpen(match);
   }, [initialView, listings]);
 
-  const share = async (l: TeamListing, i: number) => {
-    const id = listingId(l, i);
-    // A WhatsApp deep link: whoever opens it lands straight in Wilson's DM,
-    // with the listing and an "I'm interested" message pre-filled.
-    const text = `I'm interested in this listing: ${l.title} (${l.price}) at ${l.location}`;
-    const url = `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`;
-    try {
-      await navigator.clipboard.writeText(url);
-    } catch {
-      const ta = document.createElement("textarea");
-      ta.value = url;
-      ta.style.position = "fixed";
-      ta.style.left = "-9999px";
-      document.body.appendChild(ta);
-      ta.select();
-      try { document.execCommand("copy"); } catch {}
-      ta.remove();
-    }
-    setCopied(id);
-    window.setTimeout(() => setCopied((c) => (c === id ? null : c)), 1800);
+  // Share → opens Wilson's WhatsApp with this unit's link + "Hi, I'm interested"
+  const shareHref = (l: TeamListing, i: number) => {
+    const deep = `${shareBase}?view=${listingId(l, i)}`;
+    const text = `${deep}\nHi, I'm interested`;
+    return `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`;
   };
 
   const areas = useMemo(() => [...new Set(listings.map((l) => l.area))].sort(), [listings]);
@@ -179,20 +165,15 @@ export default function ForSale({
               <button className={`${s.btn} ${s.det}`} type="button" onClick={() => setOpen(l)}>
                 Details
               </button>
-              {(() => {
-                const idx = listings.indexOf(l);
-                const id = listingId(l, idx);
-                return (
-                  <button
-                    className={`${s.btn} ${s.share} ${copied === id ? s.shared : ""}`}
-                    type="button"
-                    onClick={() => share(l, idx)}
-                    aria-label="Copy share link"
-                  >
-                    {SHARE_ICON}{copied === id ? "Copied!" : "Share"}
-                  </button>
-                );
-              })()}
+              <a
+                className={`${s.btn} ${s.share}`}
+                href={shareHref(l, listings.indexOf(l))}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Share this unit on WhatsApp"
+              >
+                {SHARE_ICON}Share
+              </a>
             </div>
           </article>
         ))}

@@ -70,7 +70,13 @@ export default async function ForRentPage({
           {intro} — shoplots, offices &amp; shop-offices around Puchong, Bandar Puteri &amp; IOI Boulevard.
           Filter by area, type or price, then WhatsApp to arrange a viewing.
         </p>
-        <ForRent listings={listings} initialArea={area} initialView={view} shareWhatsapp={WILSON.whatsapp ?? ""} />
+        <ForRent
+          listings={listings}
+          initialArea={area}
+          initialView={view}
+          shareWhatsapp={WILSON.whatsapp ?? ""}
+          shareBase="https://wilsonyap.vercel.app/for-rent"
+        />
       </section>
 
       <section id="contact" className={s.contact}>
