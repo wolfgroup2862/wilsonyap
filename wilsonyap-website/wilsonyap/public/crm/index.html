@@ -222,6 +222,44 @@ details.imp[open] summary::after{content:"－"}
 .langbtn{padding:3px;border-radius:999px;font-size:12px;margin-left:auto;display:inline-flex;gap:2px;font-weight:600;letter-spacing:.04em}.langbtn span{padding:4px 11px;border-radius:999px;color:var(--muted)}.langbtn span.on{background:var(--fg);color:var(--bg)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:10px;z-index:60;font-size:13px}
 @media (prefers-reduced-motion:no-preference){.drawer{animation:sl .18s ease-out}@keyframes sl{from{transform:translateX(20px);opacity:.6}}.cat,.chip,.row{transition:border-color .15s,box-shadow .15s}}
+/* ===== Skyloft building navigator ===== */
+#skyloft{display:flex;flex-direction:column;gap:14px}
+.skyhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.skyhead .bc{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.skyhead button{border:0;background:none;color:var(--a1);cursor:pointer;font:inherit;padding:0}
+.skyhead .sep{opacity:.5}
+.skyhero{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel)}
+.skyhero img{display:block;width:100%}
+.skyhero .cap{padding:10px 14px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+.blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:560px){.blocks{grid-template-columns:1fr}}
+.block{border:1.5px solid var(--line);border-radius:16px;padding:16px 16px 16px 20px;cursor:pointer;text-align:left;background:var(--panel);display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden}
+.block:hover{border-color:color-mix(in srgb,var(--bk) 60%,var(--line))}
+.block .bk{font-family:var(--f-d);font-size:26px;font-weight:700;line-height:1.1}
+.block .bkt{font-size:13px;color:var(--muted)}
+.block .bn{font-family:var(--f-m);font-size:12px;color:var(--bk);margin-top:4px}
+.block::before{content:"";position:absolute;top:0;bottom:0;left:0;width:6px;background:var(--bk)}
+.lvtabs{display:flex;gap:6px;flex-wrap:wrap}
+.lvtab{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:8px 16px;cursor:pointer;font-weight:600;font-size:14px}
+.lvtab small{font-family:var(--f-m);color:var(--muted);margin-left:6px;font-weight:400}
+.lvtab[aria-pressed=true]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.lvtab[aria-pressed=true] small{color:var(--bg);opacity:.7}
+.ugrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
+.ucard{border:1px solid var(--line);border-left:4px solid var(--uc,var(--line));background:var(--panel);border-radius:12px;padding:12px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:5px}
+.ucard:hover{border-color:color-mix(in srgb,var(--a1) 45%,var(--line))}
+.ucard .un{font-family:var(--f-d);font-weight:700;font-size:20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ucard .ty{font-family:var(--f-m);font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-weight:400}
+.ucard .ty:hover{border-color:var(--a1);color:var(--a1)}
+.ucard .ost{font-size:11px;font-family:var(--f-m);letter-spacing:.04em;color:var(--uc,var(--muted))}
+.ucard .onm{font-size:13px;color:var(--fg);overflow-wrap:anywhere}
+.ucard .onm.tbd{color:var(--muted)}
+.plans{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.plans button{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:7px 12px;cursor:pointer;font-size:13px;font-weight:500}
+.plans button:hover{border-color:var(--a1)}
+.skylb{position:fixed;inset:0;z-index:70;background:rgba(3,6,14,.9);display:grid;place-items:center;padding:16px}
+.skylb img{max-width:100%;max-height:82vh;border-radius:12px;background:#fff}
+.skylb .x{position:absolute;top:14px;right:16px;border:0;background:var(--fg);color:var(--bg);width:38px;height:38px;border-radius:50%;font-size:22px;cursor:pointer;line-height:1}
+.skylb .cap{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;font-family:var(--f-m)}
 </style>
 <style> .leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane > svg,.leaflet-pane > canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0;}.leaflet-container{overflow:hidden;}.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-user-drag:none;}.leaflet-tile::selection{background:transparent;}.leaflet-safari .leaflet-tile{image-rendering:-webkit-optimize-contrast;}.leaflet-safari .leaflet-tile-container{width:1600px;height:1600px;-webkit-transform-origin:0 0;}.leaflet-marker-icon,.leaflet-marker-shadow{display:block;}.leaflet-container .leaflet-overlay-pane svg{max-width:none !important;max-height:none !important;}.leaflet-container .leaflet-marker-pane img,.leaflet-container .leaflet-shadow-pane img,.leaflet-container .leaflet-tile-pane img,.leaflet-container img.leaflet-image-layer,.leaflet-container .leaflet-tile{max-width:none !important;max-height:none !important;width:auto;padding:0;}.leaflet-container img.leaflet-tile{mix-blend-mode:plus-lighter;}.leaflet-container.leaflet-touch-zoom{-ms-touch-action:pan-x pan-y;touch-action:pan-x pan-y;}.leaflet-container.leaflet-touch-drag{-ms-touch-action:pinch-zoom;touch-action:none;touch-action:pinch-zoom;}.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{-ms-touch-action:none;touch-action:none;}.leaflet-container{-webkit-tap-highlight-color:transparent;}.leaflet-container a{-webkit-tap-highlight-color:rgba(51,181,229,0.4);}.leaflet-tile{filter:inherit;visibility:hidden;}.leaflet-tile-loaded{visibility:inherit;}.leaflet-zoom-box{width:0;height:0;-moz-box-sizing:border-box;box-sizing:border-box;z-index:800;}.leaflet-overlay-pane svg{-moz-user-select:none;}.leaflet-pane{z-index:400;}.leaflet-tile-pane{z-index:200;}.leaflet-overlay-pane{z-index:400;}.leaflet-shadow-pane{z-index:500;}.leaflet-marker-pane{z-index:600;}.leaflet-tooltip-pane{z-index:650;}.leaflet-popup-pane{z-index:700;}.leaflet-map-pane canvas{z-index:100;}.leaflet-map-pane svg{z-index:200;}.leaflet-vml-shape{width:1px;height:1px;}.lvml{display:inline-block;position:absolute;}.leaflet-control{position:relative;z-index:800;pointer-events:visiblePainted;pointer-events:auto;}.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none;}.leaflet-top{top:0;}.leaflet-right{right:0;}.leaflet-bottom{bottom:0;}.leaflet-left{left:0;}.leaflet-control{float:left;clear:both;}.leaflet-right .leaflet-control{float:right;}.leaflet-top .leaflet-control{margin-top:10px;}.leaflet-bottom .leaflet-control{margin-bottom:10px;}.leaflet-left .leaflet-control{margin-left:10px;}.leaflet-right .leaflet-control{margin-right:10px;}.leaflet-fade-anim .leaflet-popup{opacity:0;-webkit-transition:opacity 0.2s linear;-moz-transition:opacity 0.2s linear;transition:opacity 0.2s linear;}.leaflet-fade-anim .leaflet-map-pane .leaflet-popup{opacity:1;}.leaflet-zoom-animated{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0;}svg.leaflet-zoom-animated{will-change:transform;}.leaflet-zoom-anim .leaflet-zoom-animated{-webkit-transition:-webkit-transform 0.25s cubic-bezier(0,0,0.25,1);-moz-transition:-moz-transform 0.25s cubic-bezier(0,0,0.25,1);transition:transform 0.25s cubic-bezier(0,0,0.25,1);}.leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{-webkit-transition:none;-moz-transition:none;transition:none;}.leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden;}.leaflet-interactive{cursor:pointer;}.leaflet-grab{cursor:-webkit-grab;cursor:-moz-grab;cursor:grab;}.leaflet-crosshair,.leaflet-crosshair .leaflet-interactive{cursor:crosshair;}.leaflet-popup-pane,.leaflet-control{cursor:auto;}.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive,.leaflet-dragging .leaflet-marker-draggable{cursor:move;cursor:-webkit-grabbing;cursor:-moz-grabbing;cursor:grabbing;}.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-image-layer,.leaflet-pane > svg path,.leaflet-tile-container{pointer-events:none;}.leaflet-marker-icon.leaflet-interactive,.leaflet-image-layer.leaflet-interactive,.leaflet-pane > svg path.leaflet-interactive,svg.leaflet-image-layer.leaflet-interactive path{pointer-events:visiblePainted;pointer-events:auto;}.leaflet-container{background:#ddd;outline-offset:1px;}.leaflet-container a{color:#0078A8;}.leaflet-zoom-box{border:2px dotted #38f;background:rgba(255,255,255,0.5);}.leaflet-container{font-family:"Helvetica Neue",Arial,Helvetica,sans-serif;font-size:12px;font-size:0.75rem;line-height:1.5;}.leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,0.65);border-radius:4px;}.leaflet-bar a{background-color:#fff;border-bottom:1px solid #ccc;width:26px;height:26px;line-height:26px;display:block;text-align:center;text-decoration:none;color:black;}.leaflet-bar a,.leaflet-control-layers-toggle{background-position:50% 50%;background-repeat:no-repeat;display:block;}.leaflet-bar a:hover,.leaflet-bar a:focus{background-color:#f4f4f4;}.leaflet-bar a:first-child{border-top-left-radius:4px;border-top-right-radius:4px;}.leaflet-bar a:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;border-bottom:none;}.leaflet-bar a.leaflet-disabled{cursor:default;background-color:#f4f4f4;color:#bbb;}.leaflet-touch .leaflet-bar a{width:30px;height:30px;line-height:30px;}.leaflet-touch .leaflet-bar a:first-child{border-top-left-radius:2px;border-top-right-radius:2px;}.leaflet-touch .leaflet-bar a:last-child{border-bottom-left-radius:2px;border-bottom-right-radius:2px;}.leaflet-control-zoom-in,.leaflet-control-zoom-out{font:bold 18px 'Lucida Console',Monaco,monospace;text-indent:1px;}.leaflet-touch .leaflet-control-zoom-in,.leaflet-touch .leaflet-control-zoom-out{font-size:22px;}.leaflet-control-layers{box-shadow:0 1px 5px rgba(0,0,0,0.4);background:#fff;border-radius:5px;}.leaflet-control-layers-toggle{background-image:url(images/layers.png);width:36px;height:36px;}.leaflet-retina .leaflet-control-layers-toggle{background-image:url(images/layers-2x.png);background-size:26px 26px;}.leaflet-touch .leaflet-control-layers-toggle{width:44px;height:44px;}.leaflet-control-layers .leaflet-control-layers-list,.leaflet-control-layers-expanded .leaflet-control-layers-toggle{display:none;}.leaflet-control-layers-expanded .leaflet-control-layers-list{display:block;position:relative;}.leaflet-control-layers-expanded{padding:6px 10px 6px 6px;color:#333;background:#fff;}.leaflet-control-layers-scrollbar{overflow-y:scroll;overflow-x:hidden;padding-right:5px;}.leaflet-control-layers-selector{margin-top:2px;position:relative;top:1px;}.leaflet-control-layers label{display:block;font-size:13px;font-size:1.08333em;}.leaflet-control-layers-separator{height:0;border-top:1px solid #ddd;margin:5px -10px 5px -6px;}.leaflet-default-icon-path{background-image:url(images/marker-icon.png);}.leaflet-container .leaflet-control-attribution{background:#fff;background:rgba(255,255,255,0.8);margin:0;}.leaflet-control-attribution,.leaflet-control-scale-line{padding:0 5px;color:#333;line-height:1.4;}.leaflet-control-attribution a{text-decoration:none;}.leaflet-control-attribution a:hover,.leaflet-control-attribution a:focus{text-decoration:underline;}.leaflet-attribution-flag{display:inline !important;vertical-align:baseline !important;width:1em;height:0.6669em;}.leaflet-left .leaflet-control-scale{margin-left:5px;}.leaflet-bottom .leaflet-control-scale{margin-bottom:5px;}.leaflet-control-scale-line{border:2px solid #777;border-top:none;line-height:1.1;padding:2px 5px 1px;white-space:nowrap;-moz-box-sizing:border-box;box-sizing:border-box;background:rgba(255,255,255,0.8);text-shadow:1px 1px #fff;}.leaflet-control-scale-line:not(:first-child){border-top:2px solid #777;border-bottom:none;margin-top:-2px;}.leaflet-control-scale-line:not(:first-child):not(:last-child){border-bottom:2px solid #777;}.leaflet-touch .leaflet-control-attribution,.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-bar{box-shadow:none;}.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-bar{border:2px solid rgba(0,0,0,0.2);background-clip:padding-box;}.leaflet-popup{position:absolute;text-align:center;margin-bottom:20px;}.leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:12px;}.leaflet-popup-content{margin:13px 24px 13px 20px;line-height:1.3;font-size:13px;font-size:1.08333em;min-height:1px;}.leaflet-popup-content p{margin:17px 0;margin:1.3em 0;}.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-top:-1px;margin-left:-20px;overflow:hidden;pointer-events:none;}.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;pointer-events:auto;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg);}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:white;color:#333;box-shadow:0 3px 14px rgba(0,0,0,0.4);}.leaflet-container a.leaflet-popup-close-button{position:absolute;top:0;right:0;border:none;text-align:center;width:24px;height:24px;font:16px/24px Tahoma,Verdana,sans-serif;color:#757575;text-decoration:none;background:transparent;}.leaflet-container a.leaflet-popup-close-button:hover,.leaflet-container a.leaflet-popup-close-button:focus{color:#585858;}.leaflet-popup-scrolled{overflow:auto;}.leaflet-oldie .leaflet-popup-content-wrapper{-ms-zoom:1;}.leaflet-oldie .leaflet-popup-tip{width:24px;margin:0 auto;-ms-filter:"progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678,M12=0.70710678,M21=-0.70710678,M22=0.70710678)";filter:progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678,M12=0.70710678,M21=-0.70710678,M22=0.70710678);}.leaflet-oldie .leaflet-control-zoom,.leaflet-oldie .leaflet-control-layers,.leaflet-oldie .leaflet-popup-content-wrapper,.leaflet-oldie .leaflet-popup-tip{border:1px solid #999;}.leaflet-div-icon{background:#fff;border:1px solid #666;}.leaflet-tooltip{position:absolute;padding:6px;background-color:#fff;border:1px solid #fff;border-radius:3px;color:#222;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,0.4);}.leaflet-tooltip.leaflet-interactive{cursor:pointer;pointer-events:auto;}.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{position:absolute;pointer-events:none;border:6px solid transparent;background:transparent;content:"";}.leaflet-tooltip-bottom{margin-top:6px;}.leaflet-tooltip-top{margin-top:-6px;}.leaflet-tooltip-bottom:before,.leaflet-tooltip-top:before{left:50%;margin-left:-6px;}.leaflet-tooltip-top:before{bottom:0;margin-bottom:-12px;border-top-color:#fff;}.leaflet-tooltip-bottom:before{top:0;margin-top:-12px;margin-left:-6px;border-bottom-color:#fff;}.leaflet-tooltip-left{margin-left:-6px;}.leaflet-tooltip-right{margin-left:6px;}.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{top:50%;margin-top:-6px;}.leaflet-tooltip-left:before{right:0;margin-right:-12px;border-left-color:#fff;}.leaflet-tooltip-right:before{left:0;margin-left:-12px;border-right-color:#fff;}@media print{.leaflet-control{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
 .seg{display:flex;gap:6px}
@@ -344,6 +382,7 @@ details.imp[open] summary::after{content:"－"}
       <details class="imp" id="stBox"><summary id="stSum">街道位置</summary><div class="impbody"><p class="mapnote">每条路只要在地图上点两下（门牌最小号那头、最大号那头），那条路的单位就会自动排上去。已经先从 OpenStreetMap 定位了一部分，位置不对可以重新定位。</p><div class="list" id="stList"></div></div></details>
     </div>
     <div class="plan" id="plan"></div>
+    <div id="skyloft" hidden></div>
     <p class="mapnote" id="mapMiss"></p>
   </section>
 
@@ -732,10 +771,60 @@ $("bList").addEventListener("click",async e=>{const row=e.target.closest(".brow"
 let zoom=1,flashId=null;
 function parseUnit(r){const a=r.address||"";const m=/^(?:No\.?\s*)?([0-9]+[A-Za-z]?)\s*,\s*(.+)$/i.exec(a);return m?{no:m[1],n:parseInt(m[1]),street:m[2].trim()}:null}
 const CLS={Sale:"sale",Rent:"rent","Own Stay":"own",Tenanted:"ten",Sold:"sold"};const TXT={Sale:"FOR SALE",Rent:"FOR RENT","Own Stay":"OWN STAY",Tenanted:"TENANTED",Sold:"SOLD"};
+/* ===== Skyloft Avenue building navigator ===== */
+const SKY_AREA="Skyloft Avenue";
+const SKY_TYPE={"01":"A","02":"B","03":"B","06":"B","07":"B","08":"B","10":"B","11":"B","12":"B","17":"B","19":"B","22":"L"};
+const SKY_SF={A:"1,539 sf",B:"1,539 sf",L:"1,249 sf"};
+const SKY_META={A:{t:"Pejabat Kedai 4 Tingkat",c:"#5B9BD5"},B:{t:"Pejabat Kedai 4 Tingkat",c:"#70AD72"},C:{t:"Lower Ground",c:"#E08A9B"}};
+const skyS={block:null,level:null};
+function skyParse(r){const m=/([A-Za-z]+)\s*-\s*(LG|L\d+)\s*-\s*([0-9A-Za-z]+)/i.exec(r.address||"");if(!m)return null;
+  const lv=m[2].toUpperCase();return {block:m[1].toUpperCase(),level:lv==="LG"?"LG":"L"+parseInt(lv.slice(1),10),unit:m[3].toUpperCase()}}
+function skyData(){const g={};rows.forEach(r=>{if((r.area||"")!==SKY_AREA)return;const p=skyParse(r);if(!p)return;
+  (g[p.block]=g[p.block]||{});(g[p.block][p.level]=g[p.block][p.level]||[]).push({unit:p.unit,type:SKY_TYPE[p.unit]||"",r});});return g}
+function skyLvOrder(a){return a.slice().sort((x,y)=>{const o=v=>v==="LG"?0:parseInt(v.slice(1),10);return o(x)-o(y)})}
+function skyLvLabel(l){return l==="LG"?"Lower Ground":"Level "+l.slice(1)}
+function skyUSort(a,b){const na=parseInt(a.unit,10)||0,nb=parseInt(b.unit,10)||0;return na-nb||a.unit.localeCompare(b.unit)}
+function skyOwner(r){const L=ownersOf(r);if(!L.length)return "";const co=L.find(o=>o.company);return esc((co||L[0]).name||"")}
+function skyUC(r){const s=CLS[r.for];return s==="sale"?"var(--a1)":s==="rent"?"var(--a2)":s==="ten"?"var(--warn)":s==="sold"?"var(--bad)":s==="own"?"var(--muted)":"var(--line)"}
+const skyPlanBtns='<div class="plans"><span class="mapnote">平面图：</span><button type="button" data-plan="A">Type A</button><button type="button" data-plan="B">Type B</button><button type="button" data-plan="L">Type L</button><button type="button" data-plan="site">Site plan</button></div>';
+function renderSky(){
+  const host=$("skyloft");if(!host)return;const g=skyData();const blocks=Object.keys(g).sort();
+  if(skyS.block&&blocks.indexOf(skyS.block)<0)skyS.block=null;
+  if(!skyS.block){
+    host.innerHTML='<div class="skyhero"><img src="/crm/skyloft/siteplan.jpg" alt="Skyloft Avenue site plan" loading="lazy"><div class="cap">Skyloft Avenue · Bandar Puchong Jaya · Jalan Tempua 3 — 点下面的 Block 进去看每一层的单位</div></div>'
+      +'<div class="blocks">'+blocks.map(b=>{const lv=skyLvOrder(Object.keys(g[b]));const cnt=lv.reduce((s,l)=>s+g[b][l].length,0);const m=SKY_META[b]||{t:"",c:"var(--a1)"};
+        const lvtxt=b==="C"?"Lower Ground":(lv.length+" 层 · "+lv.map(l=>l==="LG"?"LG":l).join(" "));
+        return '<button type="button" class="block" data-b="'+esc(b)+'" style="--bk:'+m.c+'"><span class="bk" style="color:'+m.c+'">Block '+esc(b)+'</span><span class="bkt">'+esc(m.t)+'</span><span class="bn">'+cnt+' 个单位 · '+esc(lvtxt)+'</span></button>';
+      }).join('')+'</div>'+skyPlanBtns;
+    return;
+  }
+  const b=skyS.block,lv=skyLvOrder(Object.keys(g[b])),m=SKY_META[b]||{c:"var(--a1)"};
+  if(!skyS.level||lv.indexOf(skyS.level)<0)skyS.level=lv[0];
+  const units=g[b][skyS.level].slice().sort(skyUSort);
+  host.innerHTML='<div class="skyhead"><div class="bc"><button type="button" data-nav="blocks">所有 Block</button><span class="sep">›</span><b style="color:'+m.c+'">Block '+esc(b)+'</b></div></div>'
+    +(lv.length>1?'<div class="lvtabs">'+lv.map(l=>'<button type="button" class="lvtab" data-lv="'+esc(l)+'" aria-pressed="'+(l===skyS.level)+'">'+esc(skyLvLabel(l))+'<small>'+g[b][l].length+'</small></button>').join('')+'</div>':'<div class="skyhead"><b>'+esc(skyLvLabel(skyS.level))+'</b> · '+units.length+' 个单位</div>')
+    +'<div class="ugrid">'+units.map(u=>{const nm=skyOwner(u.r),ty=u.type;
+      return '<button type="button" class="ucard" data-id="'+esc(u.r.id)+'" style="--uc:'+skyUC(u.r)+'"><span class="un">'+esc(u.unit)+(ty?'<span class="ty" data-plan="'+ty+'">Type '+ty+(SKY_SF[ty]?' · '+SKY_SF[ty]:'')+'</span>':'')+'</span><span class="ost">'+(TXT[u.r.for]||"未分类")+'</span><span class="onm'+(nm?'':' tbd')+'">'+(nm||'[待填 owner]')+'</span></button>';
+    }).join('')+'</div>'+skyPlanBtns;
+}
+function skyLightbox(w){const M={A:["/crm/skyloft/type-a.jpg","Type A · 1,539 sf"],B:["/crm/skyloft/type-b.jpg","Type B · 1,539 sf"],L:["/crm/skyloft/type-l.jpg","Type L · 1,249 sf"],site:["/crm/skyloft/siteplan.jpg","Site plan"]};const m=M[w];if(!m)return;
+  const ov=document.createElement("div");ov.className="skylb";ov.innerHTML='<button class="x" type="button" aria-label="关闭">×</button><img src="'+m[0]+'" alt="'+esc(m[1])+'"><div class="cap">'+esc(m[1])+'</div>';
+  ov.addEventListener("click",e=>{if(e.target===ov||e.target.classList.contains("x"))ov.remove()});document.body.appendChild(ov)}
+$("skyloft").addEventListener("click",e=>{
+  const pb=e.target.closest("[data-plan]");if(pb){skyLightbox(pb.dataset.plan);return}
+  const nav=e.target.closest("[data-nav]");if(nav){skyS.block=null;skyS.level=null;renderSky();return}
+  const blk=e.target.closest(".block");if(blk){skyS.block=blk.dataset.b;skyS.level=null;renderSky();return}
+  const lt=e.target.closest(".lvtab");if(lt){skyS.level=lt.dataset.lv;renderSky();return}
+  const uc=e.target.closest(".ucard");if(uc){openDrawer(uc.dataset.id);return}
+});
 function renderMap(){
   const areas=[...new Set(rows.map(r=>r.area||"[待填]"))].sort();const ms=$("mArea");const cur=ms.value;
   ms.innerHTML=areas.map(a=>`<option ${a===cur?"selected":""}>${esc(a)}</option>`).join("");
-  const area=ms.value;const inA=rows.filter(r=>(r.area||"[待填]")===area);
+  const area=ms.value;
+  {const seg=document.querySelector(".maptools .seg");
+   if(area===SKY_AREA){$("skyloft").hidden=false;$("realWrap").hidden=true;$("plan").hidden=true;$("mapMiss").hidden=true;$("zoomBox").hidden=true;if(seg)seg.style.display="none";$("mapForm").style.display="none";renderSky();return}
+   $("skyloft").hidden=true;if(seg)seg.style.display="";$("mapForm").style.display="";$("zoomBox").hidden=mapMode==="real";$("mapMiss").hidden=mapMode==="real";$("realWrap").hidden=mapMode!=="real";$("plan").hidden=mapMode==="real";}
+  const inA=rows.filter(r=>(r.area||"[待填]")===area);
   const streets={};let miss=0;
   inA.forEach(r=>{const u=parseUnit(r);if(!u){miss++;return}(streets[u.street]=streets[u.street]||[]).push({...u,r})});
   const names=Object.keys(streets).sort((a,b)=>a.localeCompare(b,"en",{numeric:true}));
