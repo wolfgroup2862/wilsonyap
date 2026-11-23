@@ -765,10 +765,10 @@ function parseOSM(t){const o={R:[],B:[],S:{}};let sec="";for(const l of t.split(
   else if(sec==="B")o.B.push([decP(l)]);else if(sec==="S"){const i=l.indexOf("|");o.S[l.slice(0,i)]=decP(l.slice(i+1))}}return o}
 function loadOSM(){if(osmP)return osmP;osmP=fetch("/crm/map/osm.txt").then(r=>r.ok?r.text():Promise.reject(r.status)).then(t=>{OSM=parseOSM(t);drawOSM();drawMarkers()}).catch(()=>{$("rmapNote").textContent="地图底图载入不了，单位点还是可以用。"});return osmP}
 function drawOSM(){if(!LM||!OSM||drawOSM.done)return;drawOSM.done=1;const rd=L.canvas({padding:.5});
-  L.polygon(OSM.B,{renderer:rd,color:"#cfc8ba",weight:1,fillColor:"#e4dfd4",fillOpacity:1,interactive:false}).addTo(LM);
+  L.polygon(OSM.B,{renderer:rd,color:"#ffffff",weight:.7,opacity:.3,fillOpacity:0,interactive:false}).addTo(LM);
   const W=[5,6,8,10],F=["#ffffff","#ffffff","#fde7a6","#f6c76b"];
-  [0,1,2,3].forEach(c=>{const ls=OSM.R.filter(r=>r.c===c).map(r=>r.P);if(ls.length)L.polyline(ls,{renderer:rd,color:"#c3c6cf",weight:W[c]+2,interactive:false}).addTo(LM)});
-  [0,1,2,3].forEach(c=>{const ls=OSM.R.filter(r=>r.c===c).map(r=>r.P);if(ls.length)L.polyline(ls,{renderer:rd,color:F[c],weight:W[c],interactive:false}).addTo(LM)});
+  /* road casing removed for satellite base */
+  [0,1,2,3].forEach(c=>{const ls=OSM.R.filter(r=>r.c===c).map(r=>r.P);if(ls.length)L.polyline(ls,{renderer:rd,color:"#ffe08a",weight:Math.max(2,W[c]-3),opacity:.3,interactive:false}).addTo(LM)});
   Object.entries(OSM.S).forEach(([n,P])=>{const m=along(P,.5,0,0);L.marker(m,{interactive:false,keyboard:false,icon:L.divIcon({className:"",html:`<span class="rlab">${esc(n.replace(/^Jalan /,""))}</span>`,iconSize:[0,0]})}).addTo(LM)})}
 function plen(P){const k0=Math.cos(P[0][0]*Math.PI/180)*111320;let s=0;for(let i=1;i<P.length;i++)s+=Math.hypot((P[i][1]-P[i-1][1])*k0,(P[i][0]-P[i-1][0])*111320);return s}
 function along(P,t,off,side){const k0=Math.cos(P[0][0]*Math.PI/180)*111320,ky=111320;const Q=P.map(([a,b])=>[b*k0,a*ky]);let Lt=0;const S=[0];
@@ -782,6 +782,7 @@ async function renderReal(){
   const box=$("rmap");
   if(!LM){
     LM=L.map(box,{maxZoom:21,minZoom:12,zoomSnap:.5}).setView([3.0,101.61],15);
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:21,maxNativeZoom:19,attribution:"Tiles \u00a9 Esri"}).addTo(LM);
     LM.attributionControl.setPrefix(false);LM.attributionControl.addAttribution("© OpenStreetMap contributors");
     lmLayer=L.layerGroup().addTo(LM);
     const zn=()=>{box.classList.toggle("zn",LM.getZoom()>=17.5);box.classList.toggle("zl",LM.getZoom()>=16.5)};LM.on("zoomend",zn);zn();
