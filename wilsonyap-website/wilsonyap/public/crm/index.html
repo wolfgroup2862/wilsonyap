@@ -763,7 +763,7 @@ function decP(s){let a=0,b=0;return s.split(" ").map(t=>{const i=t.indexOf(",");
 function parseOSM(t){const o={R:[],B:[],S:{}};let sec="";for(const l of t.split("\n")){if(l==="R"||l==="B"||l==="S"){sec=l;continue}if(!l)continue;
   if(sec==="R"){const i=l.indexOf("|"),j=l.indexOf("|",i+1);o.R.push({c:+l.slice(0,i),P:decP(l.slice(j+1))})}
   else if(sec==="B")o.B.push([decP(l)]);else if(sec==="S"){const i=l.indexOf("|");o.S[l.slice(0,i)]=decP(l.slice(i+1))}}return o}
-function loadOSM(){if(osmP)return osmP;osmP=fetch("map/osm.txt").then(r=>r.ok?r.text():Promise.reject(r.status)).then(t=>{OSM=parseOSM(t);drawOSM();drawMarkers()}).catch(()=>{$("rmapNote").textContent="地图底图载入不了，单位点还是可以用。"});return osmP}
+function loadOSM(){if(osmP)return osmP;osmP=fetch("/crm/map/osm.txt").then(r=>r.ok?r.text():Promise.reject(r.status)).then(t=>{OSM=parseOSM(t);drawOSM();drawMarkers()}).catch(()=>{$("rmapNote").textContent="地图底图载入不了，单位点还是可以用。"});return osmP}
 function drawOSM(){if(!LM||!OSM||drawOSM.done)return;drawOSM.done=1;const rd=L.canvas({padding:.5});
   L.polygon(OSM.B,{renderer:rd,color:"#cfc8ba",weight:1,fillColor:"#e4dfd4",fillOpacity:1,interactive:false}).addTo(LM);
   const W=[5,6,8,10],F=["#ffffff","#ffffff","#fde7a6","#f6c76b"];
