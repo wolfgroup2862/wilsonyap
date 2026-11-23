@@ -228,31 +228,24 @@ details.imp[open] summary::after{content:"－"}
 .skyhead .bc{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .skyhead button{border:0;background:none;color:var(--a1);cursor:pointer;font:inherit;padding:0}
 .skyhead .sep{opacity:.5}
-.skyhero{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel)}
-.skyhero img{display:block;width:100%}
-.skyhero .cap{padding:10px 14px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
-.blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-@media(max-width:560px){.blocks{grid-template-columns:1fr}}
-.block{border:1.5px solid var(--line);border-radius:16px;padding:16px 16px 16px 20px;cursor:pointer;text-align:left;background:var(--panel);display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden}
-.block:hover{border-color:color-mix(in srgb,var(--bk) 60%,var(--line))}
-.block .bk{font-family:var(--f-d);font-size:26px;font-weight:700;line-height:1.1}
-.block .bkt{font-size:13px;color:var(--muted)}
-.block .bn{font-family:var(--f-m);font-size:12px;color:var(--bk);margin-top:4px}
-.block::before{content:"";position:absolute;top:0;bottom:0;left:0;width:6px;background:var(--bk)}
-.lvtabs{display:flex;gap:6px;flex-wrap:wrap}
-.lvtab{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:8px 16px;cursor:pointer;font-weight:600;font-size:14px}
-.lvtab small{font-family:var(--f-m);color:var(--muted);margin-left:6px;font-weight:400}
-.lvtab[aria-pressed=true]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-.lvtab[aria-pressed=true] small{color:var(--bg);opacity:.7}
-.ugrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
-.ucard{border:1px solid var(--line);border-left:4px solid var(--uc,var(--line));background:var(--panel);border-radius:12px;padding:12px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:5px}
-.ucard:hover{border-color:color-mix(in srgb,var(--a1) 45%,var(--line))}
-.ucard .un{font-family:var(--f-d);font-weight:700;font-size:20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ucard .ty{font-family:var(--f-m);font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-weight:400}
-.ucard .ty:hover{border-color:var(--a1);color:var(--a1)}
-.ucard .ost{font-size:11px;font-family:var(--f-m);letter-spacing:.04em;color:var(--uc,var(--muted))}
-.ucard .onm{font-size:13px;color:var(--fg);overflow-wrap:anywhere}
-.ucard .onm.tbd{color:var(--muted)}
+.skyhead .ty{font-family:var(--f-m);font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);cursor:pointer}
+.skyhead .ty:hover{border-color:var(--a1);color:var(--a1)}
+.skyplan{position:relative;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#eef1f6;line-height:0}
+.skyplan img{display:block;width:100%}
+.skyplan svg{position:absolute;inset:0;width:100%;height:100%}
+.scell polygon{fill:transparent;stroke:transparent;stroke-width:3;transition:fill .12s,stroke .12s}
+.scell:not(.off){cursor:pointer}
+.scell.off{pointer-events:none}
+.scell:not(.off):hover polygon{fill:color-mix(in srgb,var(--bc) 45%,transparent);stroke:#fff}
+.scell text{font:600 13px var(--f-m,monospace);fill:#17324d;text-anchor:middle;dominant-baseline:central;pointer-events:none;paint-order:stroke;stroke:rgba(255,255,255,.7);stroke-width:3px}
+.scell.off text{fill:#8795a6}
+.lvstack{display:flex;flex-direction:column;gap:8px}
+.lvcard{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:14px;border:1px solid var(--line);border-left:4px solid var(--uc,var(--line));background:var(--panel);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left}
+.lvcard:hover{border-color:color-mix(in srgb,var(--a1) 45%,var(--line))}
+.lvcard .lvn{font-family:var(--f-d);font-weight:700;font-size:17px;min-width:96px}
+.lvcard .ost{font-size:11px;font-family:var(--f-m);letter-spacing:.04em;color:var(--uc,var(--muted))}
+.lvcard .onm{font-size:14px;color:var(--fg);overflow-wrap:anywhere;text-align:right}
+.lvcard .onm.tbd{color:var(--muted)}
 .plans{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .plans button{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:7px 12px;cursor:pointer;font-size:13px;font-weight:500}
 .plans button:hover{border-color:var(--a1)}
@@ -775,47 +768,46 @@ const CLS={Sale:"sale",Rent:"rent","Own Stay":"own",Tenanted:"ten",Sold:"sold"};
 const SKY_AREA="Skyloft Avenue";
 const SKY_TYPE={"01":"A","02":"B","03":"B","06":"B","07":"B","08":"B","10":"B","11":"B","12":"B","17":"B","19":"B","22":"L"};
 const SKY_SF={A:"1,539 sf",B:"1,539 sf",L:"1,249 sf"};
-const SKY_META={A:{t:"Pejabat Kedai 4 Tingkat",c:"#5B9BD5"},B:{t:"Pejabat Kedai 4 Tingkat",c:"#70AD72"},C:{t:"Lower Ground",c:"#E08A9B"}};
-const skyS={block:null,level:null};
+const SKY_BCOL={A:"#5B9BD5",B:"#70AD72",C:"#E08A9B"};
+const SKY_CELLS={"A":[["01","01","322.3,298.1 358.3,319.3 313.7,395.1 277.7,373.9",318.0,346.6],["02","02","359.8,320.2 395.8,341.4 351.2,417.2 315.2,396",355.5,368.7],["03","03","397.3,342.3 433.3,363.5 388.7,439.3 352.7,418.1",393.0,390.8],["02A","2A","434.8,364.4 470.8,385.6 426.2,461.4 390.2,440.2",430.5,412.9],["05","05","472.3,386.5 508.3,407.7 463.7,483.5 427.7,462.3",468.0,435.0],["06","06","509.8,408.6 545.8,429.8 501.2,505.6 465.2,484.4",505.5,457.1],["07","07","547.3,430.7 583.3,451.9 538.7,527.7 502.7,506.5",543.0,479.2],["08","08","584.8,452.8 620.8,474 576.2,549.8 540.2,528.6",580.5,501.3],["09","09","622.3,474.9 658.3,496.1 613.7,571.9 577.7,550.7",618.0,523.4],["10","10","659.8,497 695.8,518.2 651.2,594 615.2,572.8",655.5,545.5],["11","11","697.3,519.1 733.3,540.3 688.7,616.1 652.7,594.9",693.0,567.6],["12","12","734.8,541.2 770.8,562.4 726.2,638.2 690.2,617",730.5,589.7],["13","13","772.3,563.2 808.3,584.5 763.7,660.3 727.7,639.1",768.0,611.8]],"B":[["12A","12A","837.8,604.3 881,607.3 872.2,731 829,727.9",855.0,667.6],["15","15","882.8,607.5 926,610.5 917.2,734.2 874,731.1",900.0,670.8],["16","16","927.8,610.6 971,613.7 962.2,737.4 919,734.3",945.0,674.0],["17","17","972.8,613.8 1016,616.9 1007.2,740.6 964,737.5",990.0,677.2],["18","18","1017.8,617 1061,620.1 1052.2,743.8 1009,740.7",1035.0,680.4],["19","19","1062.8,620.2 1106,623.3 1097.2,747 1054,743.9",1080.0,683.6],["20","20","1107.8,623.4 1151,626.5 1142.2,750.2 1099,747.1",1125.0,686.8],["21","21","1152.8,626.6 1196,629.7 1187.2,753.4 1144,750.3",1170.0,690.0],["22","22","1197.8,629.8 1241,632.9 1232.2,756.6 1189,753.5",1215.0,693.2]],"C":[["01","LG-01","336.9,420.8 337.1,470.7 233.1,471.2 232.9,421.4",285.0,446.0],["02","LG-02","337.2,475 337.4,524.8 233.4,525.4 233.2,475.6",285.3,500.2],["03","LG-03","337.5,529.2 337.7,579 233.7,579.6 233.5,529.7",285.6,554.4],["02A","LG-2A","337.8,583.3 338,633.2 234,633.7 233.8,583.9",285.9,608.5],["05","LG-05","338.1,637.5 338.3,687.3 234.3,687.9 234.1,638.1",286.2,662.7],["06","LG-06","338.4,691.7 338.6,741.5 234.6,742.1 234.4,692.2",286.5,716.9]]};
+const skyS={unit:null};
 function skyParse(r){const m=/([A-Za-z]+)\s*-\s*(LG|L\d+)\s*-\s*([0-9A-Za-z]+)/i.exec(r.address||"");if(!m)return null;
   const lv=m[2].toUpperCase();return {block:m[1].toUpperCase(),level:lv==="LG"?"LG":"L"+parseInt(lv.slice(1),10),unit:m[3].toUpperCase()}}
 function skyData(){const g={};rows.forEach(r=>{if((r.area||"")!==SKY_AREA)return;const p=skyParse(r);if(!p)return;
-  (g[p.block]=g[p.block]||{});(g[p.block][p.level]=g[p.block][p.level]||[]).push({unit:p.unit,type:SKY_TYPE[p.unit]||"",r});});return g}
-function skyLvOrder(a){return a.slice().sort((x,y)=>{const o=v=>v==="LG"?0:parseInt(v.slice(1),10);return o(x)-o(y)})}
+  (g[p.block]=g[p.block]||{});(g[p.block][p.level]=g[p.block][p.level]||[]).push({unit:p.unit,r});});return g}
 function skyLvLabel(l){return l==="LG"?"Lower Ground":"Level "+l.slice(1)}
-function skyUSort(a,b){const na=parseInt(a.unit,10)||0,nb=parseInt(b.unit,10)||0;return na-nb||a.unit.localeCompare(b.unit)}
 function skyOwner(r){const L=ownersOf(r);if(!L.length)return "";const co=L.find(o=>o.company);return esc((co||L[0]).name||"")}
 function skyUC(r){const s=CLS[r.for];return s==="sale"?"var(--a1)":s==="rent"?"var(--a2)":s==="ten"?"var(--warn)":s==="sold"?"var(--bad)":s==="own"?"var(--muted)":"var(--line)"}
+function skyUnitLevels(g,block,tok){const res=[],lv=g[block]||{};Object.keys(lv).forEach(l=>{const e=lv[l].find(x=>x.unit===tok);if(e)res.push({level:l,r:e.r})});
+  res.sort((a,b)=>{const o=x=>x.level==="LG"?0:parseInt(x.level.slice(1),10);return o(a)-o(b)});return res}
 const skyPlanBtns='<div class="plans"><span class="mapnote">平面图：</span><button type="button" data-plan="A">Type A</button><button type="button" data-plan="B">Type B</button><button type="button" data-plan="L">Type L</button><button type="button" data-plan="site">Site plan</button></div>';
 function renderSky(){
-  const host=$("skyloft");if(!host)return;const g=skyData();const blocks=Object.keys(g).sort();
-  if(skyS.block&&blocks.indexOf(skyS.block)<0)skyS.block=null;
-  if(!skyS.block){
-    host.innerHTML='<div class="skyhero"><img src="/crm/skyloft/siteplan.jpg" alt="Skyloft Avenue site plan" loading="lazy"><div class="cap">Skyloft Avenue · Bandar Puchong Jaya · Jalan Tempua 3 — 点下面的 Block 进去看每一层的单位</div></div>'
-      +'<div class="blocks">'+blocks.map(b=>{const lv=skyLvOrder(Object.keys(g[b]));const cnt=lv.reduce((s,l)=>s+g[b][l].length,0);const m=SKY_META[b]||{t:"",c:"var(--a1)"};
-        const lvtxt=b==="C"?"Lower Ground":(lv.length+" 层 · "+lv.map(l=>l==="LG"?"LG":l).join(" "));
-        return '<button type="button" class="block" data-b="'+esc(b)+'" style="--bk:'+m.c+'"><span class="bk" style="color:'+m.c+'">Block '+esc(b)+'</span><span class="bkt">'+esc(m.t)+'</span><span class="bn">'+cnt+' 个单位 · '+esc(lvtxt)+'</span></button>';
-      }).join('')+'</div>'+skyPlanBtns;
+  const host=$("skyloft");if(!host)return;const g=skyData();
+  if(!skyS.unit){
+    let polys='';
+    Object.keys(SKY_CELLS).forEach(b=>{(SKY_CELLS[b]||[]).forEach(c=>{
+      polys+='<g class="scell" data-b="'+esc(b)+'" data-t="'+esc(c[0])+'"><polygon points="'+c[2]+'" style="--bc:'+SKY_BCOL[b]+'"></polygon></g>';
+    })});
+    host.innerHTML='<div class="skyplan"><img src="/crm/skyloft/siteplan.jpg" alt="Skyloft Avenue site plan"><svg viewBox="0 0 1500 947" preserveAspectRatio="xMidYMid meet">'+polys+'</svg></div>'
+      +'<p class="mapnote">Skyloft Avenue · Jalan Tempua 3 — 点一个单位格子，看它每一层（Level 1–4）的 owner。</p>'+skyPlanBtns;
     return;
   }
-  const b=skyS.block,lv=skyLvOrder(Object.keys(g[b])),m=SKY_META[b]||{c:"var(--a1)"};
-  if(!skyS.level||lv.indexOf(skyS.level)<0)skyS.level=lv[0];
-  const units=g[b][skyS.level].slice().sort(skyUSort);
-  host.innerHTML='<div class="skyhead"><div class="bc"><button type="button" data-nav="blocks">所有 Block</button><span class="sep">›</span><b style="color:'+m.c+'">Block '+esc(b)+'</b></div></div>'
-    +(lv.length>1?'<div class="lvtabs">'+lv.map(l=>'<button type="button" class="lvtab" data-lv="'+esc(l)+'" aria-pressed="'+(l===skyS.level)+'">'+esc(skyLvLabel(l))+'<small>'+g[b][l].length+'</small></button>').join('')+'</div>':'<div class="skyhead"><b>'+esc(skyLvLabel(skyS.level))+'</b> · '+units.length+' 个单位</div>')
-    +'<div class="ugrid">'+units.map(u=>{const nm=skyOwner(u.r),ty=u.type;
-      return '<button type="button" class="ucard" data-id="'+esc(u.r.id)+'" style="--uc:'+skyUC(u.r)+'"><span class="un">'+esc(u.unit)+(ty?'<span class="ty" data-plan="'+ty+'">Type '+ty+(SKY_SF[ty]?' · '+SKY_SF[ty]:'')+'</span>':'')+'</span><span class="ost">'+(TXT[u.r.for]||"未分类")+'</span><span class="onm'+(nm?'':' tbd')+'">'+(nm||'[待填 owner]')+'</span></button>';
-    }).join('')+'</div>'+skyPlanBtns;
+  const {block,tok}=skyS.unit;const levels=skyUnitLevels(g,block,tok);
+  const cell=(SKY_CELLS[block]||[]).find(c=>c[0]===tok);const lab=cell?cell[1]:tok;
+  const ty=(block==="C")?"":(SKY_TYPE[tok]||""),col=SKY_BCOL[block]||"var(--a1)";
+  host.innerHTML='<div class="skyhead"><div class="bc"><button type="button" data-nav="plan">← Site plan</button><span class="sep">›</span><b style="color:'+col+'">Block '+esc(block)+'</b><span class="sep">·</span><b>Unit '+esc(lab)+'</b>'+(ty?' <span class="ty" data-plan="'+ty+'">Type '+ty+(SKY_SF[ty]?' · '+SKY_SF[ty]:'')+'</span>':'')+'</div></div>'
+    +(levels.length?'<div class="lvstack">'+levels.map(x=>{const nm=skyOwner(x.r);
+      return '<button type="button" class="lvcard" data-id="'+esc(x.r.id)+'" style="--uc:'+skyUC(x.r)+'"><span class="lvn">'+esc(skyLvLabel(x.level))+'</span><span class="ost">'+(TXT[x.r.for]||"未分类")+'</span><span class="onm'+(nm?'':' tbd')+'">'+(nm||'[待填 owner]')+'</span></button>';
+    }).join('')+'</div>':'<div class="empty"><b>这个单位还没有资料</b>汇入后就会显示每一层的 owner。</div>')+skyPlanBtns;
 }
 function skyLightbox(w){const M={A:["/crm/skyloft/type-a.jpg","Type A · 1,539 sf"],B:["/crm/skyloft/type-b.jpg","Type B · 1,539 sf"],L:["/crm/skyloft/type-l.jpg","Type L · 1,249 sf"],site:["/crm/skyloft/siteplan.jpg","Site plan"]};const m=M[w];if(!m)return;
   const ov=document.createElement("div");ov.className="skylb";ov.innerHTML='<button class="x" type="button" aria-label="关闭">×</button><img src="'+m[0]+'" alt="'+esc(m[1])+'"><div class="cap">'+esc(m[1])+'</div>';
   ov.addEventListener("click",e=>{if(e.target===ov||e.target.classList.contains("x"))ov.remove()});document.body.appendChild(ov)}
 $("skyloft").addEventListener("click",e=>{
   const pb=e.target.closest("[data-plan]");if(pb){skyLightbox(pb.dataset.plan);return}
-  const nav=e.target.closest("[data-nav]");if(nav){skyS.block=null;skyS.level=null;renderSky();return}
-  const blk=e.target.closest(".block");if(blk){skyS.block=blk.dataset.b;skyS.level=null;renderSky();return}
-  const lt=e.target.closest(".lvtab");if(lt){skyS.level=lt.dataset.lv;renderSky();return}
-  const uc=e.target.closest(".ucard");if(uc){openDrawer(uc.dataset.id);return}
+  const nav=e.target.closest("[data-nav]");if(nav){skyS.unit=null;renderSky();return}
+  const cell=e.target.closest(".scell[data-b]");if(cell){skyS.unit={block:cell.getAttribute("data-b"),tok:cell.getAttribute("data-t")};renderSky();return}
+  const lc=e.target.closest(".lvcard");if(lc){openDrawer(lc.dataset.id);return}
 });
 function renderMap(){
   const areas=[...new Set(rows.map(r=>r.area||"[待填]"))].sort();const ms=$("mArea");const cur=ms.value;
