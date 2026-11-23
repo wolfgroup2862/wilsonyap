@@ -408,17 +408,24 @@ details.imp[open] summary::after{content:"－"}
 
   // ---- Firestore-like adapter over Supabase tables (columns: id text pk, data jsonb) ----
   function makeDb(){
+    // PostgREST returns at most 1000 rows per request — page through all of them
+    function fetchAll(name, ok, err){
+      var all=[], size=1000;
+      (function page(from){
+        sb.from(name).select('id,data').range(from, from+size-1).then(function(r){
+          if(r.error){ err&&err(r.error); return; }
+          all=all.concat(r.data||[]);
+          if((r.data||[]).length===size) page(from+size); else ok(all);
+        });
+      })(0);
+    }
     return {
       collection:function(name){
         return {
           onSnapshot:function(cb, errCb){
             var cache=new Map();
             var emit=function(){ try{ cb({ docs: Array.from(cache.entries()).map(function(e){ return { id:e[0], data:function(){return e[1];} }; }) }); }catch(x){} };
-            sb.from(name).select('id,data').then(function(r){
-              if(r.error){ errCb&&errCb({code:r.error.message}); return; }
-              cache=new Map((r.data||[]).map(function(row){return [row.id,row.data];}));
-              emit();
-            });
+            fetchAll(name, function(rows){ cache=new Map(rows.map(function(row){return [row.id,row.data];})); emit(); }, function(e){ errCb&&errCb({code:e.message}); });
             var ch=sb.channel('rt-'+name).on('postgres_changes',{event:'*',schema:'public',table:name},function(p){
               if(p.eventType==='DELETE'){ if(p.old&&p.old.id!=null) cache.delete(p.old.id); }
               else if(p.new){ cache.set(p.new.id, p.new.data); }
@@ -435,7 +442,7 @@ details.imp[open] summary::after{content:"－"}
             };
           },
           add:function(obj){ var id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():('id'+Date.now()+Math.random().toString(36).slice(2)); return sb.from(name).insert({ id:id, data:obj, updated_at:new Date().toISOString() }).then(function(r){ if(r.error) throw r.error; return { id:id }; }); },
-          get:function(){ return sb.from(name).select('id,data').then(function(r){ return { docs:(r.data||[]).map(function(row){ return { id:row.id, data:function(){return row.data;} }; }) }; }); }
+          get:function(){ return new Promise(function(res,rej){ fetchAll(name, function(rows){ res({ docs:rows.map(function(row){ return { id:row.id, data:function(){return row.data;} }; }) }); }, rej); }); }
         };
       }
     };
