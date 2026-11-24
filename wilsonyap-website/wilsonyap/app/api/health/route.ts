@@ -37,27 +37,27 @@ async function fetchAll(url: string, key: string): Promise<Row[]> {
 export async function GET(req: Request) {
   const token = new URL(req.url).searchParams.get("token") || "";
   const expected = process.env.HEALTH_TOKEN || "";
+  // Always return HTTP 200 and put the real state inside the JSON, so monitoring
+  // tools (WebFetch) can always read the body even on an error condition.
   if (!expected || token !== expected) {
-    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+    return NextResponse.json({ ok: false, error: "unauthorized" });
   }
 
   const url = process.env.SUPABASE_URL || "";
   const key = process.env.SUPABASE_SECRET || "";
   if (!url || !key) {
-    return NextResponse.json(
-      { ok: false, error: "missing SUPABASE_URL or SUPABASE_SECRET env var" },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      ok: false,
+      error: "missing_env",
+      detail: "Set SUPABASE_URL, SUPABASE_SECRET and HEALTH_TOKEN in Vercel project env vars, then redeploy.",
+    });
   }
 
   let rows: Row[];
   try {
     rows = await fetchAll(url, key);
   } catch (e) {
-    return NextResponse.json(
-      { ok: false, error: "db_unreachable", detail: String(e).slice(0, 300) },
-      { status: 502 }
-    );
+    return NextResponse.json({ ok: false, error: "db_unreachable", detail: String(e).slice(0, 300) });
   }
 
   const now = Date.now();
