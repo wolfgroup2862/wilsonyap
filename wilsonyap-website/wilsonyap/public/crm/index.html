@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Wilson Yap CRM</title>
+<title>Wolf Group CRM</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -277,7 +277,7 @@ details.imp[open] summary::after{content:"－"}
 
 <div class="wrap">
   <header class="top">
-    <div class="brand"><div class="logo">W</div>Wilson Yap CRM</div>
+    <div class="brand"><div class="logo">W</div><span class="crmName" data-noi18n>Wolf Group CRM</span></div>
     <button class="btn langbtn" type="button" id="langBtn" data-noi18n aria-label="Language EN / CN"><span data-l="en">EN</span><span data-l="zh">CN</span></button>
     <nav class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-tab="listing" id="tab-listing">Listing</button>
@@ -292,7 +292,7 @@ details.imp[open] summary::after{content:"－"}
     <div class="pend" id="tagFix" hidden><div><b id="tagFixTitle"></b><div class="mapnote">照 agent 备注把号码标成 Wrong number / Not in service / No pick up。</div></div><button class="btn primary" type="button" id="tagFixGo">标记</button></div>
     <div class="pend" id="pend" hidden><div><b id="pendTitle"></b><div class="mapnote" id="pendSub"></div></div><button class="btn primary" type="button" id="pendGo">导入</button></div>
     <section class="hero">
-      <div class="eyebrow">Private · Wilson Yap CRM</div>
+      <div class="eyebrow"><span>Private ·</span> <span class="crmName" data-noi18n>Wolf Group CRM</span></div>
       <h1>Find any listing.<br><span class="grad">Know every detail.</span></h1>
       <p>输入 listing ID、门牌 / 地址或项目名称，马上找到 owner 电话、售价和完整资料。</p>
     </section>
@@ -430,7 +430,7 @@ details.imp[open] summary::after{content:"－"}
 </aside>
 <div class="toast" id="toast" hidden></div>
 
-<!-- ===== Wilson Yap CRM · Supabase + Login (injected; replaces the Claude runtime) ===== -->
+<!-- ===== Wolf Group CRM · Supabase + Login (injected; replaces the Claude runtime) ===== -->
 <script src="/crm/supabase.js"></script>
 <script>
 (function(){
@@ -484,7 +484,34 @@ details.imp[open] summary::after{content:"－"}
   var dbResolve, dbPromise=new Promise(function(res){ dbResolve=res; });
   window.claude = { use:function(n){ return n==="db" ? dbPromise : Promise.resolve(null); } };
 
-  function boot(){ dbResolve(makeDb()); addLogoutBtn(); }
+  // ---- per-login branding: whoever logs in sees their own CRM name ----
+  var CRM_OWNERS = {
+    "ws.wilsonyap@gmail.com": "Wilson Yap",
+    "lck5143@gmail.com": "CK Law",
+    "wolfgroup2862@gmail.com": "Wolf Group"
+  };
+  // links: /crm?u=wilson → Wilson Yap CRM, /crm?u=ck → CK Law CRM (login page shows that name)
+  var CRM_LINKS = { wilson: "Wilson Yap", ck: "CK Law", wolf: "Wolf Group" };
+  function setBrand(owner){
+    window.CRM_OWNER = owner; window.CRM_NAME = owner + " CRM";
+    document.title = window.CRM_NAME;
+    document.querySelectorAll(".crmName").forEach(function(el){ el.textContent = window.CRM_NAME; });
+  }
+  function preLoginOwner(){
+    var u = ""; try{ u = (new URLSearchParams(location.search).get("u")||"").toLowerCase(); }catch(e){}
+    if(CRM_LINKS[u]) return CRM_LINKS[u];
+    try{ var last = localStorage.getItem("crmOwner"); if(last) return last; }catch(e){}
+    return "Wolf Group";
+  }
+  function applyBrand(email){
+    var owner = CRM_OWNERS[String(email||"").toLowerCase()] || "Wolf Group";
+    try{ localStorage.setItem("crmOwner", owner); }catch(e){}
+    setBrand(owner);
+  }
+  function boot(){
+    dbResolve(makeDb()); addLogoutBtn();
+    sb.auth.getUser().then(function(r){ applyBrand(r && r.data && r.data.user && r.data.user.email); }).catch(function(){});
+  }
 
   function addLogoutBtn(){
     if(document.getElementById('__logout')) return;
@@ -500,7 +527,7 @@ details.imp[open] summary::after{content:"－"}
     ov.style.cssText='position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#070A12;color:#E8ECF6;font-family:Inter,system-ui,sans-serif;padding:16px';
     ov.innerHTML=''
       +'<form id="__lf" style="width:min(360px,100%);background:#0E1320;border:1px solid #222B42;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.5)">'
-      +'<div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3BE3D6,#8C7BFF);display:grid;place-items:center;color:#05121A;font-weight:700">W</div><div style="font-weight:700;font-size:18px">Wilson Yap CRM</div></div>'
+      +'<div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3BE3D6,#8C7BFF);display:grid;place-items:center;color:#05121A;font-weight:700">W</div><div style="font-weight:700;font-size:18px" class="crmName">Wolf Group CRM</div></div>'
       +'<div style="color:#8A93AE;font-size:13px;margin-top:-4px">请用你的 agent 账号登录</div>'
       +'<input id="__em" type="email" placeholder="Email" autocomplete="username" style="padding:12px 13px;border-radius:10px;border:1px solid #222B42;background:#070A12;color:#E8ECF6;font-size:15px">'
       +'<input id="__pw" type="password" placeholder="密码" autocomplete="current-password" style="padding:12px 13px;border-radius:10px;border:1px solid #222B42;background:#070A12;color:#E8ECF6;font-size:15px">'
@@ -508,6 +535,7 @@ details.imp[open] summary::after{content:"－"}
       +'<div id="__err" style="color:#F87171;font-size:13px;min-height:16px"></div>'
       +'</form>';
     document.body.appendChild(ov);
+    setBrand(preLoginOwner());
     document.getElementById('__lf').addEventListener('submit',function(e){
       e.preventDefault();
       var em=(document.getElementById('__em').value||'').trim(), pw=document.getElementById('__pw').value||'';
@@ -525,6 +553,8 @@ details.imp[open] summary::after{content:"－"}
     else if(document.body){ showLogin(); }
     else document.addEventListener('DOMContentLoaded', showLogin);
   }
+  document.title = preLoginOwner() + " CRM";
+  if(document.body) setBrand(preLoginOwner()); else document.addEventListener('DOMContentLoaded', function(){ setBrand(preLoginOwner()); });
   sb.auth.getSession().then(gate).catch(function(){ gate(null); });
 })();
 </script>
@@ -635,7 +665,7 @@ async function checkPending(){if(checkPending.done)return;checkPending.done=1;
 function pendTodo(){const by={};rows.forEach(r=>by[r.id]=r);return pending?pending.filter(d=>{if(!d||!d.ref)return false;const ex=by[String(d.ref).toLowerCase()];return !ex||ex.area!==d.area}):[]}
 function showPending(){const el=$("pend");if(!el)return;const t=pendTodo();el.hidden=!t.length||!canWrite;if(!t.length||pendBusy)return;
   const by={};t.forEach(d=>by[d.area||"[待填]"]=(by[d.area||"[待填]"]||0)+1);
-  $("pendTitle").textContent=`Wilson Yap 准备好 ${t.length} 个新 listing`;
+  $("pendTitle").textContent=`${window.CRM_OWNER||"Wolf Group"} 准备好 ${t.length} 个新 listing`;
   $("pendSub").textContent=Object.entries(by).map(([a,n])=>`${a} ${n}`).join(" · ")+"。已经在 CRM 里的不会被覆盖。"}
 $("pendGo").onclick=async()=>{if(pendBusy||!db)return;const t=pendTodo();if(!t.length)return;pendBusy=true;const b=$("pendGo");b.disabled=true;let done=0,fail=0;
   for(let i=0;i<t.length;i+=8){const chunk=t.slice(i,i+8);
@@ -1071,7 +1101,7 @@ $("dlBtn").onclick=async()=>{
     if(n!==all.length)throw new Error("count mismatch");
     const buf=XLSX.write(wb,{bookType:"xlsx",type:"array"});
     const blob=new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
-    const d=new Date(),fn=`Wilson_Yap_CRM_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}.xlsx`;
+    const d=new Date(),fn=`${(window.CRM_NAME||"Wolf Group CRM").replace(/ /g,"_")}_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}.xlsx`;
     const dl=window.claude&&await claude.use("downloads");
     if(dl){await dl.save({filename:fn,data:blob})}
     else{const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000)}
@@ -1255,7 +1285,7 @@ const I18N_EN=[
 ["类别","Category"],["地区","Area"],["类型","Type"],["状态","Status"],["备注","Notes"],["名字","Name"],["公司","Company"],["移除","Remove"],["编辑","Edit"],["删除","Delete"],["取消","Cancel"],["保存","Save"],["清除","Clear"],["标记","Mark"],["复制","Copy"],["关闭","Close"],["放大","Zoom in"],["缩小","Zoom out"],["不要","No"],
 ["[待填]","[TBC]"],["卫星图看这一排","Satellite view of this row"],["到","to"],["待填","TBC"],["买","Buy"],["租","Rent"],["以上","up"],["已上线","Live"],["打开网站","Open website"],["⬇ Download Excel（全部资料）","⬇ Download Excel (all data)"],["Vercel 后台","Vercel dashboard"],["iProperty 盘源","iProperty listings"],["Facebook 影片","Facebook videos"],["放在哪里","Hosted on"],["网站","Websites"],["内容","Sections"],["盘源","Listings"],["影片","Videos"],
 ];
-const I18N_ZH=[["Find any listing.","找到每一个盘源。"],["Know every detail.","资料一目了然。"],["Find listing","找 Listing"],["Private · Wilson Yap CRM","内部使用 · Wilson Yap CRM"],
+const I18N_ZH=[["Find any listing.","找到每一个盘源。"],["Know every detail.","资料一目了然。"],["Find listing","找 Listing"],["Private ·","内部使用 ·"],
 ["Upload listing（Excel / CSV）","上传 Listing（Excel / CSV）"],["Filter","筛选"],["Buyer Matching","买家配对"],["Marketing","市场推广"],["Mapping","地图"],["soon","即将"],
 ["Buyer ","买家 "],["Matching","配对"]];
 let LANG="zh";try{LANG=localStorage.getItem("wolfLang")||"zh"}catch(e){}
