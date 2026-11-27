@@ -500,12 +500,10 @@ details.imp[open] summary::after{content:"－"}
   function preLoginOwner(){
     var u = ""; try{ u = (new URLSearchParams(location.search).get("u")||"").toLowerCase(); }catch(e){}
     if(CRM_LINKS[u]) return CRM_LINKS[u];
-    try{ var last = localStorage.getItem("crmOwner"); if(last) return last; }catch(e){}
     return "Wolf Group";
   }
   function applyBrand(email){
     var owner = CRM_OWNERS[String(email||"").toLowerCase()] || "Wolf Group";
-    try{ localStorage.setItem("crmOwner", owner); }catch(e){}
     setBrand(owner);
   }
   function boot(){
@@ -517,7 +515,7 @@ details.imp[open] summary::after{content:"－"}
     if(document.getElementById('__logout')) return;
     var b=document.createElement('button'); b.id='__logout'; b.type='button'; b.textContent='登出';
     b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:50;font:600 12px Inter,system-ui,sans-serif;padding:7px 12px;border-radius:999px;border:1px solid #333;background:#111;color:#bbb;cursor:pointer;opacity:.75';
-    b.onclick=function(){ sb.auth.signOut().then(function(){ location.reload(); }); };
+    b.onclick=function(){ try{ localStorage.removeItem("crmOwner"); }catch(e){} sb.auth.signOut().then(function(){ location.href = location.pathname; }); };
     document.body.appendChild(b);
   }
 
