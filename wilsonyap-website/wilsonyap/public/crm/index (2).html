@@ -1,0 +1,1310 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Wolf Group CRM</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single centered column — hero + search, 3 category cards, area chips, address list; import panel at bottom; detail drawer */
+:root{
+  --bg:#070A12; --panel:#0E1320; --panel2:#141B2C; --line:#222B42; --fg:#E8ECF6; --muted:#8A93AE;
+  --a1:#3BE3D6; --a2:#8C7BFF; --glow:rgba(59,227,214,.14); --glow2:rgba(140,123,255,.14); --on-a:#05121A;
+  --ok:#34D399; --warn:#FBBF24; --off:#8A93AE; --bad:#F87171;
+  --f-d:"Space Grotesk",system-ui,sans-serif; --f-b:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif; --f-m:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#F4F6FB; --panel:#FFFFFF; --panel2:#EEF1F8; --line:#DDE2EE; --fg:#0D1324; --muted:#5B6584;
+  --a1:#0A9E96; --a2:#6A57F2; --glow:rgba(10,158,150,.10); --glow2:rgba(106,87,242,.10); --on-a:#FFFFFF;
+  --ok:#059669; --warn:#B45309; --off:#6B7280; --bad:#DC2626; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#F4F6FB; --panel:#FFFFFF; --panel2:#EEF1F8; --line:#DDE2EE; --fg:#0D1324; --muted:#5B6584;
+  --a1:#0A9E96; --a2:#6A57F2; --glow:rgba(10,158,150,.10); --glow2:rgba(106,87,242,.10); --on-a:#FFFFFF;
+  --ok:#059669; --warn:#B45309; --off:#6B7280; --bad:#DC2626; color-scheme:light}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-b);font-size:15px;line-height:1.5;min-height:100vh;
+  background-image:radial-gradient(700px 380px at 80% -80px,var(--glow),transparent 70%),radial-gradient(600px 360px at 10% 0,var(--glow2),transparent 70%);background-repeat:no-repeat}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--a1);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding-block:16px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:26px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-d);font-weight:600}
+.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--a1),var(--a2));display:grid;place-items:center;color:var(--on-a);font-weight:700;font-size:14px}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px;overflow-x:auto;max-width:100%}
+.tabs button{border:0;background:none;padding:6px 12px;border-radius:999px;color:var(--muted);cursor:pointer;white-space:nowrap;font-size:13px}
+.tabs button[aria-selected="true"]{background:var(--panel2);color:var(--fg)}
+.tabs .soon{font-size:10px;opacity:.7;margin-left:4px}
+.hero{text-align:center;display:flex;flex-direction:column;gap:10px;padding-top:10px}
+.hero .eyebrow{font-family:var(--f-m);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-family:var(--f-d);font-weight:700;font-size:clamp(34px,8vw,56px);line-height:1.02;margin:0;letter-spacing:-.02em;text-wrap:balance}
+.grad{background:linear-gradient(100deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{margin:0 auto;color:var(--muted);max-width:44ch}
+.searchbox{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 40px var(--glow)}
+.sfield{display:flex;align-items:center;gap:10px;padding:6px 10px}
+.sfield svg{flex:none;color:var(--a1)}
+.sfield input{flex:1;min-width:0;border:0;background:none;font-size:17px;outline:none}
+.btn{border:1px solid var(--line);background:var(--panel2);padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:500}
+.btn.primary{border:0;background:linear-gradient(110deg,var(--a1),var(--a2));color:var(--on-a);font-weight:600}
+.btn.big{padding:14px;font-size:16px;border-radius:14px}
+.btn.ghost{background:none}
+.btn.danger{background:none;color:var(--bad);border-color:currentColor}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.sec h2{font-family:var(--f-d);font-size:17px;margin:0 0 2px}
+.sec .hint{color:var(--muted);font-size:13px;margin:0 0 12px}
+.cats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}@media (max-width:640px){.cats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.cat{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:16px 10px;cursor:pointer;text-align:center;display:flex;flex-direction:column;gap:2px}
+.cat b{font-family:var(--f-d);font-size:17px}
+.cat span{color:var(--muted);font-size:12px}
+.cat .n{font-family:var(--f-m);font-size:12px;color:var(--a1)}
+.cat[aria-pressed="true"]{border-color:transparent;background:linear-gradient(var(--panel),var(--panel)) padding-box,linear-gradient(120deg,var(--a1),var(--a2)) border-box;border:1.5px solid transparent;box-shadow:0 0 28px var(--glow)}
+@media (max-width:420px){.cat{padding:14px 6px}.cat b{font-size:15px}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:7px 14px;cursor:pointer;font-size:14px;white-space:nowrap}
+.chip small{font-family:var(--f-m);color:var(--muted);margin-left:6px}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip[aria-pressed="true"] small{color:var(--bg);opacity:.7}
+.list{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px 16px;cursor:pointer;text-align:left;width:100%}
+.row:hover{border-color:color-mix(in srgb,var(--a1) 50%,var(--line))}
+.row .main{min-width:0}
+.row .addr{font-weight:600;overflow-wrap:anywhere}
+.row .meta{color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.row .right{text-align:right;flex:none}
+.price{font-family:var(--f-m);font-variant-numeric:tabular-nums;font-weight:500}
+.ref{font-family:var(--f-m);font-size:11px;color:var(--muted)}
+.tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:999px;border:1px solid currentColor;margin-top:4px}
+.t-ok{color:var(--ok)}.t-warn{color:var(--warn)}.t-off{color:var(--off)}
+.tbd{color:var(--muted);font-style:italic;font-weight:400}
+.empty{border:1px dashed var(--line);border-radius:14px;padding:28px 16px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--fg);font-family:var(--f-d);margin-bottom:4px}
+details.imp{border:1px solid var(--line);background:var(--panel);border-radius:16px}
+details.imp summary{cursor:pointer;padding:16px 18px;font-weight:600;font-family:var(--f-d);list-style:none;display:flex;justify-content:space-between;gap:8px}
+details.imp summary::-webkit-details-marker{display:none}
+details.imp summary::after{content:"＋";color:var(--a1)}
+details.imp[open] summary::after{content:"－"}
+.impbody{padding:0 18px 18px;display:flex;flex-direction:column;gap:12px}
+.drop{border:1.5px dashed var(--line);border-radius:12px;padding:22px;text-align:center;color:var(--muted);cursor:pointer}
+.drop.over{border-color:var(--a1);color:var(--fg)}
+.field{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 11px;width:100%;min-width:0}
+.inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.inline label{font-size:13px;color:var(--muted)}
+.inline select{width:auto}
+.pv{overflow-x:auto;border:1px solid var(--line);border-radius:10px;max-height:320px}
+.pv table{border-collapse:collapse;font-size:12px;width:100%}
+.pv th,.pv td{padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:left}
+.pv th{position:sticky;top:0;background:var(--panel2);color:var(--muted);font-weight:500}
+.mapnote{font-size:12px;color:var(--muted)}
+.mapnote code{font-family:var(--f-m);color:var(--fg)}
+.sumline{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
+.sumline b{font-family:var(--f-m)}
+.foot{text-align:center;color:var(--muted);font-size:12px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.foot .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--muted);margin-right:6px}
+.foot .dot.on{background:var(--a1);box-shadow:0 0 8px var(--a1)}
+.linkbtn{background:none;border:0;color:var(--a1);cursor:pointer;font-size:12px;padding:2px}
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(3,6,14,.55);backdrop-filter:blur(3px);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(480px,100%);background:var(--panel);z-index:41;display:flex;flex-direction:column;border-left:1px solid var(--line);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.dhead{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dhead h3{margin:0;font-family:var(--f-d);font-size:18px;overflow-wrap:anywhere}
+.dbody{overflow:auto;padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dbody .full{grid-column:1/-1}
+.dbody label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+.dbody .field{font-size:14px;color:var(--fg)}
+.view{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:14px}
+.view dt{color:var(--muted)}
+.view dd{margin:0;overflow-wrap:anywhere}
+.copy{margin-left:8px}
+.dfoot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--line)}
+.dfoot div{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media (max-width:480px){.dbody{grid-template-columns:1fr}}
+#view-marketing:not([hidden]){display:flex;flex-direction:column;gap:18px}
+.site{border:1px solid var(--line);background:var(--panel);border-radius:18px;overflow:hidden}
+.site .cover{padding:22px 18px;background:radial-gradient(400px 200px at 80% 0,rgba(200,35,31,.55),transparent 70%),#120909;color:#f4ece4}
+.site .cover .k{font-family:var(--f-m);font-size:11px;letter-spacing:.18em;color:#a4948c}
+.site .cover h3{margin:6px 0 2px;font-family:var(--f-d);font-size:26px;letter-spacing:.02em}
+.site .cover a{color:#f4ece4;font-family:var(--f-m);font-size:13px;overflow-wrap:anywhere}
+.site .body{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.site dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0;font-size:14px}
+.site dt{color:var(--muted)}.site dd{margin:0;overflow-wrap:anywhere}
+.site .acts{display:flex;gap:8px;flex-wrap:wrap}
+.site .acts a{text-decoration:none;color:var(--fg)}.site .acts a.primary{color:var(--on-a)}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ok);border:1px solid currentColor;border-radius:999px;padding:1px 9px}
+.live:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+#view-mapping:not([hidden]){display:flex}
+#view-matching:not([hidden]){display:flex;flex-direction:column;gap:18px}
+.mform{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 40px var(--glow)}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mgrid .full{grid-column:1/-1}
+.mgrid label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+.mgrid label.ck{flex-direction:row;align-items:center;gap:8px;font-size:13px;color:var(--fg)}
+.microw{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mic{display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;padding:10px 18px;border-radius:999px;font-weight:600;background:linear-gradient(110deg,var(--a1),var(--a2));color:var(--on-a)}
+.mic.on{box-shadow:0 0 0 4px var(--glow),0 0 24px var(--a1)}
+@media (prefers-reduced-motion:no-preference){.mic.on{animation:pulse 1.2s ease-in-out infinite}}
+.btext{font-size:16px;line-height:1.5;resize:vertical;min-height:130px;background:var(--bg)}
+.parsed{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.parsed .mlab{margin:0;display:inline}.parsed .tag{margin-top:0}
+.mclean{flex-basis:100%;font-size:14px;color:var(--fg);background:var(--panel2);border-radius:10px;padding:8px 10px}
+.mnote{font-size:13px;color:var(--muted);flex-basis:100%}
+.btitle{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mlab{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.mact{display:flex;gap:8px;flex-wrap:wrap}.mact .big{flex:1 1 200px}
+.mitem{display:flex;flex-direction:column;gap:6px}
+.why{display:flex;gap:6px;flex-wrap:wrap;padding:0 4px}
+.why .tag{margin-top:0}
+.score{font-family:var(--f-m);font-size:12px;color:var(--a1)}
+.tier{font-size:12px;color:var(--muted);margin:10px 0 2px;text-transform:uppercase;letter-spacing:.08em}
+.brow{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:12px 14px;cursor:pointer}
+.brow .bsub{color:var(--muted);font-size:13px}
+@media (max-width:520px){.mgrid{grid-template-columns:1fr}}
+.pend{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1.5px solid transparent;border-radius:16px;padding:14px 16px;background:linear-gradient(var(--panel),var(--panel)) padding-box,linear-gradient(120deg,var(--a1),var(--a2)) border-box}
+.pend>div{min-width:0;flex:1 1 220px}
+.maptools{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.maptools select{width:auto;max-width:100%}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px}
+.lg{display:inline-flex;align-items:center;gap:5px}
+.lg::before{content:"";width:12px;height:12px;border-radius:3px;border:1.5px solid currentColor}
+.lg.sale{color:var(--a1)}.lg.rent{color:var(--a2)}.lg.own{color:var(--muted)}.lg.none{color:var(--line)}
+.lg.sale::before{background:color-mix(in srgb,var(--a1) 25%,transparent)}.lg.rent::before{background:color-mix(in srgb,var(--a2) 25%,transparent)}.lg.own::before{background:color-mix(in srgb,var(--muted) 20%,transparent)}
+.lg.none{color:var(--muted)}.lg.ten{color:var(--warn)}.lg.ten::before{background:color-mix(in srgb,var(--warn) 22%,transparent)}.u.ten{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 18%,var(--bg))}.u.ten .ul{color:var(--warn)}.pin.ten{background:#FBBF24;border-color:#B45309}.lg.sold{color:var(--bad)}.lg.sold::before{background:color-mix(in srgb,var(--bad) 20%,transparent)}.u.sold{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 16%,var(--bg))}.u.sold .ul{color:var(--bad)}.pin.sold{background:#F87171;border-color:#B91C1C}
+.zoom{display:flex;gap:6px}.zoom .btn{padding:6px 14px;font-size:18px;line-height:1}
+.plan{--z:1;display:flex;flex-direction:column;gap:18px}
+.street{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;min-width:0}
+.sname{font-family:var(--f-d);font-weight:600;margin-bottom:10px;display:flex;gap:10px;align-items:baseline}
+.sat{margin-left:auto;font-family:var(--f-b);font-size:12px;font-weight:600;text-decoration:none;color:var(--a1);border:1px solid var(--a1);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.sname{flex-wrap:wrap}
+.sname small{font-family:var(--f-m);font-size:11px;color:var(--muted);font-weight:400}
+.sscroll{overflow-x:auto;padding-block:4px 6px}
+.srow{display:flex;gap:calc(6px*var(--z));width:max-content;padding-top:calc(14px*var(--z))}
+.sin{width:max-content;min-width:100%}
+.road{text-align:center;font-family:var(--f-m);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);border-block:1px dashed var(--line);padding:6px 0;margin-top:8px;background:repeating-linear-gradient(90deg,transparent 0 18px,var(--panel2) 18px 30px)}
+.u{position:relative;width:calc(48px*var(--z));height:calc(56px*var(--z));border-radius:6px;border:1.5px solid var(--line);background:var(--bg);cursor:pointer;display:grid;place-items:center;padding:0;flex:none}
+.u .un{font-family:var(--f-m);font-weight:600;font-size:calc(14px*var(--z))}
+.u .ul{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-size:calc(8px*var(--z));font-weight:700;letter-spacing:.04em;white-space:nowrap;margin-bottom:2px}
+.u.sale{border-color:var(--a1);background:color-mix(in srgb,var(--a1) 22%,var(--bg));color:var(--fg)}.u.sale .ul{color:var(--a1)}
+.u.rent{border-color:var(--a2);background:color-mix(in srgb,var(--a2) 22%,var(--bg))}.u.rent .ul{color:var(--a2)}
+.u.own{border-color:var(--muted);background:color-mix(in srgb,var(--muted) 16%,var(--bg))}.u.own .ul{color:var(--muted)}
+.u:hover{transform:translateY(-2px)}
+.u.flash{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--a1),0 0 26px var(--a1);z-index:1}
+@media (prefers-reduced-motion:no-preference){.u{transition:transform .12s}.u.flash{animation:pulse 1s ease-in-out 3}@keyframes pulse{50%{box-shadow:0 0 0 3px var(--bg),0 0 0 9px var(--a1),0 0 40px var(--a1)}}}
+.gmap{grid-column:1/-1;text-align:center;text-decoration:none;color:var(--fg);margin-top:6px}
+.owners{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.ohead{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.coname{font-family:var(--f-d);font-weight:600;font-size:17px;overflow-wrap:anywhere}
+.ocard{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;background:var(--bg)}
+.olab{font-family:var(--f-m);font-size:11px;color:var(--a1)}
+.olab2{font-size:11px;color:var(--muted);margin-top:4px}
+.oname{font-weight:600;overflow-wrap:anywhere}
+.oic{font-family:var(--f-m);font-size:13px;color:var(--muted)}
+.ph{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 0;border-top:1px dashed var(--line)}
+.ph .num{font-family:var(--f-m);font-variant-numeric:tabular-nums;font-size:15px}
+.ph.k-correct .num{color:var(--ok);font-weight:600}
+.ph.k-npu .num{color:var(--warn)}
+.ph.k-wrong .num,.ph.k-nis .num{color:var(--bad);text-decoration:line-through;opacity:.8}
+.t-bad{color:var(--bad)}
+.mark{font-size:12px;padding:4px 6px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);max-width:92px}
+.ph .tag{margin-top:0}
+.ph .sp{flex:1}
+.call{display:inline-flex;align-items:center;gap:4px;text-decoration:none;font-weight:600;font-size:13px;padding:6px 14px;border-radius:999px;background:linear-gradient(110deg,var(--a1),var(--a2));color:var(--on-a)}
+.call::before{content:"";width:12px;height:12px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z'/%3E%3C/svg%3E") center/contain no-repeat}
+.oedit{display:flex;flex-direction:column;gap:10px}
+.oblk{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.oblk .obtop{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}
+.ck{flex-direction:row!important;align-items:center;gap:6px!important}
+@media (max-width:480px){.oblk{grid-template-columns:1fr}}
+.row{cursor:pointer}
+.rown{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.rname{font-size:13px;overflow-wrap:anywhere}
+.rph{font-family:var(--f-m);font-size:13px;color:var(--ok);font-weight:600}
+.call.sm,.wa.sm{padding:4px 12px;font-size:12px}
+.wa{display:inline-flex;align-items:center;text-decoration:none;font-weight:600;font-size:13px;padding:6px 14px;border-radius:999px;border:1px solid #25D366;color:#25D366}
+.fbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:10px;align-items:end}
+.fbar label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+@media (max-width:640px){.fbar{grid-template-columns:1fr 1fr}.fbar label:nth-child(-n+2){grid-column:1/-1}}
+.langbtn{padding:3px;border-radius:999px;font-size:12px;margin-left:auto;display:inline-flex;gap:2px;font-weight:600;letter-spacing:.04em}.langbtn span{padding:4px 11px;border-radius:999px;color:var(--muted)}.langbtn span.on{background:var(--fg);color:var(--bg)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:10px;z-index:60;font-size:13px}
+@media (prefers-reduced-motion:no-preference){.drawer{animation:sl .18s ease-out}@keyframes sl{from{transform:translateX(20px);opacity:.6}}.cat,.chip,.row{transition:border-color .15s,box-shadow .15s}}
+/* ===== Skyloft building navigator ===== */
+#skyloft{display:flex;flex-direction:column;gap:14px}
+.skyhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.skyhead .bc{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.skyhead button{border:0;background:none;color:var(--a1);cursor:pointer;font:inherit;padding:0}
+.skyhead .sep{opacity:.5}
+.skyhead .ty{font-family:var(--f-m);font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);cursor:pointer}
+.skyhead .ty:hover{border-color:var(--a1);color:var(--a1)}
+.skyplan{position:relative;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#eef1f6;line-height:0}
+.skyplan img{display:block;width:100%}
+.skyplan svg{position:absolute;inset:0;width:100%;height:100%}
+.scell polygon{fill:transparent;stroke:transparent;stroke-width:3;transition:fill .12s,stroke .12s}
+.scell:not(.off){cursor:pointer}
+.scell.off{pointer-events:none}
+.scell:not(.off):hover polygon{fill:color-mix(in srgb,var(--bc) 45%,transparent);stroke:#fff}
+.scell text{font:600 13px var(--f-m,monospace);fill:#17324d;text-anchor:middle;dominant-baseline:central;pointer-events:none;paint-order:stroke;stroke:rgba(255,255,255,.7);stroke-width:3px}
+.scell.off text{fill:#8795a6}
+.lvstack{display:flex;flex-direction:column;gap:8px}
+.lvcard{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:14px;border:1px solid var(--line);border-left:4px solid var(--uc,var(--line));background:var(--panel);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left}
+.lvcard:hover{border-color:color-mix(in srgb,var(--a1) 45%,var(--line))}
+.lvcard .lvn{font-family:var(--f-d);font-weight:700;font-size:17px;min-width:96px}
+.lvcard .ost{font-size:11px;font-family:var(--f-m);letter-spacing:.04em;color:var(--uc,var(--muted))}
+.lvcard .onm{font-size:14px;color:var(--fg);overflow-wrap:anywhere;text-align:right}
+.lvcard .onm.tbd{color:var(--muted)}
+.plans{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.plans button{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:7px 12px;cursor:pointer;font-size:13px;font-weight:500}
+.plans button:hover{border-color:var(--a1)}
+.skylb{position:fixed;inset:0;z-index:70;background:rgba(3,6,14,.9);display:grid;place-items:center;padding:16px}
+.skylb img{max-width:100%;max-height:82vh;border-radius:12px;background:#fff}
+.skylb .x{position:absolute;top:14px;right:16px;border:0;background:var(--fg);color:var(--bg);width:38px;height:38px;border-radius:50%;font-size:22px;cursor:pointer;line-height:1}
+.skylb .cap{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;font-family:var(--f-m)}
+</style>
+<style> .leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane > svg,.leaflet-pane > canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0;}.leaflet-container{overflow:hidden;}.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-user-drag:none;}.leaflet-tile::selection{background:transparent;}.leaflet-safari .leaflet-tile{image-rendering:-webkit-optimize-contrast;}.leaflet-safari .leaflet-tile-container{width:1600px;height:1600px;-webkit-transform-origin:0 0;}.leaflet-marker-icon,.leaflet-marker-shadow{display:block;}.leaflet-container .leaflet-overlay-pane svg{max-width:none !important;max-height:none !important;}.leaflet-container .leaflet-marker-pane img,.leaflet-container .leaflet-shadow-pane img,.leaflet-container .leaflet-tile-pane img,.leaflet-container img.leaflet-image-layer,.leaflet-container .leaflet-tile{max-width:none !important;max-height:none !important;width:auto;padding:0;}.leaflet-container img.leaflet-tile{mix-blend-mode:plus-lighter;}.leaflet-container.leaflet-touch-zoom{-ms-touch-action:pan-x pan-y;touch-action:pan-x pan-y;}.leaflet-container.leaflet-touch-drag{-ms-touch-action:pinch-zoom;touch-action:none;touch-action:pinch-zoom;}.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{-ms-touch-action:none;touch-action:none;}.leaflet-container{-webkit-tap-highlight-color:transparent;}.leaflet-container a{-webkit-tap-highlight-color:rgba(51,181,229,0.4);}.leaflet-tile{filter:inherit;visibility:hidden;}.leaflet-tile-loaded{visibility:inherit;}.leaflet-zoom-box{width:0;height:0;-moz-box-sizing:border-box;box-sizing:border-box;z-index:800;}.leaflet-overlay-pane svg{-moz-user-select:none;}.leaflet-pane{z-index:400;}.leaflet-tile-pane{z-index:200;}.leaflet-overlay-pane{z-index:400;}.leaflet-shadow-pane{z-index:500;}.leaflet-marker-pane{z-index:600;}.leaflet-tooltip-pane{z-index:650;}.leaflet-popup-pane{z-index:700;}.leaflet-map-pane canvas{z-index:100;}.leaflet-map-pane svg{z-index:200;}.leaflet-vml-shape{width:1px;height:1px;}.lvml{display:inline-block;position:absolute;}.leaflet-control{position:relative;z-index:800;pointer-events:visiblePainted;pointer-events:auto;}.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none;}.leaflet-top{top:0;}.leaflet-right{right:0;}.leaflet-bottom{bottom:0;}.leaflet-left{left:0;}.leaflet-control{float:left;clear:both;}.leaflet-right .leaflet-control{float:right;}.leaflet-top .leaflet-control{margin-top:10px;}.leaflet-bottom .leaflet-control{margin-bottom:10px;}.leaflet-left .leaflet-control{margin-left:10px;}.leaflet-right .leaflet-control{margin-right:10px;}.leaflet-fade-anim .leaflet-popup{opacity:0;-webkit-transition:opacity 0.2s linear;-moz-transition:opacity 0.2s linear;transition:opacity 0.2s linear;}.leaflet-fade-anim .leaflet-map-pane .leaflet-popup{opacity:1;}.leaflet-zoom-animated{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0;}svg.leaflet-zoom-animated{will-change:transform;}.leaflet-zoom-anim .leaflet-zoom-animated{-webkit-transition:-webkit-transform 0.25s cubic-bezier(0,0,0.25,1);-moz-transition:-moz-transform 0.25s cubic-bezier(0,0,0.25,1);transition:transform 0.25s cubic-bezier(0,0,0.25,1);}.leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{-webkit-transition:none;-moz-transition:none;transition:none;}.leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden;}.leaflet-interactive{cursor:pointer;}.leaflet-grab{cursor:-webkit-grab;cursor:-moz-grab;cursor:grab;}.leaflet-crosshair,.leaflet-crosshair .leaflet-interactive{cursor:crosshair;}.leaflet-popup-pane,.leaflet-control{cursor:auto;}.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive,.leaflet-dragging .leaflet-marker-draggable{cursor:move;cursor:-webkit-grabbing;cursor:-moz-grabbing;cursor:grabbing;}.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-image-layer,.leaflet-pane > svg path,.leaflet-tile-container{pointer-events:none;}.leaflet-marker-icon.leaflet-interactive,.leaflet-image-layer.leaflet-interactive,.leaflet-pane > svg path.leaflet-interactive,svg.leaflet-image-layer.leaflet-interactive path{pointer-events:visiblePainted;pointer-events:auto;}.leaflet-container{background:#ddd;outline-offset:1px;}.leaflet-container a{color:#0078A8;}.leaflet-zoom-box{border:2px dotted #38f;background:rgba(255,255,255,0.5);}.leaflet-container{font-family:"Helvetica Neue",Arial,Helvetica,sans-serif;font-size:12px;font-size:0.75rem;line-height:1.5;}.leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,0.65);border-radius:4px;}.leaflet-bar a{background-color:#fff;border-bottom:1px solid #ccc;width:26px;height:26px;line-height:26px;display:block;text-align:center;text-decoration:none;color:black;}.leaflet-bar a,.leaflet-control-layers-toggle{background-position:50% 50%;background-repeat:no-repeat;display:block;}.leaflet-bar a:hover,.leaflet-bar a:focus{background-color:#f4f4f4;}.leaflet-bar a:first-child{border-top-left-radius:4px;border-top-right-radius:4px;}.leaflet-bar a:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;border-bottom:none;}.leaflet-bar a.leaflet-disabled{cursor:default;background-color:#f4f4f4;color:#bbb;}.leaflet-touch .leaflet-bar a{width:30px;height:30px;line-height:30px;}.leaflet-touch .leaflet-bar a:first-child{border-top-left-radius:2px;border-top-right-radius:2px;}.leaflet-touch .leaflet-bar a:last-child{border-bottom-left-radius:2px;border-bottom-right-radius:2px;}.leaflet-control-zoom-in,.leaflet-control-zoom-out{font:bold 18px 'Lucida Console',Monaco,monospace;text-indent:1px;}.leaflet-touch .leaflet-control-zoom-in,.leaflet-touch .leaflet-control-zoom-out{font-size:22px;}.leaflet-control-layers{box-shadow:0 1px 5px rgba(0,0,0,0.4);background:#fff;border-radius:5px;}.leaflet-control-layers-toggle{background-image:url(images/layers.png);width:36px;height:36px;}.leaflet-retina .leaflet-control-layers-toggle{background-image:url(images/layers-2x.png);background-size:26px 26px;}.leaflet-touch .leaflet-control-layers-toggle{width:44px;height:44px;}.leaflet-control-layers .leaflet-control-layers-list,.leaflet-control-layers-expanded .leaflet-control-layers-toggle{display:none;}.leaflet-control-layers-expanded .leaflet-control-layers-list{display:block;position:relative;}.leaflet-control-layers-expanded{padding:6px 10px 6px 6px;color:#333;background:#fff;}.leaflet-control-layers-scrollbar{overflow-y:scroll;overflow-x:hidden;padding-right:5px;}.leaflet-control-layers-selector{margin-top:2px;position:relative;top:1px;}.leaflet-control-layers label{display:block;font-size:13px;font-size:1.08333em;}.leaflet-control-layers-separator{height:0;border-top:1px solid #ddd;margin:5px -10px 5px -6px;}.leaflet-default-icon-path{background-image:url(images/marker-icon.png);}.leaflet-container .leaflet-control-attribution{background:#fff;background:rgba(255,255,255,0.8);margin:0;}.leaflet-control-attribution,.leaflet-control-scale-line{padding:0 5px;color:#333;line-height:1.4;}.leaflet-control-attribution a{text-decoration:none;}.leaflet-control-attribution a:hover,.leaflet-control-attribution a:focus{text-decoration:underline;}.leaflet-attribution-flag{display:inline !important;vertical-align:baseline !important;width:1em;height:0.6669em;}.leaflet-left .leaflet-control-scale{margin-left:5px;}.leaflet-bottom .leaflet-control-scale{margin-bottom:5px;}.leaflet-control-scale-line{border:2px solid #777;border-top:none;line-height:1.1;padding:2px 5px 1px;white-space:nowrap;-moz-box-sizing:border-box;box-sizing:border-box;background:rgba(255,255,255,0.8);text-shadow:1px 1px #fff;}.leaflet-control-scale-line:not(:first-child){border-top:2px solid #777;border-bottom:none;margin-top:-2px;}.leaflet-control-scale-line:not(:first-child):not(:last-child){border-bottom:2px solid #777;}.leaflet-touch .leaflet-control-attribution,.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-bar{box-shadow:none;}.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-bar{border:2px solid rgba(0,0,0,0.2);background-clip:padding-box;}.leaflet-popup{position:absolute;text-align:center;margin-bottom:20px;}.leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:12px;}.leaflet-popup-content{margin:13px 24px 13px 20px;line-height:1.3;font-size:13px;font-size:1.08333em;min-height:1px;}.leaflet-popup-content p{margin:17px 0;margin:1.3em 0;}.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-top:-1px;margin-left:-20px;overflow:hidden;pointer-events:none;}.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;pointer-events:auto;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg);}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:white;color:#333;box-shadow:0 3px 14px rgba(0,0,0,0.4);}.leaflet-container a.leaflet-popup-close-button{position:absolute;top:0;right:0;border:none;text-align:center;width:24px;height:24px;font:16px/24px Tahoma,Verdana,sans-serif;color:#757575;text-decoration:none;background:transparent;}.leaflet-container a.leaflet-popup-close-button:hover,.leaflet-container a.leaflet-popup-close-button:focus{color:#585858;}.leaflet-popup-scrolled{overflow:auto;}.leaflet-oldie .leaflet-popup-content-wrapper{-ms-zoom:1;}.leaflet-oldie .leaflet-popup-tip{width:24px;margin:0 auto;-ms-filter:"progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678,M12=0.70710678,M21=-0.70710678,M22=0.70710678)";filter:progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678,M12=0.70710678,M21=-0.70710678,M22=0.70710678);}.leaflet-oldie .leaflet-control-zoom,.leaflet-oldie .leaflet-control-layers,.leaflet-oldie .leaflet-popup-content-wrapper,.leaflet-oldie .leaflet-popup-tip{border:1px solid #999;}.leaflet-div-icon{background:#fff;border:1px solid #666;}.leaflet-tooltip{position:absolute;padding:6px;background-color:#fff;border:1px solid #fff;border-radius:3px;color:#222;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,0.4);}.leaflet-tooltip.leaflet-interactive{cursor:pointer;pointer-events:auto;}.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{position:absolute;pointer-events:none;border:6px solid transparent;background:transparent;content:"";}.leaflet-tooltip-bottom{margin-top:6px;}.leaflet-tooltip-top{margin-top:-6px;}.leaflet-tooltip-bottom:before,.leaflet-tooltip-top:before{left:50%;margin-left:-6px;}.leaflet-tooltip-top:before{bottom:0;margin-bottom:-12px;border-top-color:#fff;}.leaflet-tooltip-bottom:before{top:0;margin-top:-12px;margin-left:-6px;border-bottom-color:#fff;}.leaflet-tooltip-left{margin-left:-6px;}.leaflet-tooltip-right{margin-left:6px;}.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{top:50%;margin-top:-6px;}.leaflet-tooltip-left:before{right:0;margin-right:-12px;border-left-color:#fff;}.leaflet-tooltip-right:before{left:0;margin-left:-12px;border-right-color:#fff;}@media print{.leaflet-control{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+.seg{display:flex;gap:6px}
+.realwrap:not([hidden]){display:flex;flex-direction:column;gap:12px}
+.mapbox{position:relative;isolation:isolate;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+#rmap{height:min(70vh,640px);width:100%}
+.leaflet-container{background:#eef0f3;font:13px var(--f-b)}
+.gsat{position:absolute;top:10px;right:10px;z-index:500;background:#fff;color:#0D1324;font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;text-decoration:none;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.rlab{font:600 11px var(--f-b);color:#3c4252;white-space:nowrap;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff;pointer-events:none;display:none;transform:translate(-50%,-50%)}
+#rmap.zl .rlab{display:block}
+.pin{border-radius:6px;border:1.5px solid #0D1324;background:#8A93AE;display:grid!important;place-items:center;box-shadow:0 1px 4px rgba(0,0,0,.55);color:#05121A;cursor:pointer}
+.pin b{font:600 10px var(--f-m);display:none;line-height:1}
+#rmap.zn .pin b{display:block}
+#rmap:not(.zn) .pin{width:12px!important;height:12px!important;margin-left:-6px!important;margin-top:-6px!important;border-radius:50%}
+.pin.sale{background:#19C2B5;border-color:#077a72}.pin.rent{background:#8C7BFF;border-color:#4b3bc4;color:#fff}.pin.own{background:#9aa3b8;border-color:#5B6584}.pin.none{background:#fff;border-color:#5B6584;color:#0D1324}
+.pin.flash{box-shadow:0 0 0 3px #fff,0 0 0 6px #19C2B5,0 0 24px #19C2B5;z-index:1000!important}
+.strow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
+.strow small{display:block;color:var(--muted);font-size:12px}
+.strow small.no{color:var(--warn)}
+.stbtns{display:flex;gap:6px;flex-wrap:wrap}.stbtns .btn{padding:6px 12px;font-size:13px}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">W</div><span class="crmName" data-noi18n>Wolf Group CRM</span></div>
+    <button class="btn langbtn" type="button" id="langBtn" data-noi18n aria-label="Language EN / CN"><span data-l="en">EN</span><span data-l="zh">CN</span></button>
+    <nav class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="listing" id="tab-listing">Listing</button>
+      <button role="tab" aria-selected="false" data-tab="mapping" id="tab-mapping">Mapping</button>
+      <button role="tab" aria-selected="false" data-tab="marketing" id="tab-marketing">Marketing</button>
+      <button role="tab" aria-selected="false" data-tab="matching" id="tab-matching">Buyer Matching</button>
+    </nav>
+  </header>
+
+  <main id="view-listing" style="display:flex;flex-direction:column;gap:26px">
+    <div class="pend" id="ownFix" hidden><div><b id="ownFixTitle"></b><div class="mapnote">每个 owner 分开：名字、IC、电话，correct number 放第一个。</div></div><button class="btn primary" type="button" id="ownFixGo">整理</button></div>
+    <div class="pend" id="tagFix" hidden><div><b id="tagFixTitle"></b><div class="mapnote">照 agent 备注把号码标成 Wrong number / Not in service / No pick up。</div></div><button class="btn primary" type="button" id="tagFixGo">标记</button></div>
+    <div class="pend" id="pend" hidden><div><b id="pendTitle"></b><div class="mapnote" id="pendSub"></div></div><button class="btn primary" type="button" id="pendGo">导入</button></div>
+    <section class="hero">
+      <div class="eyebrow"><span>Private ·</span> <span class="crmName" data-noi18n>Wolf Group CRM</span></div>
+      <h1>Find any listing.<br><span class="grad">Know every detail.</span></h1>
+      <p>输入 listing ID、门牌 / 地址或项目名称，马上找到 owner 电话、售价和完整资料。</p>
+    </section>
+
+    <form class="searchbox" id="searchForm" role="search">
+      <div class="sfield">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="q" type="search" placeholder="例如 WL-0012、21-08 或项目名称" aria-label="搜寻 listing" autocomplete="off">
+      </div>
+      <button class="btn primary big" type="submit">Find listing</button>
+    </form>
+
+    <section class="sec">
+      <h2>选类别</h2>
+      <div class="cats" id="cats">
+        <button type="button" class="cat" data-for="Sale" aria-pressed="false"><b>For Sale</b><span>售价</span><span class="n" id="n-Sale">0</span></button>
+        <button type="button" class="cat" data-for="Rent" aria-pressed="false"><b>For Rent</b><span>租金</span><span class="n" id="n-Rent">0</span></button>
+        <button type="button" class="cat" data-for="Own Stay" aria-pressed="false"><b>Own Stay</b><span>屋主自住</span><span class="n" id="n-Own Stay">0</span></button>
+        <button type="button" class="cat" data-for="Tenanted" aria-pressed="false"><b>Tenanted</b><span>已有租客</span><span class="n" id="n-Tenanted">0</span></button>
+        <button type="button" class="cat" data-for="Sold" aria-pressed="false"><b>Sold</b><span>已经卖了</span><span class="n" id="n-Sold">0</span></button>
+      </div>
+      <div style="text-align:center;margin-top:10px"><button type="button" class="chip" id="noneChip" data-for="__none" aria-pressed="false">未分类<small id="n-none">0</small></button></div>
+    </section>
+
+    <section class="sec" id="areaSec" hidden>
+      <h2>Filter</h2>
+      <p class="hint" id="areaHint"></p>
+      <div class="fbar">
+        <label>Project<select class="field" id="fProj"></select></label>
+        <label>Property type<select class="field" id="fType"></select></label>
+        <label>价钱 RM 从<input class="field" id="fMin" inputmode="decimal" placeholder="例如 1.5m" autocomplete="off"></label>
+        <label>到<input class="field" id="fMax" inputmode="decimal" placeholder="例如 3m" autocomplete="off"></label>
+        <button class="btn ghost" type="button" id="fReset">清除</button>
+      </div>
+    </section>
+
+    <section class="sec" id="resSec" hidden>
+      <h2 id="resTitle">Address</h2>
+      <p class="hint" id="resHint"></p>
+      <div class="list" id="results"></div>
+    </section>
+
+    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap"><button class="btn" id="addBtn" type="button">+ 新增一个 listing</button><button class="btn" id="dlBtn" type="button">⬇ Download Excel（全部资料）</button></div>
+
+    <details class="imp" id="imp">
+      <summary>Upload listing（Excel / CSV）</summary>
+      <div class="impbody">
+        <label class="drop" id="drop" for="file">把 Excel 或 CSV 拖进来，或<b> 点这里选文件</b><br><small>同一个 Listing ID（或同地区同地址）的资料会更新，不会重复</small></label>
+        <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+        <div id="impStep" hidden style="display:flex;flex-direction:column;gap:12px">
+          <div class="inline"><label for="defFor">文件里没写类别的，当作</label>
+            <select class="field" id="defFor"><option value="">[待填]</option><option>Sale</option><option>Rent</option><option>Own Stay</option><option>Tenanted</option><option>Sold</option></select></div>
+          <div class="mapnote" id="mapNote"></div>
+          <div class="sumline" id="impSum"></div>
+          <div class="pv"><table id="pvTable"></table></div>
+          <div class="inline"><button class="btn primary" id="impGo" type="button">确认上传</button><button class="btn ghost" id="impCancel" type="button">取消</button><span id="impProg" class="mapnote"></span></div>
+        </div>
+      </div>
+    </details>
+  </main>
+
+  <section id="view-mapping" hidden style="flex-direction:column;gap:16px">
+    <div class="hero" style="padding-top:0"><h1 style="font-size:clamp(28px,6vw,40px)">Mapping</h1><p>每个点是一个单位。搜寻门牌或 Listing ID，地图会飞到那个单位。</p></div>
+    <form class="searchbox" id="mapForm" role="search">
+      <div class="sfield"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="mq" type="search" placeholder="例如 23、BK1-18-23" aria-label="搜寻单位" autocomplete="off"></div>
+      <button class="btn primary big" type="submit">Zoom 到这个单位</button>
+    </form>
+    <div class="maptools">
+      <div class="seg"><button type="button" class="chip" id="modeReal" aria-pressed="true">真地图</button><button type="button" class="chip" id="modeGrid" aria-pressed="false">格子图</button></div>
+      <select class="field" id="mArea" aria-label="地区"></select>
+      <div class="legend"><span class="lg sale">For Sale</span><span class="lg rent">For Rent</span><span class="lg own">Own Stay</span><span class="lg ten">Tenanted</span><span class="lg sold">Sold</span><span class="lg none">未分类</span></div>
+      <div class="zoom" id="zoomBox"><button class="btn" type="button" id="zOut" aria-label="缩小">−</button><button class="btn" type="button" id="zIn" aria-label="放大">＋</button></div>
+    </div>
+    <div id="realWrap" class="realwrap">
+      <div class="pend" id="placeBar" hidden><div><b id="placeTxt"></b><div class="mapnote">先放大到看得清楚那条路再点，比较准。</div></div><button class="btn" type="button" id="placeCancel">取消</button></div>
+      <div class="mapbox"><div id="rmap"></div><a class="gsat" id="gsat" href="https://www.google.com/maps" target="_blank" rel="noopener">🛰 Google 卫星图</a></div>
+      <p class="mapnote" id="rmapMiss" style="color:var(--warn)"></p>
+      <p class="mapnote" id="rmapNote">道路和厂房轮廓来自 OpenStreetMap。单位点是按街道和门牌号排出来的大概位置：单号一边，双号一边。放大就会看到门牌号，点一下看 owner 资料。位置不对，可以在下面「街道位置」调整。</p>
+      <details class="imp" id="stBox"><summary id="stSum">街道位置</summary><div class="impbody"><p class="mapnote">每条路只要在地图上点两下（门牌最小号那头、最大号那头），那条路的单位就会自动排上去。已经先从 OpenStreetMap 定位了一部分，位置不对可以重新定位。</p><div class="list" id="stList"></div></div></details>
+    </div>
+    <div class="plan" id="plan"></div>
+    <div id="skyloft" hidden></div>
+    <p class="mapnote" id="mapMiss"></p>
+  </section>
+
+  <section id="view-marketing" hidden>
+    <div class="sec"><h2>网站</h2><p class="hint">团队对外的网站。要改内容，直接告诉 Claude。</p></div>
+    <article class="site">
+      <div class="cover">
+        <div class="k">MEET THE TEAM · THE ROOF REALTY (TRR) · WOLF GROUP</div>
+        <h3>WILSON YAP × MANDY LEE</h3>
+        <a href="https://wilsonyap.vercel.app" target="_blank" rel="noopener">wilsonyap.vercel.app ↗</a>
+      </div>
+      <div class="body">
+        <div><span class="live">已上线</span></div>
+        <dl>
+          <dt>经纪</dt><dd>Wilson Yap、Mandy Lee（双人团队页，点照片里的人物会跳出介绍）</dd>
+          <dt>团队</dt><dd>The Roof Realty (TRR) · Wolf Group</dd>
+          <dt>地区</dt><dd>Puchong · Bukit Jalil · Petaling Jaya (PJ)</dd>
+          <dt>主打</dt><dd>Puchong 商业 · Bukit Jalil · PJ</dd>
+          <dt>内容</dt><dd>Home、My Team（Wilson / Mandy 个人简介）、Get in Touch</dd>
+          <dt>待补</dt><dd>两位经纪的简介文案和联络方式（WhatsApp / 电话）目前还是模板，要填真的资料就告诉 Claude</dd>
+        </dl>
+        <div class="acts">
+          <a class="btn primary" href="https://wilsonyap.vercel.app" target="_blank" rel="noopener">打开网站</a>
+        </div>
+      </div>
+    </article>
+  </section>
+  <section id="view-matching" hidden>
+    <div class="hero" style="padding-top:0"><h1 style="font-size:clamp(28px,6vw,40px)">Buyer <span class="grad">Matching</span></h1><p>把买家要找什么贴进大格，AI 自动读，从你的 listing 里找出符合的单位。</p></div>
+    <form class="mform" id="mForm" autocomplete="off">
+      <div class="microw"><button class="mic" type="button" id="bMic" hidden aria-label="按着讲买家需求"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span id="bMicTxt">按一下讲话</span></button><span class="mapnote" id="bMicHint">在手机上：点大格，再按键盘上的 🎤 就可以用讲的。</span></div>
+      <textarea class="field btext" id="bText" rows="5" placeholder="把买家的要求直接贴进来，例如：&#10;客户要买 Puchong 的 link factory，2m 以下，built-up 最少 3000sf，要 3 phase"></textarea>
+      <div class="parsed" id="bParsed" hidden></div>
+      <div class="mact"><button class="btn primary big" type="submit" id="bGo">AI 帮我找 Match</button><button class="btn" type="button" id="bSave">存这个买家</button><button class="btn ghost" type="button" id="bClear">清除</button></div>
+    </form>
+    <section class="sec" id="mResSec" hidden><h2 id="mResTitle">Match</h2><p class="hint" id="mResHint"></p><div class="list" id="mRes"></div></section>
+    <section class="sec"><h2>已存的买家</h2><p class="hint">点一个买家，马上重新配对。</p><div class="list" id="bList"></div></section>
+  </section>
+
+  <footer class="foot">
+    <span><span class="dot" id="dot"></span><span id="sync">连接中…</span></span>
+    <span>Owner 资料只存在这个 CRM 里，请不要截图外传。</span>
+    <button class="linkbtn" id="clearSamples" type="button" hidden></button>
+  </footer>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="dTitle">
+  <div class="dhead"><h3 id="dTitle">Listing</h3><button class="btn ghost" id="dClose" type="button" aria-label="关闭">✕</button></div>
+  <div class="dbody" id="dBody"></div>
+  <div class="dfoot" id="dFoot"></div>
+</aside>
+<div class="toast" id="toast" hidden></div>
+
+<!-- ===== Wolf Group CRM · Supabase + Login (injected; replaces the Claude runtime) ===== -->
+<script src="/crm/supabase.js"></script>
+<script>
+(function(){
+  var SB_URL = "https://rkrgedvnqtjkrlveotpv.supabase.co";
+  var SB_KEY = "sb_publishable_LblLyuIWe4eNxce8hCTybQ_98rOvUr0";
+  var sb = window.supabase.createClient(SB_URL, SB_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
+
+  // ---- Firestore-like adapter over Supabase tables (columns: id text pk, data jsonb) ----
+  function makeDb(){
+    // PostgREST returns at most 1000 rows per request — page through all of them
+    function fetchAll(name, ok, err){
+      var all=[], size=1000;
+      (function page(from){
+        sb.from(name).select('id,data').range(from, from+size-1).then(function(r){
+          if(r.error){ err&&err(r.error); return; }
+          all=all.concat(r.data||[]);
+          if((r.data||[]).length===size) page(from+size); else ok(all);
+        });
+      })(0);
+    }
+    return {
+      collection:function(name){
+        return {
+          onSnapshot:function(cb, errCb){
+            var cache=new Map();
+            var emit=function(){ try{ cb({ docs: Array.from(cache.entries()).map(function(e){ return { id:e[0], data:function(){return e[1];} }; }) }); }catch(x){} };
+            fetchAll(name, function(rows){ cache=new Map(rows.map(function(row){return [row.id,row.data];})); emit(); }, function(e){ errCb&&errCb({code:e.message}); });
+            var ch=sb.channel('rt-'+name).on('postgres_changes',{event:'*',schema:'public',table:name},function(p){
+              if(p.eventType==='DELETE'){ if(p.old&&p.old.id!=null) cache.delete(p.old.id); }
+              else if(p.new){ cache.set(p.new.id, p.new.data); }
+              emit();
+            }).subscribe();
+            return function(){ try{ sb.removeChannel(ch); }catch(x){} };
+          },
+          doc:function(id){
+            return {
+              get:function(){ return sb.from(name).select('data').eq('id',id).maybeSingle().then(function(r){ var d=r.data?r.data.data:undefined; return { exists:!!r.data, id:id, data:function(){return d;} }; }); },
+              set:function(obj){ return sb.from(name).upsert({ id:id, data:obj, updated_at:new Date().toISOString() }).then(function(r){ if(r.error) throw r.error; }); },
+              update:function(obj){ return sb.from(name).select('data').eq('id',id).maybeSingle().then(function(r){ var cur=(r.data&&r.data.data)||{}; var m=Object.assign({},cur,obj); return sb.from(name).update({ data:m, updated_at:new Date().toISOString() }).eq('id',id).then(function(r2){ if(r2.error) throw r2.error; }); }); },
+              delete:function(){ return sb.from(name).delete().eq('id',id).then(function(r){ if(r.error) throw r.error; }); }
+            };
+          },
+          add:function(obj){ var id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():('id'+Date.now()+Math.random().toString(36).slice(2)); return sb.from(name).insert({ id:id, data:obj, updated_at:new Date().toISOString() }).then(function(r){ if(r.error) throw r.error; return { id:id }; }); },
+          get:function(){ return new Promise(function(res,rej){ fetchAll(name, function(rows){ res({ docs:rows.map(function(row){ return { id:row.id, data:function(){return row.data;} }; }) }); }, rej); }); }
+        };
+      }
+    };
+  }
+
+  // ---- login gate: the app awaits window.claude.use("db"); it resolves only after sign-in ----
+  var dbResolve, dbPromise=new Promise(function(res){ dbResolve=res; });
+  window.claude = { use:function(n){ return n==="db" ? dbPromise : Promise.resolve(null); } };
+
+  // ---- per-login branding: whoever logs in sees their own CRM name ----
+  var CRM_OWNERS = {
+    "ws.wilsonyap@gmail.com": "Wilson Yap",
+    "lck5143@gmail.com": "CK Law",
+    "wolfgroup2862@gmail.com": "Wolf Group"
+  };
+  // links: /crm?u=wilson → Wilson Yap CRM, /crm?u=ck → CK Law CRM (login page shows that name)
+  var CRM_LINKS = { wilson: "Wilson Yap", ck: "CK Law", wolf: "Wolf Group" };
+  function setBrand(owner){
+    window.CRM_OWNER = owner; window.CRM_NAME = owner + " CRM";
+    document.title = window.CRM_NAME;
+    document.querySelectorAll(".crmName").forEach(function(el){ el.textContent = window.CRM_NAME; });
+  }
+  function preLoginOwner(){
+    var u = ""; try{ u = (new URLSearchParams(location.search).get("u")||"").toLowerCase(); }catch(e){}
+    if(CRM_LINKS[u]) return CRM_LINKS[u];
+    try{ var last = localStorage.getItem("crmOwner"); if(last) return last; }catch(e){}
+    return "Wolf Group";
+  }
+  function applyBrand(email){
+    var owner = CRM_OWNERS[String(email||"").toLowerCase()] || "Wolf Group";
+    try{ localStorage.setItem("crmOwner", owner); }catch(e){}
+    setBrand(owner);
+  }
+  function boot(){
+    dbResolve(makeDb()); addLogoutBtn();
+    sb.auth.getUser().then(function(r){ applyBrand(r && r.data && r.data.user && r.data.user.email); }).catch(function(){});
+  }
+
+  function addLogoutBtn(){
+    if(document.getElementById('__logout')) return;
+    var b=document.createElement('button'); b.id='__logout'; b.type='button'; b.textContent='登出';
+    b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:50;font:600 12px Inter,system-ui,sans-serif;padding:7px 12px;border-radius:999px;border:1px solid #333;background:#111;color:#bbb;cursor:pointer;opacity:.75';
+    b.onclick=function(){ sb.auth.signOut().then(function(){ location.reload(); }); };
+    document.body.appendChild(b);
+  }
+
+  function showLogin(){
+    if(document.getElementById('__login')) return;
+    var ov=document.createElement('div'); ov.id='__login';
+    ov.style.cssText='position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#070A12;color:#E8ECF6;font-family:Inter,system-ui,sans-serif;padding:16px';
+    ov.innerHTML=''
+      +'<form id="__lf" style="width:min(360px,100%);background:#0E1320;border:1px solid #222B42;border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.5)">'
+      +'<div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3BE3D6,#8C7BFF);display:grid;place-items:center;color:#05121A;font-weight:700">W</div><div style="font-weight:700;font-size:18px" class="crmName">Wolf Group CRM</div></div>'
+      +'<div style="color:#8A93AE;font-size:13px;margin-top:-4px">请用你的 agent 账号登录</div>'
+      +'<input id="__em" type="email" placeholder="Email" autocomplete="username" style="padding:12px 13px;border-radius:10px;border:1px solid #222B42;background:#070A12;color:#E8ECF6;font-size:15px">'
+      +'<input id="__pw" type="password" placeholder="密码" autocomplete="current-password" style="padding:12px 13px;border-radius:10px;border:1px solid #222B42;background:#070A12;color:#E8ECF6;font-size:15px">'
+      +'<button type="submit" style="padding:13px;border:0;border-radius:12px;background:linear-gradient(110deg,#3BE3D6,#8C7BFF);color:#05121A;font-weight:700;font-size:15px;cursor:pointer">登录</button>'
+      +'<div id="__err" style="color:#F87171;font-size:13px;min-height:16px"></div>'
+      +'</form>';
+    document.body.appendChild(ov);
+    setBrand(preLoginOwner());
+    document.getElementById('__lf').addEventListener('submit',function(e){
+      e.preventDefault();
+      var em=(document.getElementById('__em').value||'').trim(), pw=document.getElementById('__pw').value||'';
+      var er=document.getElementById('__err'); er.textContent='登录中…';
+      sb.auth.signInWithPassword({ email:em, password:pw }).then(function(r){
+        if(r.error){ er.textContent='登录失败：'+(r.error.message||'请检查 email / 密码'); return; }
+        ov.remove(); boot();
+      });
+    });
+  }
+
+  // on load: existing session → straight in; otherwise show the login screen
+  function gate(r){
+    if(r && r.data && r.data.session){ boot(); }
+    else if(document.body){ showLogin(); }
+    else document.addEventListener('DOMContentLoaded', showLogin);
+  }
+  document.title = preLoginOwner() + " CRM";
+  if(document.body) setBrand(preLoginOwner()); else document.addEventListener('DOMContentLoaded', function(){ setBrand(preLoginOwner()); });
+  sb.auth.getSession().then(gate).catch(function(){ gate(null); });
+})();
+</script>
+<!-- ===== end injected ===== -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=v=>{if(v==null||v==="")return null;const n=Number(String(v).replace(/[^0-9.]/g,""));return isNaN(n)||String(v).replace(/[^0-9.]/g,"")===""?null:n};
+const fmt=n=>n==null?"":n.toLocaleString("en-MY");
+const TBD='<span class="tbd">[待填]</span>';
+const LBL={Sale:"For Sale",Rent:"For Rent","Own Stay":"Own Stay",Tenanted:"Tenanted",Sold:"Sold",__none:"未分类"};
+function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,2400)}
+function priceTxt(r){const p=num(r.price);if(p==null)return r.for==="Own Stay"?"":TBD;return "RM "+fmt(p)+(r.for==="Rent"?"/月":"")}
+function statusTag(s){if(!s)return"";const c=/avail|在/i.test(s)?"t-ok":/nego|offer|谈/i.test(s)?"t-warn":"t-off";return `<span class="tag ${c}">${esc(s)}</span>`}
+const addrOf=r=>r.address||r.project||"";
+const isNum=k=>["price","built","land"].includes(k);
+
+let rows=[],db=null,canWrite=false,sel={for:"",area:""},query="";
+
+/* tabs */
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  ["listing","mapping","marketing","matching"].forEach(t=>$("view-"+t).hidden=b.dataset.tab!==t);
+  if(b.dataset.tab==="matching"){bChips();renderBuyers()}
+  if(b.dataset.tab==="mapping")renderMap();
+});
+
+/* search + category + area */
+$("searchForm").addEventListener("submit",e=>{e.preventDefault();query=$("q").value.trim();render();if(query)$("resSec").scrollIntoView({behavior:"smooth",block:"start"})});
+$("q").addEventListener("input",()=>{query=$("q").value.trim();render()});
+$("noneChip").onclick=()=>{sel.for=sel.for==="__none"?"":"__none";sel.area="";query="";$("q").value="";render()};
+$("cats").addEventListener("click",e=>{const b=e.target.closest(".cat");if(!b)return;sel.for=sel.for===b.dataset.for?"":b.dataset.for;sel.area="";showN=60;query="";$("q").value="";render()});
+const FL={proj:"",type:"",min:"",max:""};let showN=60;
+function amt(v){let t=String(v||"").trim().toLowerCase().replace(/rm|,|\s/g,"");if(!t)return null;let k=1;if(/m$/.test(t)){k=1e6;t=t.slice(0,-1)}else if(/k$/.test(t)){k=1e3;t=t.slice(0,-1)}const n=parseFloat(t);return isNaN(n)?null:n*k}
+[["fProj","proj"],["fType","type"]].forEach(([id,k])=>$(id).addEventListener("change",()=>{FL[k]=$(id).value;showN=60;render()}));
+[["fMin","min"],["fMax","max"]].forEach(([id,k])=>$(id).addEventListener("input",()=>{FL[k]=$(id).value;showN=60;render()}));
+$("fReset").onclick=()=>{Object.assign(FL,{proj:"",type:"",min:"",max:""});["fProj","fType","fMin","fMax"].forEach(i=>$(i).value="");showN=60;render()};
+$("results").addEventListener("click",e=>{if(e.target.id==="moreBtn"){showN+=100;render()}});
+
+function matchQ(r,q){q=q.toLowerCase();return ["ref","address","project","area","owner","phone","notes","type"].some(k=>String(r[k]??"").toLowerCase().includes(q))||(Array.isArray(r.owners)&&r.owners.some(o=>[o.name,o.ic,...(o.correct||[]),...(o.phones||[])].join(" ").toLowerCase().includes(q)))}
+function rowOwner(r){const L=ownersOf(r);if(!L.length)return "";
+  const co=L.find(o=>o.company);const withC=L.find(o=>(o.correct||[]).length);
+  const name=withC?(co&&co!==withC?`${esc(co.name)} · ${esc(withC.name)}`:esc(withC.name)):esc((co||L[0]).name||"");
+  const n=withC?withC.correct[0]:null;
+  return `<div class="rown"><span class="rname">${name||TBD}</span>${n?`<span class="rph">${fmtPh(n)}</span>${callBtns(n,1)}`:""}</div>`}
+function rowHtml(r){
+  return `<div role="button" tabindex="0" class="row" data-id="${esc(r.id)}"><div class="main"><div class="addr">${addrOf(r)?esc(addrOf(r)):TBD}</div>
+    <div class="meta">${[r.area,r.type].filter(Boolean).map(esc).join(" · ")}</div>${rowOwner(r)}</div>
+    <div class="right"><div class="price">${priceTxt(r)}</div><div class="ref">${esc(r.ref||"")}</div>${statusTag(r.status)}</div></div>`;
+}
+function render(){
+  ["Sale","Rent","Own Stay","Tenanted","Sold"].forEach(f=>{$("n-"+f).textContent=rows.filter(r=>r.for===f).length+" 个"});
+  document.querySelectorAll(".cat").forEach(c=>c.setAttribute("aria-pressed",c.dataset.for===sel.for));
+  const nNone=rows.filter(r=>!r.for).length;$("n-none").textContent=nNone;$("noneChip").hidden=!nNone;$("noneChip").setAttribute("aria-pressed",sel.for==="__none");
+  const inCat=rows.filter(r=>sel.for==="__none"?!r.for:r.for===sel.for);
+  $("areaSec").hidden=!sel.for||!!query;
+  const opts=(id,key,cur,all)=>{const cnt={};inCat.forEach(r=>{const v=r[key]||"[待填]";cnt[v]=(cnt[v]||0)+1});if(cur&&!(cur in cnt))cnt[cur]=0;
+    $(id).innerHTML=`<option value="">${all}</option>`+Object.keys(cnt).sort().map(v=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(v)} (${cnt[v]})</option>`).join("")};
+  if(sel.for){opts("fProj","area",FL.proj,"全部 Project");opts("fType","type",FL.type,"全部类型")}
+  const lo=amt(FL.min),hi=amt(FL.max);
+  const pass=r=>(!FL.proj||(r.area||"[待填]")===FL.proj)&&(!FL.type||(r.type||"[待填]")===FL.type)&&((lo==null&&hi==null)||(num(r.price)!=null&&(lo==null||num(r.price)>=lo)&&(hi==null||num(r.price)<=hi)));
+  let res=null,title="",hint="";
+  if(query){res=rows.filter(r=>matchQ(r,query));title=`搜寻：${query}`;hint=`找到 ${res.length} 个`}
+  else if(sel.for){res=inCat.filter(pass);title=`${LBL[sel.for]} · Address`;
+    const bits=[FL.proj,FL.type,(lo!=null||hi!=null)?`RM ${lo!=null?fmt(lo):"0"} – ${hi!=null?fmt(hi):"以上"}`:""].filter(Boolean);
+    hint=`${res.length} 个${bits.length?"（"+bits.join(" · ")+"）":""}，点进去看 owner 和完整资料`;
+    $("areaHint").textContent=`${LBL[sel.for]} 共 ${inCat.length} 个`+((lo!=null||hi!=null)?"，有价钱的才会出现在价钱筛选里":"")}
+  $("resSec").hidden=!res;
+  if(res){
+    res.sort((a,b)=>String(a.ref||addrOf(a)).localeCompare(String(b.ref||addrOf(b)),"en",{numeric:true}));
+    $("resTitle").textContent=title;$("resHint").textContent=hint;
+    $("results").innerHTML=res.length?res.slice(0,showN).map(rowHtml).join("")+(res.length>showN?`<button class="btn" type="button" id="moreBtn">再显示 ${Math.min(100,res.length-showN)} 个（还有 ${res.length-showN} 个）</button>`:"")
+      :`<div class="empty"><b>没有符合的 listing</b>试试放宽价钱，或换一个 Project / 类型。</div>`;
+  }
+  const sc=rows.filter(r=>r.sample).length;const cs=$("clearSamples");cs.hidden=!sc||!canWrite;cs.textContent=`移除 ${sc} 个示例资料`;
+  $("addBtn").disabled=!canWrite;
+  if(!$("view-mapping").hidden)renderMap();
+  showPending();showOwnFix();showTagFix();
+}
+let tagMap=null,tagBusy=false;
+async function checkTags(){if(checkTags.done)return;checkTags.done=1;try{const r=await fetch("import/tags.json",{cache:"no-store"});if(r.ok)tagMap=await r.json()}catch(e){}showTagFix()}
+function tagTodo(){return tagMap?rows.filter(r=>Array.isArray(r.owners)&&r.owners.length&&!r.tagsV1&&tagMap[r.id]):[]}
+function showTagFix(){const el=$("tagFix");if(!el||tagBusy)return;const t=tagTodo();el.hidden=!t.length||!canWrite;if(t.length)$("tagFixTitle").textContent=`标记 ${t.length} 个单位的问题号码`}
+function mergeTags(owners,map){const L=JSON.parse(JSON.stringify(owners));
+  for(const [n,t] of Object.entries(map)){let oi=L.findIndex(o=>(o.correct||[]).includes(n));if(oi>=0)continue;
+    oi=L.findIndex(o=>(o.phones||[]).includes(n));
+    if(oi<0){oi=L.findIndex(o=>!o.company);if(oi<0)oi=0;L[oi].phones=[...(L[oi].phones||[]),n]}
+    L[oi].tags={...(L[oi].tags||{}),[n]:t}}
+  return L}
+$("tagFixGo").onclick=async()=>{if(tagBusy||!db)return;const t=tagTodo();tagBusy=true;$("tagFixGo").disabled=true;let done=0,fail=0;
+  for(let i=0;i<t.length;i+=8){await Promise.all(t.slice(i,i+8).map(r=>db.collection("listings").doc(r.id).update({owners:mergeTags(r.owners,tagMap[r.id]),tagsV1:true}).then(()=>done++,()=>fail++)));$("tagFixTitle").textContent=`标记中 ${done+fail} / ${t.length}…`}
+  tagBusy=false;$("tagFixGo").disabled=false;toast(fail?`完成 ${done} 个，失败 ${fail} 个，再按一次补上`:`已标记 ${done} 个单位`);showTagFix()};
+let ownMap=null,ownBusy=false;
+async function checkOwn(){if(checkOwn.done)return;checkOwn.done=1;try{const r=await fetch("import/owners.json",{cache:"no-store"});if(r.ok)ownMap=await r.json()}catch(e){}showOwnFix()}
+function ownTodo(){return ownMap?rows.filter(r=>!Array.isArray(r.owners)&&ownMap[r.id]):[]}
+function showOwnFix(){const el=$("ownFix");if(!el||ownBusy)return;const t=ownTodo();el.hidden=!t.length||!canWrite;if(t.length)$("ownFixTitle").textContent=`整理 ${t.length} 个 listing 的 owner 资料`}
+$("ownFixGo").onclick=async()=>{if(ownBusy||!db)return;const t=ownTodo();ownBusy=true;$("ownFixGo").disabled=true;let done=0,fail=0;
+  for(let i=0;i<t.length;i+=8){await Promise.all(t.slice(i,i+8).map(r=>db.collection("listings").doc(r.id).update(ownMap[r.id]).then(()=>done++,()=>fail++)));$("ownFixTitle").textContent=`整理中 ${done+fail} / ${t.length}…请不要关掉页面`}
+  ownBusy=false;$("ownFixGo").disabled=false;toast(fail?`完成 ${done} 个，失败 ${fail} 个，再按一次补上`:`已整理 ${done} 个`);showOwnFix()};
+/* ===== Celeste prepared import ===== */
+let pending=null,pendBusy=false;
+async function checkPending(){if(checkPending.done)return;checkPending.done=1;
+  try{const r=await fetch("import/pending.json",{cache:"no-store"});if(!r.ok)return;const j=await r.json();if(Array.isArray(j))pending=j}catch(e){return}
+  showPending()}
+function pendTodo(){const by={};rows.forEach(r=>by[r.id]=r);return pending?pending.filter(d=>{if(!d||!d.ref)return false;const ex=by[String(d.ref).toLowerCase()];return !ex||ex.area!==d.area}):[]}
+function showPending(){const el=$("pend");if(!el)return;const t=pendTodo();el.hidden=!t.length||!canWrite;if(!t.length||pendBusy)return;
+  const by={};t.forEach(d=>by[d.area||"[待填]"]=(by[d.area||"[待填]"]||0)+1);
+  $("pendTitle").textContent=`${window.CRM_OWNER||"Wolf Group"} 准备好 ${t.length} 个新 listing`;
+  $("pendSub").textContent=Object.entries(by).map(([a,n])=>`${a} ${n}`).join(" · ")+"。已经在 CRM 里的不会被覆盖。"}
+$("pendGo").onclick=async()=>{if(pendBusy||!db)return;const t=pendTodo();if(!t.length)return;pendBusy=true;const b=$("pendGo");b.disabled=true;let done=0,fail=0;
+  for(let i=0;i<t.length;i+=8){const chunk=t.slice(i,i+8);
+    await Promise.all(chunk.map(d=>db.collection("listings").doc(String(d.ref).toLowerCase()).set(d).then(()=>done++,()=>fail++)));
+    $("pendTitle").textContent=`导入中 ${done+fail} / ${t.length}…请不要关掉页面`}
+  pendBusy=false;b.disabled=false;toast(fail?`导入 ${done} 个，失败 ${fail} 个，可以再按一次补上`:`已导入 ${done} 个 listing`);showPending()};
+/* ===== Buyer Matching ===== */
+const STD_TYPES=["Link Factory","Semi-D Factory","Detached Factory","Cluster Factory","Warehouse","Industrial Land"];
+let buyers=[];
+const allTypes=()=>[...new Set([...STD_TYPES,...rows.map(r=>r.type).filter(Boolean)])];
+const allAreas=()=>[...new Set(rows.map(r=>r.area).filter(Boolean))].sort();
+function bChips(){}
+function cnNum(str){const D={零:0,〇:0,一:1,二:2,两:2,俩:2,三:3,四:4,五:5,六:6,七:7,八:8,九:9};const U={十:10,百:100,千:1000};
+  return str.replace(/[零〇一二两俩三四五六七八九十百千万点]+/g,m=>{if(!/[一二两俩三四五六七八九十]/.test(m))return m;
+    let [ip,dp]=m.split("点");let total=0,sec=0,cur=0;
+    for(const ch of ip){if(ch in D)cur=D[ch];else if(ch in U){sec+=(cur||1)*U[ch];cur=0}else if(ch==="万"){total+=(sec+cur)*1e4;sec=0;cur=0}}
+    let n=total+sec+cur;if(dp!==undefined){const d=[...dp].map(c=>D[c]??"").join("");n=parseFloat(n+"."+d)}
+    return String(n)})}
+function localParse(t){const s=cnNum(t.toLowerCase()).replace(/(\d)\s*米/g,"$1m").replace(/(\d)\s*百万/g,"$1m").replace(/(?<![\d.,])(\d{6,})(?![\d.,]|\s*(?:sf|sqft|方尺|平方尺|尺))/g,(m,n)=>(+n/1e6)+"m");const b={for:/租|rent|tenan/.test(s)&&!/买|buy|purchase/.test(s)?"Rent":"Sale",types:[],areas:[],min:"",max:"",built:"",land:"",notes:""};
+  const T=[[/semi[\s-]?d|semi detached|半独立|双并|赛米|塞米|赛咪|色米/,"Semi-D Factory"],[/(?<!semi[\s-]?)(?<!semi-)detached|(?<!半)独立|bungalow|迪塔奇|低他器|地塔奇/,"Detached Factory"],[/link|林克|领克|零克|铃克|灵克|排屋|连排/,"Link Factory"],[/cluster|克拉斯特|卡拉斯特/,"Cluster Factory"],[/warehouse|货仓|仓库|维尔豪斯/,"Warehouse"],[/industrial land|工业地|\bland\b(?!\s*(size|area))/,"Industrial Land"]];
+  T.forEach(([re,v])=>{if(re.test(s))b.types.push(v)});
+  const A=allAreas();const add=re=>A.forEach(a=>{if(re.test(a)&&!b.areas.includes(a))b.areas.push(a)});
+  A.forEach(a=>{if(s.includes(a.toLowerCase()))add(new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"i"))});
+  const UT="utama|乌塔玛|乌达玛|武达马|乌他玛";
+  if(/kinrara|金拉拉|金那拉|金啦啦|\bbk\b/.test(s))add(/kinrara/i);if(/tpp|tp p|t p p/.test(s))add(/tpp/i);if(/perdana|柏达纳|柏达那/.test(s))add(/perdana/i);
+  if(new RegExp(`(${UT})\\s*1|pu1`).test(s))add(/utama 1/i);if(new RegExp(`(${UT})\\s*2|pu2`).test(s))add(/utama 2/i);if(new RegExp(`(${UT})(?!\\s*[12])`).test(s))add(/utama/i);
+  if(/puchong|蒲种|普冲|布冲|铺种/.test(s)&&!new RegExp(`${UT}|tpp|perdana|柏达`).test(s))add(/puchong|tpp/i);
+  const money=x=>{x=x.replace(/,/g,"");let m=x.match(/([\d.]+)\s*(m|mil|million|k|万|千)?/i);if(!m)return null;let n=parseFloat(m[1]);const u=(m[2]||"").toLowerCase();
+    if(u==="m"||u.startsWith("mil"))n*=1e6;else if(u==="k"||u==="千")n*=1e3;else if(u==="万")n*=1e4;else if(n<100)n*=1e6;return n};
+  const R=s.match(/(?:rm\s*)?([\d.,]+\s*(?:m|mil|million|k|万)?)\s*(?:-|~|to|至|到)\s*(?:rm\s*)?([\d.,]+\s*(?:m|mil|million|k|万)?)/i);
+  if(R){b.min=String(money(R[1]));b.max=String(money(R[2]))}
+  else{const U=s.match(/(?:below|under|max|budget|以内|以下|预算|不超过)?\s*(?:rm\s*)?([\d.,]+\s*(?:m|mil|million|k|万))\s*(below|under|以内|以下|左右|max)?/i);
+    if(U){const v=money(U[1]);if(/左右|大概|大约|around|about|approx|~/.test(s)){b.min=String(Math.round(v*.85));b.max=String(Math.round(v*1.1))}else b.max=String(v)}}
+  const bu=s.match(/(?:built[\s-]?up|bu|建筑面积|建筑|比尔达普|比达普)\D{0,12}([\d,]{3,})/)||s.match(/([\d,]{3,})\s*(?:sf|sqft|sq ft|方尺|平方尺|尺)\s*(?:built|bu)/);if(bu)b.built=bu[1].replace(/,/g,"");
+  const la=s.match(/(?:land|土地|地皮|兰德)\D{0,12}([\d,]{3,})/);if(la)b.land=la[1].replace(/,/g,"");
+  if(!b.built&&!b.land){const g=s.match(/([\d,]{3,})\s*(?:sf|sqft|sq ft|方尺|平方尺|尺)/);if(g)b.built=g[1].replace(/,/g,"")}
+  return b}
+let sampleP=null;
+async function aiParse(t){
+  try{if(!sampleP)sampleP=window.claude?.use?window.claude.use("sample"):Promise.resolve(null);const sample=await sampleP;if(!sample)return null;
+    const prompt=`你帮马来西亚房产中介读买家的要求，只回 JSON，不要别的字。
+注意：这段文字常常是手机语音转文字，会有错字和同音字，你要先猜出原本的意思。例子：林克/领克/零克=link，赛米D/塞米=semi-D，迪塔奇=detached，蒲种/普冲=Puchong，金拉拉=Kinrara，乌塔玛=Utama，柏达纳=Perdana，两米/2米=2m，两百万=2m，三千方尺=3000 sqft，比尔达普=built-up，兰德=land。
+可选 types（只能用这些，可以多个）：${JSON.stringify(allTypes())}
+可选 areas（只能用这些，可以多个，没提到地区就空）：${JSON.stringify(allAreas())}
+买家要求：
+"""${t}"""
+回传格式：{"clean":"把买家要求改正错字后，用一句简短华语写出来","for":"Sale 或 Rent","types":[],"areas":[],"min":数字或null,"max":数字或null,"built":最少built-up平方尺数字或null,"land":最少土地平方尺数字或null,"notes":"其他要求，简短华语"}
+规则：价钱用马币整数（2m=2000000，200万=2000000）。只说"2m 以下"就 min=null。说"2m 左右"就 min=1700000 max=2200000。"puchong"指所有含 Puchong 的 areas。"semi-d"是 Semi-D Factory，"detached"是 Detached Factory，"link"是 Link Factory。`;
+    const j=await sample.json(prompt,{modelTier:"quick"});if(!j||typeof j!=="object")return null;
+    const T=allTypes(),A=allAreas();
+    return {for:j.for==="Rent"?"Rent":"Sale",types:(j.types||[]).filter(x=>T.includes(x)),areas:(j.areas||[]).filter(x=>A.includes(x)),min:j.min?String(j.min):"",max:j.max?String(j.max):"",built:j.built?String(j.built):"",land:j.land?String(j.land):"",notes:j.notes||"",clean:j.clean||""}
+  }catch(e){return null}}
+function parsedHtml(b,src){const ch=[b.for==="Rent"?"租":"买",...(b.types.length?b.types:["全部类型"]),...(b.areas.length?b.areas:["全部地区"])];
+  if(b.min||b.max)ch.push(`RM ${b.min?fmt(+b.min):"0"} – ${b.max?fmt(+b.max):"以上"}`);if(b.built)ch.push(`Built-up ≥ ${fmt(+b.built)}`);if(b.land)ch.push(`Land ≥ ${fmt(+b.land)}`);
+  return `${b.clean?`<div class="mclean">AI 理解成：「${esc(b.clean)}」</div>`:""}<span class="mlab">${src} 读到：</span>${ch.map(c=>`<span class="tag t-ok">${esc(c)}</span>`).join("")}${b.notes?`<span class="mnote">${esc(b.notes)}</span>`:""}`}
+function matchBuyer(b){
+  const lo=amt(b.min),hi=amt(b.max),mb=num(b.built),ml=num(b.land);const out=[];
+  for(const r of rows){
+    if(r.sample||r.status==="Sold"||r.status==="Rented")continue;
+    if(b.types.length&&!b.types.includes(r.type))continue;
+    if(b.areas.length&&!b.areas.includes(r.area))continue;
+    let tier;if(r.for===b.for)tier=1;else if(b.for==="Sale"&&(!r.for||r.for==="Own Stay"))tier=3;else continue;
+    const why=[];let s=50;const p=num(r.price);
+    if(b.types.length){why.push(["ok",r.type]);s+=10}
+    if(b.areas.length){why.push(["ok",r.area]);s+=10}
+    if(lo!=null||hi!=null){
+      if(p==null){why.push(["warn","价钱未知，要问屋主"]);if(tier===1)tier=2}
+      else if((lo==null||p>=lo)&&(hi==null||p<=hi)){why.push(["ok","在预算内"]);s+=25}
+      else if(hi!=null&&p>hi&&p<=hi*1.15){why.push(["warn",`超预算 ${Math.round((p/hi-1)*100)}%`]);s+=5}
+      else if(lo!=null&&p<lo&&p>=lo*0.85){why.push(["warn","比预算低一点"]);s+=10}
+      else continue;
+    }else if(p!=null){why.push(["ok","有价钱"])}
+    for(const [v,k,l] of [[mb,"built","Built-up"],[ml,"land","Land"]]){if(v==null)continue;const x=num(r[k]);
+      if(x==null)why.push(["warn",`${l} 未知`]);else if(x>=v){why.push(["ok",`${l} ${fmt(x)} sqft`]);s+=5}else{continue}}
+    if(mb!=null&&num(r.built)!=null&&num(r.built)<mb)continue;
+    if(ml!=null&&num(r.land)!=null&&num(r.land)<ml)continue;
+    if(tier===3)why.push(["warn",r.for?"Own Stay，可以问屋主":"还没确定要卖"]);
+    if(ownersOf(r).some(o=>(o.correct||[]).length)){why.push(["ok","有 correct number"]);s+=5}
+    out.push({r,tier,s:Math.min(99,s),why});
+  }
+  return out.sort((a,b)=>a.tier-b.tier||b.s-a.s||String(a.r.ref).localeCompare(String(b.r.ref),"en",{numeric:true}));
+}
+const TIERS={1:"最符合：已经在卖 / 出租，价钱对",2:"在卖，但价钱还不知道",3:"还没说要卖，可以去问屋主"};
+let mShow=40,showT3=false;
+function runMatch(b){
+  const all=matchBuyer(b);const res=showT3?all:all.filter(m=>m.tier<3);const nT3=all.length-res.length;$("mResSec").hidden=false;
+  const want="";
+  const n1=all.filter(m=>m.tier===1).length,n2=all.filter(m=>m.tier===2).length,n3=all.filter(m=>m.tier===3).length;
+  $("mResTitle").textContent=`${n1} 个最符合`+(n2?`，${n2} 个在卖但价钱未知`:"")+(n3?`，${n3} 个可以问屋主`:"");$("mResHint").textContent=want;
+  let html="",last=0;
+  res.slice(0,mShow).forEach(m=>{if(m.tier!==last){html+=`<div class="tier">${TIERS[m.tier]}</div>`;last=m.tier}
+    html+=`<div class="mitem">${rowHtml(m.r)}<div class="why"><span class="score">${m.s}%</span>${m.why.map(([k,t])=>`<span class="tag t-${k}">${esc(t)}</span>`).join("")}</div></div>`});
+  if(res.length>mShow)html+=`<button class="btn" type="button" id="mMore">再显示 ${Math.min(40,res.length-mShow)} 个（还有 ${res.length-mShow} 个）</button>`;
+  if(nT3)html+=`<button class="btn" type="button" id="mT3">也看 ${nT3} 个还没说要卖的单位（可以去问屋主）</button>`;
+  $("mRes").innerHTML=html||`<div class="empty"><b>暂时没有符合的 listing</b>试试放宽预算、多选几个类型，或勾「也找还没说要卖的单位」。</div>`;
+}
+let lastB=null,editBuyerId=null;
+/* dictation */
+let dict=null,dictOn=false,dictBase="";
+(async()=>{try{dict=window.claude?.use?await window.claude.use("dictation"):null}catch(e){dict=null}
+  if(!dict)return;$("bMic").hidden=false;$("bMicHint").textContent="按麦克风讲买家的需求，讲完再按一次停。";
+  dict.onPartial(({text})=>{$("bText").value=(dictBase?dictBase+" ":"")+text});
+  dict.onFinal(({text})=>{dictBase=((dictBase?dictBase+" ":"")+text).trim();$("bText").value=dictBase});
+  dict.onState(({state})=>{dictOn=state==="listening";$("bMic").classList.toggle("on",dictOn);$("bMicTxt").textContent=dictOn?"在听… 按一下停":"按一下讲话"});
+})();
+$("bMic").onclick=()=>{if(!dict)return;if(dictOn){dict.stop().catch(()=>{});return}
+  dictBase=$("bText").value.trim();dict.start().catch(e=>{if(e&&e.code==="not_granted"){$("bMic").hidden=true;$("bMicHint").textContent="麦克风没开权限。可以点大格，用键盘上的 🎤 讲。"}else toast("麦克风开不了，请再试一次")})};
+$("mForm").addEventListener("submit",async e=>{e.preventDefault();const t=$("bText").value.trim();if(!t){toast("请先把买家要求贴进大格");return}
+  const go=$("bGo");go.disabled=true;go.textContent="AI 在读…";
+  let b=await aiParse(t),src="AI";if(!b){b=localParse(t);src="系统"}
+  b.text=t;lastB=b;mShow=40;showT3=false;go.disabled=false;go.textContent="AI 帮我找 Match";
+  $("bParsed").hidden=false;$("bParsed").innerHTML=parsedHtml(b,src);runMatch(b);$("mResSec").scrollIntoView({behavior:"smooth",block:"start"})});
+$("mRes").addEventListener("click",e=>{if(e.target.id==="mMore"){mShow+=40;runMatch(lastB);return}if(e.target.id==="mT3"){showT3=true;runMatch(lastB);return}if(e.target.closest(".call,.wa"))return;const r=e.target.closest(".row");if(r)openDrawer(r.dataset.id)});
+$("bClear").onclick=()=>{editBuyerId=null;lastB=null;$("bText").value="";$("bParsed").hidden=true;$("mResSec").hidden=true};
+$("bSave").onclick=async()=>{if(!db){toast("还没连上资料库");return}if(!lastB){toast("先按「AI 帮我找 Match」");return}
+  const b={...lastB,updatedAt:new Date().toISOString()};
+  try{if(editBuyerId)await db.collection("buyers").doc(editBuyerId).set({...b,createdAt:(buyers.find(x=>x.id===editBuyerId)||{}).createdAt||b.updatedAt});
+    else{const ref=await db.collection("buyers").add({...b,createdAt:b.updatedAt});editBuyerId=ref.id}toast("买家已存")}catch(err){toast("存不到："+(err.code||err.message))}};
+function renderBuyers(){const L=[...buyers].sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")));
+  $("bList").innerHTML=L.length?L.map(b=>`<div class="brow" data-id="${esc(b.id)}" role="button" tabindex="0"><div style="min-width:0"><b class="btitle">${esc((b.text||b.name||"[待填]").slice(0,60))}${(b.text||"").length>60?"…":""}</b><div class="bsub">${esc([b.for==="Rent"?"租":"买",(b.types||[]).join(" / ")||"全部类型",(b.areas||[]).join(" / "),(b.min||b.max)?`RM ${b.min?fmt(+b.min):"0"}–${b.max?fmt(+b.max):"以上"}`:""].filter(Boolean).join(" · "))}</div></div><div style="display:flex;gap:6px;align-items:center"><span class="score">${matchBuyer(b).filter(m=>m.tier<3).length} match</span><button class="linkbtn bdel" type="button">删除</button></div></div>`).join("")
+    :`<div class="empty"><b>还没有存买家</b>贴好要求、按找 Match，再按「存这个买家」，以后一按就重新配对。</div>`}
+$("bList").addEventListener("click",async e=>{const row=e.target.closest(".brow");if(!row)return;const b=buyers.find(x=>x.id===row.dataset.id);if(!b)return;
+  if(e.target.classList.contains("bdel")){if(!e.target.dataset.sure){e.target.dataset.sure=1;e.target.textContent="确定删除？";return}try{await db.collection("buyers").doc(b.id).delete();toast("已删除")}catch(_){toast("删除失败")}return}
+  editBuyerId=b.id;lastB={...b,types:b.types||[],areas:b.areas||[]};$("bText").value=b.text||"";$("bParsed").hidden=false;$("bParsed").innerHTML=parsedHtml(lastB,"已存");mShow=40;showT3=false;runMatch(lastB);$("mResSec").scrollIntoView({behavior:"smooth",block:"start"})});
+/* ===== Mapping ===== */
+let zoom=1,flashId=null;
+function parseUnit(r){const a=r.address||"";const m=/^(?:No\.?\s*)?([0-9]+[A-Za-z]?)\s*,\s*(.+)$/i.exec(a);return m?{no:m[1],n:parseInt(m[1]),street:m[2].trim()}:null}
+const CLS={Sale:"sale",Rent:"rent","Own Stay":"own",Tenanted:"ten",Sold:"sold"};const TXT={Sale:"FOR SALE",Rent:"FOR RENT","Own Stay":"OWN STAY",Tenanted:"TENANTED",Sold:"SOLD"};
+/* ===== Skyloft Avenue building navigator ===== */
+const SKY_AREA="Skyloft Avenue";
+const SKY_TYPE={"01":"A","02":"B","03":"B","06":"B","07":"B","08":"B","10":"B","11":"B","12":"B","17":"B","19":"B","22":"L"};
+const SKY_SF={A:"1,539 sf",B:"1,539 sf",L:"1,249 sf"};
+const SKY_BCOL={A:"#5B9BD5",B:"#70AD72",C:"#E08A9B"};
+const SKY_CELLS={"A":[["01","01","322.3,298.1 358.3,319.3 313.7,395.1 277.7,373.9",318.0,346.6],["02","02","359.8,320.2 395.8,341.4 351.2,417.2 315.2,396",355.5,368.7],["03","03","397.3,342.3 433.3,363.5 388.7,439.3 352.7,418.1",393.0,390.8],["02A","2A","434.8,364.4 470.8,385.6 426.2,461.4 390.2,440.2",430.5,412.9],["05","05","472.3,386.5 508.3,407.7 463.7,483.5 427.7,462.3",468.0,435.0],["06","06","509.8,408.6 545.8,429.8 501.2,505.6 465.2,484.4",505.5,457.1],["07","07","547.3,430.7 583.3,451.9 538.7,527.7 502.7,506.5",543.0,479.2],["08","08","584.8,452.8 620.8,474 576.2,549.8 540.2,528.6",580.5,501.3],["09","09","622.3,474.9 658.3,496.1 613.7,571.9 577.7,550.7",618.0,523.4],["10","10","659.8,497 695.8,518.2 651.2,594 615.2,572.8",655.5,545.5],["11","11","697.3,519.1 733.3,540.3 688.7,616.1 652.7,594.9",693.0,567.6],["12","12","734.8,541.2 770.8,562.4 726.2,638.2 690.2,617",730.5,589.7],["13","13","772.3,563.2 808.3,584.5 763.7,660.3 727.7,639.1",768.0,611.8]],"B":[["12A","12A","837.8,604.3 881,607.3 872.2,731 829,727.9",855.0,667.6],["15","15","882.8,607.5 926,610.5 917.2,734.2 874,731.1",900.0,670.8],["16","16","927.8,610.6 971,613.7 962.2,737.4 919,734.3",945.0,674.0],["17","17","972.8,613.8 1016,616.9 1007.2,740.6 964,737.5",990.0,677.2],["18","18","1017.8,617 1061,620.1 1052.2,743.8 1009,740.7",1035.0,680.4],["19","19","1062.8,620.2 1106,623.3 1097.2,747 1054,743.9",1080.0,683.6],["20","20","1107.8,623.4 1151,626.5 1142.2,750.2 1099,747.1",1125.0,686.8],["21","21","1152.8,626.6 1196,629.7 1187.2,753.4 1144,750.3",1170.0,690.0],["22","22","1197.8,629.8 1241,632.9 1232.2,756.6 1189,753.5",1215.0,693.2]],"C":[["01","LG-01","336.9,420.8 337.1,470.7 233.1,471.2 232.9,421.4",285.0,446.0],["02","LG-02","337.2,475 337.4,524.8 233.4,525.4 233.2,475.6",285.3,500.2],["03","LG-03","337.5,529.2 337.7,579 233.7,579.6 233.5,529.7",285.6,554.4],["02A","LG-2A","337.8,583.3 338,633.2 234,633.7 233.8,583.9",285.9,608.5],["05","LG-05","338.1,637.5 338.3,687.3 234.3,687.9 234.1,638.1",286.2,662.7],["06","LG-06","338.4,691.7 338.6,741.5 234.6,742.1 234.4,692.2",286.5,716.9]]};
+const skyS={unit:null};
+function skyParse(r){const m=/([A-Za-z]+)\s*-\s*(LG|L\d+)\s*-\s*([0-9A-Za-z]+)/i.exec(r.address||"");if(!m)return null;
+  const lv=m[2].toUpperCase();return {block:m[1].toUpperCase(),level:lv==="LG"?"LG":"L"+parseInt(lv.slice(1),10),unit:m[3].toUpperCase()}}
+function skyData(){const g={};rows.forEach(r=>{if((r.area||"")!==SKY_AREA)return;const p=skyParse(r);if(!p)return;
+  (g[p.block]=g[p.block]||{});(g[p.block][p.level]=g[p.block][p.level]||[]).push({unit:p.unit,r});});return g}
+function skyLvLabel(l){return l==="LG"?"Lower Ground":"Level "+l.slice(1)}
+function skyOwner(r){const L=ownersOf(r);if(!L.length)return "";const co=L.find(o=>o.company);return esc((co||L[0]).name||"")}
+function skyUC(r){const s=CLS[r.for];return s==="sale"?"var(--a1)":s==="rent"?"var(--a2)":s==="ten"?"var(--warn)":s==="sold"?"var(--bad)":s==="own"?"var(--muted)":"var(--line)"}
+function skyUnitLevels(g,block,tok){const res=[],lv=g[block]||{};Object.keys(lv).forEach(l=>{const e=lv[l].find(x=>x.unit===tok);if(e)res.push({level:l,r:e.r})});
+  res.sort((a,b)=>{const o=x=>x.level==="LG"?0:parseInt(x.level.slice(1),10);return o(a)-o(b)});return res}
+const skyPlanBtns='<div class="plans"><span class="mapnote">平面图：</span><button type="button" data-plan="A">Type A</button><button type="button" data-plan="B">Type B</button><button type="button" data-plan="L">Type L</button><button type="button" data-plan="site">Site plan</button></div>';
+function renderSky(){
+  const host=$("skyloft");if(!host)return;const g=skyData();
+  if(!skyS.unit){
+    let polys='';
+    Object.keys(SKY_CELLS).forEach(b=>{(SKY_CELLS[b]||[]).forEach(c=>{
+      polys+='<g class="scell" data-b="'+esc(b)+'" data-t="'+esc(c[0])+'"><polygon points="'+c[2]+'" style="--bc:'+SKY_BCOL[b]+'"></polygon></g>';
+    })});
+    host.innerHTML='<div class="skyplan"><img src="/crm/skyloft/siteplan.jpg" alt="Skyloft Avenue site plan"><svg viewBox="0 0 1500 947" preserveAspectRatio="xMidYMid meet">'+polys+'</svg></div>'
+      +'<p class="mapnote">Skyloft Avenue · Jalan Tempua 3 — 点一个单位格子，看它每一层（Level 1–4）的 owner。</p>'+skyPlanBtns;
+    return;
+  }
+  const {block,tok}=skyS.unit;const levels=skyUnitLevels(g,block,tok);
+  const cell=(SKY_CELLS[block]||[]).find(c=>c[0]===tok);const lab=cell?cell[1]:tok;
+  const ty=(block==="C")?"":(SKY_TYPE[tok]||""),col=SKY_BCOL[block]||"var(--a1)";
+  host.innerHTML='<div class="skyhead"><div class="bc"><button type="button" data-nav="plan">← Site plan</button><span class="sep">›</span><b style="color:'+col+'">Block '+esc(block)+'</b><span class="sep">·</span><b>Unit '+esc(lab)+'</b>'+(ty?' <span class="ty" data-plan="'+ty+'">Type '+ty+(SKY_SF[ty]?' · '+SKY_SF[ty]:'')+'</span>':'')+'</div></div>'
+    +(levels.length?'<div class="lvstack">'+levels.map(x=>{const nm=skyOwner(x.r);
+      return '<button type="button" class="lvcard" data-id="'+esc(x.r.id)+'" style="--uc:'+skyUC(x.r)+'"><span class="lvn">'+esc(skyLvLabel(x.level))+'</span><span class="ost">'+(TXT[x.r.for]||"未分类")+'</span><span class="onm'+(nm?'':' tbd')+'">'+(nm||'[待填 owner]')+'</span></button>';
+    }).join('')+'</div>':'<div class="empty"><b>这个单位还没有资料</b>汇入后就会显示每一层的 owner。</div>')+skyPlanBtns;
+}
+function skyLightbox(w){const M={A:["/crm/skyloft/type-a.jpg","Type A · 1,539 sf"],B:["/crm/skyloft/type-b.jpg","Type B · 1,539 sf"],L:["/crm/skyloft/type-l.jpg","Type L · 1,249 sf"],site:["/crm/skyloft/siteplan.jpg","Site plan"]};const m=M[w];if(!m)return;
+  const ov=document.createElement("div");ov.className="skylb";ov.innerHTML='<button class="x" type="button" aria-label="关闭">×</button><img src="'+m[0]+'" alt="'+esc(m[1])+'"><div class="cap">'+esc(m[1])+'</div>';
+  ov.addEventListener("click",e=>{if(e.target===ov||e.target.classList.contains("x"))ov.remove()});document.body.appendChild(ov)}
+$("skyloft").addEventListener("click",e=>{
+  const pb=e.target.closest("[data-plan]");if(pb){skyLightbox(pb.dataset.plan);return}
+  const nav=e.target.closest("[data-nav]");if(nav){skyS.unit=null;renderSky();return}
+  const cell=e.target.closest(".scell[data-b]");if(cell){skyS.unit={block:cell.getAttribute("data-b"),tok:cell.getAttribute("data-t")};renderSky();return}
+  const lc=e.target.closest(".lvcard");if(lc){openDrawer(lc.dataset.id);return}
+});
+function renderMap(){
+  const areas=[...new Set(rows.map(r=>r.area||"[待填]"))].sort();const ms=$("mArea");const cur=ms.value;
+  ms.innerHTML=areas.map(a=>`<option ${a===cur?"selected":""}>${esc(a)}</option>`).join("");
+  const area=ms.value;
+  {const seg=document.querySelector(".maptools .seg");
+   if(area===SKY_AREA){$("skyloft").hidden=false;$("realWrap").hidden=true;$("plan").hidden=true;$("mapMiss").hidden=true;$("zoomBox").hidden=true;if(seg)seg.style.display="none";$("mapForm").style.display="none";renderSky();return}
+   $("skyloft").hidden=true;if(seg)seg.style.display="";$("mapForm").style.display="";$("zoomBox").hidden=mapMode==="real";$("mapMiss").hidden=mapMode==="real";$("realWrap").hidden=mapMode!=="real";$("plan").hidden=mapMode==="real";}
+  const inA=rows.filter(r=>(r.area||"[待填]")===area);
+  const streets={};let miss=0;
+  inA.forEach(r=>{const u=parseUnit(r);if(!u){miss++;return}(streets[u.street]=streets[u.street]||[]).push({...u,r})});
+  const names=Object.keys(streets).sort((a,b)=>a.localeCompare(b,"en",{numeric:true}));
+  const box=x=>{const c=CLS[x.r.for]||"none";return `<button type="button" class="u ${c} ${x.r.id===flashId?"flash":""}" data-id="${esc(x.r.id)}" id="u-${esc(x.r.id)}"><span class="ul">${TXT[x.r.for]||""}</span><span class="un">${esc(x.no)}</span></button>`};
+  $("plan").style.setProperty("--z",zoom);
+  $("plan").innerHTML=names.length?names.map(st=>{const L=streets[st].sort((a,b)=>a.n-b.n);const odd=L.filter(x=>x.n%2),even=L.filter(x=>!(x.n%2));
+    return `<div class="street"><div class="sname">${esc(st)}<small>${L.length} 个单位</small><a class="sat" href="https://www.google.com/maps/search/${encodeURIComponent(st+", "+area+", Selangor, Malaysia")}/data=!3m1!1e3" target="_blank" rel="noopener">🛰 卫星图看这一排</a></div><div class="sscroll"><div class="sin"><div class="srow">${odd.map(box).join("")||'<span class="mapnote">（没有单号）</span>'}</div><div class="road">${esc(st)}</div><div class="srow">${even.map(box).join("")||'<span class="mapnote">（没有双号）</span>'}</div></div></div></div>`}).join("")
+    :`<div class="empty"><b>这个地区还没有可以画的单位</b>地址要写成「No. 23, Jalan …」才能放上地图。</div>`;
+  $("mapMiss").textContent=miss?`${miss} 个 listing 的地址格式认不出，没有放上地图。`:"格子按门牌排（单号一排、双号一排），不是真实比例。点格子看资料和 Google Maps。";
+  if(mapMode==="real")renderReal();
+}
+/* ===== Real map ===== */
+let mapMode="real",LM=null,lmLayer=null,mk={},streetsDb={},stG={},placing=null,lfP=null,BASE=null,baseName="sat",lastFit="",tileErr=0,stOpened=0;
+try{mapMode=localStorage.getItem("wolfMapMode")||"real"}catch(e){}
+const skey=(a,s)=>(String(a||"")+"|"+s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+function loadLeaflet(){if(window.L&&window.L.map)return Promise.resolve();if(lfP)return lfP;
+  lfP=new Promise((ok,no)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";s.onload=ok;s.onerror=()=>{lfP=null;no()};document.head.appendChild(s)});return lfP}
+function setMode(m){mapMode=m;try{localStorage.setItem("wolfMapMode",m)}catch(e){}
+  $("modeReal").setAttribute("aria-pressed",m==="real");$("modeGrid").setAttribute("aria-pressed",m==="grid");
+  $("realWrap").hidden=m!=="real";$("plan").hidden=m==="real";$("zoomBox").hidden=m==="real";$("mapMiss").hidden=m==="real";
+  if(!$("view-mapping").hidden)renderMap()}
+$("modeReal").onclick=()=>setMode("real");$("modeGrid").onclick=()=>setMode("grid");
+let OSM=null,osmP=null;
+function decP(s){let a=0,b=0;return s.split(" ").map(t=>{const i=t.indexOf(",");a+=+t.slice(0,i);b+=+t.slice(i+1);return [a/1e5,b/1e5]})}
+function parseOSM(t){const o={R:[],B:[],S:{}};let sec="";for(const l of t.split("\n")){if(l==="R"||l==="B"||l==="S"){sec=l;continue}if(!l)continue;
+  if(sec==="R"){const i=l.indexOf("|"),j=l.indexOf("|",i+1);o.R.push({c:+l.slice(0,i),P:decP(l.slice(j+1))})}
+  else if(sec==="B")o.B.push([decP(l)]);else if(sec==="S"){const i=l.indexOf("|");o.S[l.slice(0,i)]=decP(l.slice(i+1))}}return o}
+function loadOSM(){if(osmP)return osmP;osmP=fetch("/crm/map/osm.txt").then(r=>r.ok?r.text():Promise.reject(r.status)).then(t=>{OSM=parseOSM(t);drawOSM();drawMarkers()}).catch(()=>{$("rmapNote").textContent="地图底图载入不了，单位点还是可以用。"});return osmP}
+function drawOSM(){if(!LM||!OSM||drawOSM.done)return;drawOSM.done=1;const rd=L.canvas({padding:.5});
+  L.polygon(OSM.B,{renderer:rd,color:"#ffffff",weight:.7,opacity:.3,fillOpacity:0,interactive:false}).addTo(LM);
+  const W=[5,6,8,10],F=["#ffffff","#ffffff","#fde7a6","#f6c76b"];
+  /* road casing removed for satellite base */
+  [0,1,2,3].forEach(c=>{const ls=OSM.R.filter(r=>r.c===c).map(r=>r.P);if(ls.length)L.polyline(ls,{renderer:rd,color:"#ffe08a",weight:Math.max(2,W[c]-3),opacity:.3,interactive:false}).addTo(LM)});
+  Object.entries(OSM.S).forEach(([n,P])=>{const m=along(P,.5,0,0);L.marker(m,{interactive:false,keyboard:false,icon:L.divIcon({className:"",html:`<span class="rlab">${esc(n.replace(/^Jalan /,""))}</span>`,iconSize:[0,0]})}).addTo(LM)})}
+function plen(P){const k0=Math.cos(P[0][0]*Math.PI/180)*111320;let s=0;for(let i=1;i<P.length;i++)s+=Math.hypot((P[i][1]-P[i-1][1])*k0,(P[i][0]-P[i-1][0])*111320);return s}
+function along(P,t,off,side){const k0=Math.cos(P[0][0]*Math.PI/180)*111320,ky=111320;const Q=P.map(([a,b])=>[b*k0,a*ky]);let Lt=0;const S=[0];
+  for(let i=1;i<Q.length;i++){Lt+=Math.hypot(Q[i][0]-Q[i-1][0],Q[i][1]-Q[i-1][1]);S.push(Lt)}
+  const d=t*Lt;let i=1;while(i<Q.length-1&&S[i]<d)i++;const sl=(S[i]-S[i-1])||1,u=Math.max(0,Math.min(1,(d-S[i-1])/sl));
+  const dx=Q[i][0]-Q[i-1][0],dy=Q[i][1]-Q[i-1][1],ln=Math.hypot(dx,dy)||1;
+  const x=Q[i-1][0]+dx*u+(-dy/ln)*off*side,y=Q[i-1][1]+dy*u+(dx/ln)*off*side;return [y/ky,x/k0]}
+async function renderReal(){
+  if($("view-mapping").hidden)return;
+  try{await loadLeaflet()}catch(e){$("rmapNote").textContent="地图工具载入不了，请检查网络，或先用格子图。";return}
+  const box=$("rmap");
+  if(!LM){
+    LM=L.map(box,{maxZoom:21,minZoom:12,zoomSnap:.5}).setView([3.0,101.61],15);
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:21,maxNativeZoom:19,attribution:"Tiles \u00a9 Esri"}).addTo(LM);
+    LM.attributionControl.setPrefix(false);LM.attributionControl.addAttribution("© OpenStreetMap contributors");
+    lmLayer=L.layerGroup().addTo(LM);
+    const zn=()=>{box.classList.toggle("zn",LM.getZoom()>=17.5);box.classList.toggle("zl",LM.getZoom()>=16.5)};LM.on("zoomend",zn);zn();
+    const gs=()=>{const c=LM.getCenter();$("gsat").href=`https://www.google.com/maps/@${c.lat.toFixed(6)},${c.lng.toFixed(6)},${Math.round(35000000/Math.pow(2,LM.getZoom()))}m/data=!3m1!1e3`};
+    LM.on("moveend",gs);gs();loadOSM();
+    LM.on("click",onMapClick);
+  }
+  LM.invalidateSize();drawMarkers();
+}
+function unitPos(){
+  const g={};rows.forEach(r=>{if(r.sample)return;const u=parseUnit(r);if(!u)return;const k=skey(r.area,u.street);(g[k]=g[k]||{area:r.area||"[待填]",street:u.street,L:[]}).L.push({...u,r})});
+  const pos={};
+  for(const [k,s] of Object.entries(g)){const d=streetsDb[k]||{};s.hidden=!!d.hidden;if(s.hidden)continue;const man=d.src==="manual"&&Array.isArray(d.a)&&Array.isArray(d.b);
+    const ns=s.L.map(x=>x.n),lo=Math.min(...ns),hi=Math.max(...ns),off=num(d.off)||12,fl=d.flip?-1:1;
+    const gp=typeof d.path==="string"&&d.path&&!man?d.path.split(";").map(x=>x.split(",").map(Number)):null;
+    let P=gp||(man?[d.a,d.b]:(OSM&&OSM.S[s.street])||(Array.isArray(d.a)&&Array.isArray(d.b)?[d.a,d.b]:null));
+    if(P&&!man&&!gp&&plen(P)/((hi-lo)/2+1)>45)P=null;
+    const sl=v=>{if(typeof v!=="string"||!v)return null;const q=v.split(";").map(z=>z.split(",").map(Number));return q.length===2&&q.every(z=>z.length===3&&z.every(isFinite))?q:null};
+    const SL={1:man?null:sl(d.odd),0:man?null:sl(d.even)};
+    s.placed=!!(P||SL[0]||SL[1]);s.man=man||!!gp||!!(SL[0]||SL[1]);if(!s.placed)continue;if(P&&d.rev)P=[...P].reverse();
+    s.L.forEach(x=>{const od=x.n%2;let q=SL[od],sh=0;if(!q&&SL[1-od]){q=SL[1-od];sh=1}
+      if(q){const [a,b]=q;let l0=a[2],l1=b[2];if(sh){const n2=s.L.filter(y=>y.n%2===od).map(y=>y.n);l0=Math.min(...n2);l1=Math.max(...n2)}
+        const t=l1>l0?(x.n-l0)/(l1-l0):.5;let la=a[0]+(b[0]-a[0])*t,ln=a[1]+(b[1]-a[1])*t;
+        if(sh){const kx=111320*Math.cos(la*Math.PI/180),dx=(b[1]-a[1])*kx,dy=(b[0]-a[0])*111320,L=Math.hypot(dx,dy)||1;la+=(dx/L)*24*fl/111320;ln+=(-dy/L)*24*fl/kx}
+        pos[x.r.id]=[la,ln];return}
+      if(!P)return;const t=hi>lo?(x.n-lo)/(hi-lo):.5;pos[x.r.id]=along(P,.03+.94*t,off,(x.n%2?1:-1)*fl)})}
+  rows.forEach(r=>{const la=num(r.lat),ln=num(r.lng);if(la&&ln)pos[r.id]=[la,ln]});
+  return {pos,g}}
+function drawMarkers(){if(!LM)return;const {pos,g}=unitPos();stG=g;lmLayer.clearLayers();mk={};
+  rows.forEach(r=>{const p=pos[r.id];if(!p)return;const u=parseUnit(r);const c=CLS[r.for]||"none";
+    const m=L.marker(p,{icon:L.divIcon({className:"pin "+c+(r.id===flashId?" flash":""),html:`<b>${esc(u?u.no:"•")}</b>`,iconSize:[24,22],iconAnchor:[12,11]}),keyboard:false});
+    m.bindTooltip(`<b>${esc(addrOf(r))}</b><br>${esc(TXT[r.for]||"未分类")}${num(r.price)!=null?" · "+priceTxt(r):""}`,{direction:"top",offset:[0,-10]});
+    m.on("click",()=>{if(!placing)openDrawer(r.id)});m.addTo(lmLayer);mk[r.id]=m});
+  {const tot=rows.filter(r=>!r.sample).length,on=rows.filter(r=>!r.sample&&pos[r.id]).length;$("rmapMiss").textContent=tot>on?`${tot-on} 个 listing 没在地图上（地址不完整，或街道设为不显示），可以在 Listing 页找到。`:""}
+  const area=$("mArea").value;
+  if(area!==lastFit){const P=rows.filter(r=>(r.area||"[待填]")===area&&pos[r.id]).map(r=>pos[r.id]);if(P.length){LM.fitBounds(P,{padding:[30,30],maxZoom:18});lastFit=area}}
+  renderStreetList(g)}
+function renderStreetList(g){const area=$("mArea").value;
+  const S=Object.entries(g).filter(([k,s])=>s.area===area).sort((a,b)=>a[1].street.localeCompare(b[1].street,"en",{numeric:true}));
+  const miss=S.filter(([k,s])=>!s.placed&&!s.hidden).length;
+  $("stSum").textContent=S.length?(miss?`街道位置：${miss} 条还没定位`:`街道位置：${S.length} 条全部已定位`):"街道位置";
+  $("stList").innerHTML=S.map(([k,s])=>`<div class="strow" data-k="${esc(k)}"><div><b>${esc(s.street)}</b><small class="${s.placed||s.hidden?"":"no"}">${s.L.length} 个单位 · ${s.hidden?"不显示在地图":s.placed?(s.man?"已定位（手动）":"已定位"):"还没定位"}</small></div><div class="stbtns">${canWrite&&s.hidden?'<button class="btn" type="button" data-act="unhide">恢复显示</button>':""}${canWrite&&!s.hidden?`<button class="btn ghost" type="button" data-act="hide">不显示</button>`:""}${canWrite&&!s.hidden?`<button class="btn${s.placed?"":" primary"}" type="button" data-act="place">${s.placed?"重新定位":"定位"}</button>${s.placed?'<button class="btn ghost" type="button" data-act="flip">单双号对调</button><button class="btn ghost" type="button" data-act="rev">号码方向对调</button>':""}`:""}</div></div>`).join("")||'<div class="mapnote">这个地区没有可以定位的街道。</div>';
+  if(miss&&!stOpened){$("stBox").open=true;stOpened=1}}
+$("stList").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b||!db)return;const k=b.closest(".strow").dataset.k;const s=stG[k];if(!s)return;
+  if(b.dataset.act==="hide"||b.dataset.act==="unhide"){const v=b.dataset.act==="hide",d=streetsDb[k];b.disabled=true;
+    try{if(d)await db.collection("streets").doc(k).update({hidden:v});else await db.collection("streets").doc(k).set({area:s.area,street:s.street,src:"osm",hidden:v,updatedAt:new Date().toISOString()});toast(v?`${s.street} 已从地图拿掉`:`${s.street} 恢复显示`)}catch(err){toast("存不到："+(err.code||err.message));b.disabled=false}return}
+  if(b.dataset.act==="flip"||b.dataset.act==="rev"){const f=b.dataset.act,d=streetsDb[k];b.disabled=true;
+    try{if(d)await db.collection("streets").doc(k).update({[f]:!d[f]});else await db.collection("streets").doc(k).set({area:s.area,street:s.street,src:"osm",[f]:true,updatedAt:new Date().toISOString()});toast(f==="flip"?"已对调单双号":"已对调号码方向")}catch(err){toast("存不到："+(err.code||err.message));b.disabled=false}return}
+  cancelPlace();placing={k,s,pts:[]};$("placeBar").hidden=false;$("placeTxt").textContent=`第 1 步：在地图上点 ${s.street} 门牌最小号那头`;
+  const P=s.L.map(x=>mk[x.r.id]).filter(Boolean).map(m=>m.getLatLng());if(P.length)LM.fitBounds(P,{padding:[60,60],maxZoom:19});
+  $("realWrap").scrollIntoView({behavior:"smooth",block:"start"})});
+function onMapClick(e){if(!placing)return;placing.pts.push([+e.latlng.lat.toFixed(6),+e.latlng.lng.toFixed(6)]);
+  if(placing.pts.length===1){placing.tmp=L.circleMarker(e.latlng,{radius:7,color:"#3BE3D6",weight:3}).addTo(LM);$("placeTxt").textContent=`第 2 步：再点 ${placing.s.street} 门牌最大号那头`;return}
+  const {k,s,pts}=placing;cancelPlace();
+  db.collection("streets").doc(k).set({area:s.area,street:s.street,a:pts[0],b:pts[1],flip:false,src:"manual",updatedAt:new Date().toISOString()}).then(()=>toast(`${s.street} 已定位`),err=>toast("存不到："+(err.code||err.message)))}
+function cancelPlace(){if(placing&&placing.tmp&&LM)LM.removeLayer(placing.tmp);placing=null;$("placeBar").hidden=true}
+$("placeCancel").onclick=cancelPlace;
+async function focusReal(hit){const a=hit.area||"[待填]";$("mArea").value=a;lastFit=a;flashId=hit.id;renderMap();await renderReal();
+  const m=mk[hit.id];if(!m){toast("这个单位的街道还没定位，请在下面「街道位置」先定位");$("stBox").open=true;return}
+  LM.setView(m.getLatLng(),19);m.openTooltip();$("realWrap").scrollIntoView({behavior:"smooth",block:"start"});
+  clearTimeout(focusReal.t);focusReal.t=setTimeout(()=>{flashId=null;drawMarkers()},6000)}
+setMode(mapMode);
+$("mArea").onchange=renderMap;
+$("zIn").onclick=()=>{zoom=Math.min(2.2,zoom+.3);renderMap()};
+$("zOut").onclick=()=>{zoom=Math.max(.6,zoom-.3);renderMap()};
+$("plan").addEventListener("click",e=>{const b=e.target.closest(".u");if(b)openDrawer(b.dataset.id)});
+$("mapForm").addEventListener("submit",e=>{e.preventDefault();const q=$("mq").value.trim().toLowerCase();if(!q)return;
+  let hit=rows.find(r=>String(r.ref||"").toLowerCase()===q)||rows.find(r=>{const u=parseUnit(r);return u&&u.no.toLowerCase()===q})||rows.find(r=>matchQ(r,q));
+  const many=rows.filter(r=>{const u=parseUnit(r);return u&&u.no.toLowerCase()===q});
+  if(!hit){toast("找不到这个单位");return}
+  if(many.length>1)toast(`有 ${many.length} 个 ${q} 号，先显示第一个；可打 Listing ID 更准`);
+  if(mapMode==="real"){focusReal(hit);return}
+  $("mArea").value=hit.area||"[待填]";flashId=hit.id;zoom=Math.max(zoom,1.6);renderMap();
+  const el=$("u-"+hit.id);if(el){el.scrollIntoView({behavior:"smooth",block:"center",inline:"center"});el.focus({preventScroll:true})}
+  clearTimeout(renderMap.t);renderMap.t=setTimeout(()=>{flashId=null;document.querySelectorAll(".u.flash").forEach(x=>x.classList.remove("flash"))},6000);
+});
+$("results").addEventListener("click",e=>{if(e.target.closest(".call,.wa"))return;const b=e.target.closest(".row");if(b)openDrawer(b.dataset.id)});
+$("results").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList.contains("row"))openDrawer(e.target.dataset.id)});
+
+/* drawer */
+const FIELDS=[["ref","Listing ID"],["for","类别","sel",["Sale","Rent","Own Stay","Tenanted","Sold"]],["area","地区"],["address","Address（门牌 / 地址）",0,0,1],["project","项目 / Taman",0,0,1],["type","类型"],["price","价钱 (RM)"],["status","状态","sel",["Available","Under negotiation","Sold","Rented","Own stay"]],["built","Built-up (sqft)"],["land","Land (sqft)"],["tenure","Tenure","sel",["Freehold","Leasehold"]],["notes","备注",0,0,1]];
+/* ===== Owners ===== */
+const CO_RE=/\b(SDN\.?\s*BHD|BHD|BERHAD|ENTERPRISE|TRADING|PLT|INDUSTRIES|COMPANY|HOLDINGS|MANUFACTURING|ENGINEERING|CORPORATION|LIMITED|LTD)\b/i;
+function normPh(t){let d=String(t||"").replace(/\D/g,"");if(!d)return null;if(d.startsWith("60")&&d.length>=11)d="0"+d.slice(2);if(!d.startsWith("0"))d="0"+d;return d.length>=10&&d.length<=12?d:null}
+function phList(t){return [...new Set(String(t||"").split(/[,;\/\s]+/).map(normPh).filter(Boolean))]}
+function ownersOf(r){
+  if(Array.isArray(r.owners)&&r.owners.length)return r.owners;
+  if(!r.owner&&!r.phone)return [];
+  const phs=String(r.phone||"").match(/0\d[\d-]{7,11}/g)||[];
+  return [{name:r.owner||"[待填]",ic:r.nric||"",role:"",correct:[],phones:[...new Set(phs.map(normPh).filter(Boolean))],company:CO_RE.test(r.owner||"")}];
+}
+const fmtPh=n=>n.replace(/^(01\d)(\d{3,4})(\d{4})$/,"$1-$2 $3").replace(/^(0[2-9])(\d{3,4})(\d{4})$/,"$1-$2 $3");
+const telOf=n=>"tel:+6"+n.replace(/\D/g,"");
+const waOf=n=>"https://wa.me/6"+n.replace(/\D/g,"");
+const callBtns=(n,sm)=>`<a class="call${sm?" sm":""}" href="${telOf(n)}" target="_blank" rel="noopener" data-n="${n}">Call</a><a class="wa${sm?" sm":""}" href="${waOf(n)}" target="_blank" rel="noopener">WhatsApp</a>`;
+document.addEventListener("click",async e=>{const a=e.target.closest("a.call");if(!a)return;const n=a.dataset.n;
+  try{await navigator.clipboard.writeText(n);toast(`已复制 ${fmtPh(n)}，没有跳出拨号就到电话 app 贴上`)}catch(_){toast(`号码 ${fmtPh(n)}，请到电话 app 拨打`)}});
+const TAGL={npu:"No pick up",wrong:"Wrong number",nis:"Not in service"};
+function phoneRow(n,kind,oi){const bad=kind==="wrong"||kind==="nis";
+  const mk=canWrite?`<select class="mark" data-oi="${oi}" data-n="${n}" aria-label="标记 ${n}"><option value="">标记</option><option value="correct">✓ Correct</option><option value="npu">No pick up</option><option value="wrong">Wrong number</option><option value="nis">Not in service</option><option value="none">清除标记</option></select>`:"";
+  return `<div class="ph k-${kind}"><span class="num">${fmtPh(n)}</span>${kind==="correct"?'<span class="tag t-ok">Correct</span>':TAGL[kind]?`<span class="tag ${bad?"t-bad":"t-warn"}">${TAGL[kind]}</span>`:""}<span class="sp"></span>${mk}<button class="linkbtn" type="button" data-copy="${n}">复制</button>${bad?"":callBtns(n)}</div>`}
+function ownersHtml(r){
+  const all=ownersOf(r);if(!all.length)return "";
+  const company=all.find(o=>o.company);
+  let people=all.map((o,oi)=>({o,oi})).filter(({o})=>!(o.company&&!(o.correct||[]).length&&!(o.phones||[]).length));
+  const good=o=>(o.phones||[]).filter(n=>!(o.tags||{})[n]).length;
+  people.sort((a,b)=>((b.o.correct||[]).length>0)-((a.o.correct||[]).length>0)||(good(b.o)>0)-(good(a.o)>0)||a.oi-b.oi);
+  return `<section class="owners full"><div class="ohead">Owner</div>${company?`<div class="coname">${esc(company.name)}</div>`:""}
+  ${people.map(({o,oi},i)=>{const cr=o.correct||[],ph=o.phones||[],tg=o.tags||{};
+    const norm=ph.filter(n=>!tg[n]),npu=ph.filter(n=>tg[n]==="npu"),bad=ph.filter(n=>tg[n]==="wrong"||tg[n]==="nis");
+    return `<div class="ocard"><div class="olab">Owner ${i+1}${o.role&&!/^owner$/i.test(o.role)?" · "+esc(o.role):""}</div>
+    <div class="oname">${esc(o.name||"[待填]")}</div>${o.ic?`<div class="oic">IC ${esc(o.ic)}</div>`:""}
+    ${cr.map(n=>phoneRow(n,"correct",oi)).join("")}${(norm.length||npu.length)&&cr.length?'<div class="olab2">其他号码</div>':""}${norm.map(n=>phoneRow(n,"",oi)).join("")}${npu.map(n=>phoneRow(n,"npu",oi)).join("")}
+    ${bad.length?'<div class="olab2">不要打</div>'+bad.map(n=>phoneRow(n,tg[n],oi)).join(""):""}
+    ${!cr.length&&!ph.length?'<div class="mapnote">没有电话</div>':""}</div>`}).join("")}</section>`;
+}
+function applyMark(owners,oi,n,v){const L=JSON.parse(JSON.stringify(owners));const o=L[oi];if(!o)return L;o.correct=o.correct||[];o.phones=o.phones||[];o.tags={...(o.tags||{})};
+  if(v==="correct"){o.phones=o.phones.filter(x=>x!==n);if(!o.correct.includes(n))o.correct.unshift(n);delete o.tags[n]}
+  else{if(o.correct.includes(n)){o.correct=o.correct.filter(x=>x!==n);o.phones.unshift(n)}if(v==="none")delete o.tags[n];else o.tags[n]=v}
+  return L}
+function ownerEditHtml(list){return `<div class="full oedit"><div class="ohead">Owner</div><div id="oEdit">${list.map(oBlk).join("")}</div><button class="btn" type="button" id="addOwner">+ 加 owner</button></div>`}
+function oBlk(o){o=o||{};return `<div class="oblk"><div class="obtop"><label class="ck"><input type="checkbox" class="oe" data-k="company" ${o.company?"checked":""}> 公司</label><button class="linkbtn rm" type="button">移除</button></div>
+  <label>名字<input class="field oe" data-k="name" value="${esc(o.name||"")}"></label>
+  <label>IC<input class="field oe" data-k="ic" value="${esc(o.ic||"")}"></label>
+  <label>Correct number<input class="field oe" data-k="correct" inputmode="tel" value="${esc((o.correct||[]).join(", "))}" placeholder="对的号码"></label>
+  <label>其他号码<input class="field oe" data-k="phones" inputmode="tel" value="${esc((o.phones||[]).join(", "))}" placeholder="用逗号分开"></label>
+  <input type="hidden" class="oe" data-k="role" value="${esc(o.role||"")}"><input type="hidden" class="oe" data-k="tags" value="${esc(JSON.stringify(o.tags||{}))}"></div>`}
+function readOwners(){return [...document.querySelectorAll("#oEdit .oblk")].map(b=>{const g=k=>b.querySelector(`[data-k="${k}"]`);const correct=phList(g("correct").value);
+  const phones=phList(g("phones").value).filter(n=>!correct.includes(n));let tags={};try{tags=JSON.parse(g("tags").value||"{}")}catch(e){}
+  Object.keys(tags).forEach(n=>{if(!phones.includes(n))delete tags[n]});
+  return {name:g("name").value.trim(),ic:g("ic").value.trim(),role:g("role").value,company:g("company").checked,correct,phones,tags}}).filter(o=>o.name||o.ic||o.correct.length||o.phones.length)}
+let editingId=null;
+function openDrawer(id,edit){
+  editingId=id;const r=id?rows.find(x=>x.id===id):{for:sel.for||"Sale",area:FL.proj&&FL.proj!=="[待填]"?FL.proj:"",type:FL.type&&FL.type!=="[待填]"?FL.type:""};if(!r)return;
+  $("dTitle").textContent=id?(addrOf(r)||r.ref||"Listing"):"新增 listing";
+  if(id&&!edit){
+    const sp=(()=>{try{const m=mk[id];if(m){const l=m.getLatLng();return [l.lat,l.lng]}return unitPos().pos[id]||null}catch(e){return null}})();
+    const show=FIELDS.filter(([k])=>r[k]!=null&&r[k]!==""&&k!=="notes");
+    $("dBody").innerHTML=`<dl class="view">${show.map(([k,l])=>`<dt>${l}</dt><dd>${k==="price"?priceTxt(r):esc(["built","land"].includes(k)?fmt(num(r[k])):r[k])}${k==="phone"?`<button class="linkbtn copy" type="button" data-copy="${esc(r.phone)}">复制</button>`:""}</dd>`).join("")}</dl>${ownersHtml(r)}${r.notes?`<dl class="view"><dt>备注</dt><dd>${esc(r.notes)}</dd></dl>`:""}<a class="btn gmap full" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((addrOf(r)?addrOf(r)+", ":"")+(r.area||"")+", Selangor, Malaysia")}" target="_blank" rel="noopener">在 Google Maps 打开</a>${sp?`<a class="btn primary gmap full" href="https://www.google.com/maps/place/${sp[0].toFixed(6)},${sp[1].toFixed(6)}/@${sp[0].toFixed(6)},${sp[1].toFixed(6)},90m/data=!3m1!1e3" target="_blank" rel="noopener">🛰 看这个单位的卫星图</a>`:""}`;
+    $("dFoot").innerHTML=`<div id="delWrap">${canWrite?'<button class="btn danger" type="button" id="delBtn">删除</button>':""}</div><div>${canWrite?'<button class="btn primary" type="button" id="editBtn">编辑</button>':""}</div>`;
+    if(canWrite){$("editBtn").onclick=()=>openDrawer(id,true);$("delBtn").onclick=askDel}
+  }else{
+    $("dBody").innerHTML=FIELDS.map(([k,l,t,opts,full])=>{const v=r[k]??"";
+      const ctl=t==="sel"?`<select class="field" id="f_${k}"><option value="">[待填]</option>${opts.map(o=>`<option ${o===v?"selected":""}>${o}</option>`).join("")}</select>`:`<input class="field" id="f_${k}" value="${esc(v)}" ${k==="ref"?'placeholder="自动"':""}>`;
+      return `<label class="${full?"full":""}">${l}${ctl}</label>`}).join("")+ownerEditHtml(id?ownersOf(r):[{}]);
+    $("addOwner").onclick=()=>$("oEdit").insertAdjacentHTML("beforeend",oBlk());
+    $("oEdit").addEventListener("click",e=>{if(e.target.classList.contains("rm"))e.target.closest(".oblk").remove()});
+    $("dFoot").innerHTML=`<div></div><div><button class="btn ghost" type="button" id="cancelBtn">取消</button><button class="btn primary" type="button" id="saveBtn">保存</button></div>`;
+    $("cancelBtn").onclick=()=>id?openDrawer(id):closeDrawer();$("saveBtn").onclick=save;
+  }
+  $("scrim").hidden=false;$("drawer").hidden=false;
+}
+$("dBody").addEventListener("change",async e=>{const s=e.target.closest(".mark");if(!s||!s.value||!db||!editingId)return;
+  const r=rows.find(x=>x.id===editingId);if(!r)return;const owners=applyMark(ownersOf(r),+s.dataset.oi,s.dataset.n,s.value);s.disabled=true;
+  try{await db.collection("listings").doc(editingId).update({owners,updatedAt:new Date().toISOString()});r.owners=owners;toast("已标记");openDrawer(editingId)}catch(err){toast("标记失败："+(err.code||err.message));s.disabled=false}});
+$("dBody").addEventListener("click",async e=>{const b=e.target.closest("[data-copy]");if(!b)return;try{await navigator.clipboard.writeText(b.dataset.copy);toast("已复制电话")}catch(_){const r=document.createRange();r.selectNodeContents(b.previousSibling||b.parentNode);getSelection().removeAllRanges();getSelection().addRange(r);toast("已选取，请手动复制")}});
+function closeDrawer(){$("scrim").hidden=true;$("drawer").hidden=true;editingId=null}
+$("dClose").onclick=closeDrawer;$("scrim").onclick=closeDrawer;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("drawer").hidden)closeDrawer()});
+function askDel(){$("delWrap").innerHTML=`<span class="mapnote">确定删除？</span><button class="btn danger" type="button" id="delYes">删除</button><button class="btn ghost" type="button" id="delNo">不要</button>`;
+  $("delNo").onclick=()=>openDrawer(editingId);
+  $("delYes").onclick=async()=>{try{await db.collection("listings").doc(editingId).delete();toast("已删除");closeDrawer()}catch(e){toast("删除失败："+(e.code||e.message))}}}
+function nextRef(used){let m=0;rows.forEach(r=>{const x=/^WL-(\d+)$/.exec(r.ref||"");if(x)m=Math.max(m,+x[1])});(used||[]).forEach(n=>m=Math.max(m,n));return m+1}
+async function save(){
+  if(!db||!canWrite)return;const d={};
+  FIELDS.forEach(([k])=>{let v=$("f_"+k).value.trim();if(["price","built","land"].includes(k))v=num(v);d[k]=v===""?null:v});
+  if(!d.ref)d.ref="WL-"+String(nextRef()).padStart(4,"0");
+  const ow=readOwners();d.owners=ow;const co=ow.find(o=>o.company);d.owner=(co||ow[0]||{}).name||null;
+  d.phone=ow.filter(o=>o.correct.length||o.phones.length).map(o=>`${o.name}: ${[...o.correct,...o.phones].join(", ")}`).join(" ; ")||null;
+  d.nric=ow.filter(o=>o.ic).map(o=>`${o.name}: ${o.ic}`).join(" ; ")||null;
+  d.updatedAt=new Date().toISOString();$("saveBtn").disabled=true;
+  try{
+    if(editingId){const old={...rows.find(x=>x.id===editingId)};delete old.id;await db.collection("listings").doc(editingId).set({...old,...d});toast("已保存");openDrawer(editingId)}
+    else{const ref=await db.collection("listings").add({...d,state:"Selangor",sample:false,createdAt:d.updatedAt});toast("已新增");closeDrawer();sel.for=d.for||sel.for;sel.area=d.area||"";render()}
+  }catch(e){toast("保存失败："+(e.code||e.message));$("saveBtn").disabled=false}
+}
+$("addBtn").onclick=()=>openDrawer(null,true);
+/* export all listings to Excel */
+const DL_ORDER=["ref","for","status","area","project","address","type","state","price","built","land","tenure","owner","nric","phone","notes","source","createdAt","updatedAt"];
+const DL_CAT=[["Sale","For Sale"],["Rent","For Rent"],["Own Stay","Own Stay"],["Tenanted","Tenanted"],["Sold","Sold"]];
+function dlFlat(rs){
+  const keys=new Set();let maxO=0;
+  rs.forEach(r=>{Object.keys(r).forEach(k=>{if(k!=="owners")keys.add(k)});if(Array.isArray(r.owners))maxO=Math.max(maxO,r.owners.length)});
+  const cols=["id",...DL_ORDER.filter(k=>keys.has(k)),...[...keys].filter(k=>k!=="id"&&!DL_ORDER.includes(k)).sort()];
+  const oc=[];for(let i=1;i<=maxO;i++)oc.push(`Owner${i} 名字`,`Owner${i} IC`,`Owner${i} 身份`,`Owner${i} 公司?`,`Owner${i} 电话`,`Owner${i} Correct 号码`);
+  const val=v=>v==null?"":(typeof v==="object"?JSON.stringify(v):v);
+  const aoa=[[...cols,...oc]];
+  rs.forEach(r=>{const row=cols.map(k=>val(r[k]));
+    (r.owners||[]).forEach(o=>{o=o||{};row.push(val(o.name),val(o.ic),val(o.role),o.company?"Yes":"",(o.phones||[]).join(", "),(o.correct||[]).join(", "))});
+    while(row.length<aoa[0].length)row.push("");aoa.push(row)});
+  return aoa;
+}
+$("dlBtn").onclick=async()=>{
+  const btn=$("dlBtn");
+  if(!rows.length){toast("资料还在加载，等一下再按");return}
+  if(typeof XLSX==="undefined"){toast("Excel 工具还没加载好，刷新再试");return}
+  btn.disabled=true;
+  try{
+    const all=rows.slice().sort((a,b)=>String(a.area||"").localeCompare(String(b.area||""))||String(a.address||"").localeCompare(String(b.address||""),undefined,{numeric:true}));
+    const wb=XLSX.utils.book_new();
+    const add=(name,rs)=>{const ws=XLSX.utils.aoa_to_sheet(dlFlat(rs));ws["!freeze"]={xSplit:0,ySplit:1};XLSX.utils.book_append_sheet(wb,ws,name)};
+    add("全部 All",all);
+    let n=0;DL_CAT.forEach(([k,l])=>{const rs=all.filter(r=>r.for===k);n+=rs.length;add(l,rs)});
+    const none=all.filter(r=>!DL_CAT.some(([k])=>r.for===k));n+=none.length;add("未分类",none);
+    if(n!==all.length)throw new Error("count mismatch");
+    const buf=XLSX.write(wb,{bookType:"xlsx",type:"array"});
+    const blob=new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+    const d=new Date(),fn=`${(window.CRM_NAME||"Wolf Group CRM").replace(/ /g,"_")}_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}.xlsx`;
+    const dl=window.claude&&await claude.use("downloads");
+    if(dl){await dl.save({filename:fn,data:blob})}
+    else{const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000)}
+    toast(`已下载 ${all.length} 个 listing（全部都在）`);
+  }catch(e){toast(e&&e.code==="declined"?"已取消下载":"下载失败："+(e&&(e.message||e.code)||e))}
+  finally{btn.disabled=false}
+};
+
+
+/* samples */
+$("clearSamples").onclick=async function(){
+  if(!this.dataset.sure){this.dataset.sure=1;this.textContent="确定移除所有示例资料？再按一次";return}
+  this.disabled=true;try{for(const r of rows.filter(r=>r.sample))await db.collection("listings").doc(r.id).delete();toast("示例资料已移除")}catch(e){toast("移除失败")}
+  delete this.dataset.sure;this.disabled=false;
+};
+
+/* ===== Upload ===== */
+const ALIAS={
+  ref:["listing id","listingid","id","ref","ref no","listing no","编号","编号id"],
+  for:["category","for","type of listing","listing type","sale/rent","sale / rent","类别","状态类别","用途"],
+  area:["area","location","地区","区域","city","town","state area"],
+  address:["address","unit","unit no","unit no.","lot","no","地址","门牌","单位"],
+  street:["jalan","street","road","jalan name","nama jalan","路名","街名"],
+  project:["project","project name","taman","building","development","项目","项目名称","花园"],
+  type:["property type","type","类型","屋型"],
+  price:["price","asking price","selling price","rental","rent","售价","租金","价钱","价格","price (rm)"],
+  status:["status","状况"],
+  built:["built-up","built up","builtup","built-up (sqft)","bu","建筑面积"],
+  land:["land","land area","land size","土地面积"],
+  tenure:["tenure","地契"],
+  owner:["owner","owner name","name","屋主","业主","owner 姓名"],
+  phone:["phone","owner phone","contact","tel","mobile","hp","电话","联络"],
+  notes:["notes","remark","remarks","备注","comment"]
+};
+const norm=s=>String(s??"").trim().toLowerCase().replace(/\s+/g," ");
+let imp=null;
+function mapHeaders(hdr){const m={};const used=new Set();
+  for(const [k,al] of Object.entries(ALIAS)){const i=hdr.findIndex((h,ix)=>!used.has(ix)&&al.includes(norm(h)));if(i>=0){m[k]=i;used.add(i)}}
+  return {m,unused:hdr.map((h,i)=>used.has(i)||!String(h).trim()?null:i).filter(i=>i!=null)}}
+function normFor(v){const s=norm(v);if(!s)return"";if(/\bsold\b|已卖|卖了/.test(s))return"Sold";if(/tenant|rented|已租|租客/.test(s))return"Tenanted";if(/rent|租/.test(s))return"Rent";if(/own|stay|自住/.test(s))return"Own Stay";if(/sale|sell|售|卖/.test(s))return"Sale";return""}
+const keyOf=r=>r.ref?"id:"+norm(r.ref):(r.address||r.project)?"ad:"+norm(r.area)+"|"+norm(r.address||r.project):null;
+function buildImport(){
+  const {hdr,data}=imp;const {m,unused}=mapHeaders(hdr);const def=$("defFor").value;
+  const byKey={};rows.forEach(r=>{const k=keyOf(r);if(k)byKey[k]=r;if(r.address||r.project){byKey["ad:"+norm(r.area)+"|"+norm(r.address||r.project)]=r}if(r.address)byKey["a:"+norm(r.address)]=r});
+  const out=[];const seen=new Set();let dup=0;
+  data.forEach(line=>{
+    if(!line.some(c=>String(c??"").trim()))return;
+    const r={};for(const [k,i] of Object.entries(m)){let v=line[i];v=v==null?"":String(v).trim();if(["price","built","land"].includes(k))v=num(v);r[k]=v===""?null:v}
+    if(r.street){const sn=String(r.street).replace(/\b\w/g,c=>c.toUpperCase());if(r.address&&/^\d+[A-Za-z]?$/.test(r.address))r.address=`No. ${r.address}, ${sn}`;else if(!r.address)r.address=sn;delete r.street}
+    if(!r.area&&r.address){const s=(/,\s*(.+)$/.exec(r.address)||[])[1];if(s){const h=rows.find(x=>x.area&&String(x.address||"").toLowerCase().endsWith(", "+s.toLowerCase()));if(h)r.area=h.area}}
+    r.for=normFor(r.for)||def||null;
+    const extra=unused.map(i=>String(line[i]??"").trim()?`${hdr[i]}: ${String(line[i]).trim()}`:"").filter(Boolean).join("; ");
+    if(extra)r.notes=[r.notes,extra].filter(Boolean).join(" | ");
+    const k=keyOf(r);if(k&&seen.has(k)){dup++;return}if(k)seen.add(k);
+    const ex=(r.ref&&byKey["id:"+norm(r.ref)])||((r.address||r.project)&&byKey["ad:"+norm(r.area)+"|"+norm(r.address||r.project)])||(r.address&&/,/.test(r.address)&&byKey["a:"+norm(r.address)]);
+    out.push({r,ex});
+  });
+  imp.items=out;
+  const names={ref:"Listing ID",for:"类别",area:"地区",address:"Address",street:"街名", project:"项目",type:"类型",price:"价钱",status:"状态",built:"Built-up",land:"Land",tenure:"Tenure",owner:"Owner",phone:"电话",notes:"备注"};
+  $("mapNote").innerHTML=`对到的栏位：${Object.keys(m).map(k=>`<code>${esc(hdr[m[k]])}</code>→${names[k]}`).join("，")||"没有"}${unused.length?`<br>其他栏位放进备注：${unused.map(i=>`<code>${esc(hdr[i])}</code>`).join("，")}`:""}`;
+  const nNew=out.filter(x=>!x.ex).length,nUp=out.length-nNew,noFor=out.filter(x=>!x.r.for).length,noArea=out.filter(x=>!x.r.area).length;
+  $("impSum").innerHTML=`<span>新增 <b>${nNew}</b></span><span>更新 <b>${nUp}</b></span>${dup?`<span>文件内重复跳过 <b>${dup}</b></span>`:""}${noFor?`<span style="color:var(--warn)">没类别 <b>${noFor}</b></span>`:""}${noArea?`<span style="color:var(--warn)">没地区 <b>${noArea}</b></span>`:""}`;
+  const cols=["ref","for","area","address","project","price","owner"];
+  $("pvTable").innerHTML=`<thead><tr><th></th>${cols.map(c=>`<th>${names[c]}</th>`).join("")}</tr></thead><tbody>${out.slice(0,200).map(({r,ex})=>`<tr><td>${ex?"更新":"新增"}</td>${cols.map(c=>`<td>${r[c]==null||r[c]===""?'<span class="tbd">[待填]</span>':esc(c==="price"?fmt(r[c]):c==="phone"?"•••":r[c])}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  $("impGo").disabled=!out.length||!canWrite;$("impGo").textContent=`确认上传 ${out.length} 个`;
+}
+async function readFile(f){
+  if(!window.XLSX){toast("读取 Excel 的工具没载入，请重新打开页面");return}
+  try{const buf=await f.arrayBuffer();const wb=XLSX.read(buf,{type:"array"});const ws=wb.Sheets[wb.SheetNames[0]];
+    const arr=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:""});
+    let hi=arr.findIndex(r=>r.filter(c=>String(c).trim()).length>=2);if(hi<0){toast("文件里没有资料");return}
+    imp={name:f.name,hdr:arr[hi].map(String),data:arr.slice(hi+1)};$("impStep").hidden=false;$("impProg").textContent=f.name;buildImport();
+  }catch(e){toast("读不到这个文件，请用 .xlsx 或 .csv")}
+}
+$("file").onchange=e=>{const f=e.target.files[0];if(f)readFile(f);e.target.value=""};
+const drop=$("drop");["dragenter","dragover"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add("over")}));
+["dragleave","drop"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove("over")}));
+drop.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f)readFile(f)});
+$("defFor").onchange=()=>imp&&buildImport();
+$("impCancel").onclick=()=>{imp=null;$("impStep").hidden=true};
+$("impGo").onclick=async()=>{
+  if(!imp||!db)return;const btn=$("impGo");btn.disabled=true;let done=0,fail=0;const now=new Date().toISOString();let n=nextRef();
+  for(const {r,ex} of imp.items){
+    try{
+      if(ex){const old={...ex};delete old.id;const merged={...old};for(const[k,v]of Object.entries(r))if(v!=null&&v!=="")merged[k]=v;merged.updatedAt=now;await db.collection("listings").doc(ex.id).set(merged)}
+      else{const d={...r};if(!d.ref)d.ref="WL-"+String(n++).padStart(4,"0");await db.collection("listings").add({...d,state:"Selangor",sample:false,createdAt:now,updatedAt:now})}
+      done++;
+    }catch(e){fail++}
+    $("impProg").textContent=`上传中 ${done+fail}/${imp.items.length}`;
+  }
+  toast(fail?`完成 ${done} 个，失败 ${fail} 个`:`已上传 ${done} 个 listing`);
+  imp=null;$("impStep").hidden=true;$("imp").open=false;btn.disabled=false;
+};
+
+/* data */
+render();
+(async()=>{
+  const timer=setTimeout(()=>{$("sync").textContent="资料库没有回应"},10000);
+  try{
+    if(!window.claude?.use){clearTimeout(timer);$("sync").textContent="请在 Claude 里打开";return}
+    db=await window.claude.use("db");
+    if(!db){clearTimeout(timer);$("sync").textContent="请登录后才能看资料";return}
+    canWrite=true;
+    db.collection("listings").onSnapshot(s=>{clearTimeout(timer);setTimeout(checkPending,0);setTimeout(checkOwn,0);setTimeout(checkTags,0);rows=s.docs.map(d=>({...d.data(),id:d.id}));$("dot").classList.add("on");$("sync").textContent=`实时同步 · ${rows.length} 个 listing`;render();if(!$("view-matching").hidden){bChips();if(lastB)runMatch(lastB);renderBuyers()}},
+      err=>{clearTimeout(timer);$("sync").textContent="资料库错误："+err.code});
+    db.collection("streets").onSnapshot(s=>{streetsDb={};s.docs.forEach(d=>streetsDb[d.id]=d.data());if(!$("view-mapping").hidden&&mapMode==="real")drawMarkers()},()=>{});
+    db.collection("buyers").onSnapshot(s=>{buyers=s.docs.map(d=>({...d.data(),id:d.id}));if(!$("view-matching").hidden)renderBuyers()},()=>{});
+  }catch(e){clearTimeout(timer);$("sync").textContent="资料库暂时不能用"}
+})();
+/* ===== 华语 / English ===== */
+const I18N_RX=[
+[/(\d+) 个 listing 没在地图上（地址不完整，或街道设为不显示），可以在 Listing 页找到。/,"$1 listings are not on the map (incomplete address or street hidden); find them on the Listing page."],
+[/(.+) 已从地图拿掉/,"$1 hidden from map"],
+[/街道位置：(\d+) 条还没定位/,"Street positions: $1 not placed"],[/街道位置：(\d+) 条全部已定位/,"Street positions: all $1 placed"],
+[/第 1 步：在地图上点 (.+) 门牌最小号那头/,"Step 1: tap the lowest-number end of $1"],[/第 2 步：再点 (.+) 门牌最大号那头/,"Step 2: tap the highest-number end of $1"],[/(.+) 已定位$/,"$1 placed"],
+[/(\d[\d,]*) 个最符合/g,"$1 best matches"],[/，(\d[\d,]*) 个在卖但价钱未知/g,", $1 for sale (price unknown)"],[/，(\d[\d,]*) 个可以问屋主/g,", $1 to ask owners"],
+[/也看 (\d+) 个还没说要卖的单位（可以去问屋主）/g,"Also show $1 units not yet for sale (ask the owner)"],[/再显示 (\d+) 个（还有 (\d+) 个）/g,"Show $1 more ($2 left)"],
+[/已复制 (.+)，没有跳出拨号就到电话 app 贴上/g,"Copied $1 — if the dialer didn't open, paste it in your Phone app"],[/号码 (.+)，请到电话 app 拨打/g,"Number $1 — please dial it in your Phone app"],
+[/实时同步 · (\d+) 个 listing/g,"Live · $1 listings"],[/搜寻：(.+)/g,"Search: $1"],[/找到 (\d+) 个/g,"$1 found"],[/(.+) 共 (\d+) 个/g,"$1: $2 total"],
+[/(\d+) 个单位/g,"$1 units"],[/(\d+) 个 listing/g,"$1 listings"],[/超预算 (\d+)%/g,"Over budget $1%"],[/(\d+) 号，先显示第一个；可打 Listing ID 更准/g,"There are several no. $1 — showing the first; type the Listing ID to be exact"],
+[/配对：(.+)/g,"Match: $1"],[/(\d+) match/g,"$1 match"],[/–\s*以上/g,"– up"],[/(\d+) 个/g,"$1"],[/(\d+)\/月/g,"$1/mo"],
+];
+const I18N_EN=[
+["团队对外的网站。要改内容，直接告诉 Claude。","The team's public websites. To change anything, just tell Claude."],
+["道路和厂房轮廓来自 OpenStreetMap。单位点是按街道和门牌号排出来的大概位置：单号一边，双号一边。放大就会看到门牌号，点一下看 owner 资料。位置不对，可以在下面「街道位置」调整。","Roads and buildings from OpenStreetMap. Unit dots are approximate, laid out along each street by unit number (odd one side, even the other). Zoom in to see numbers; tap one for owner details. Fix positions under \"Street positions\" below."],["这个单位的街道还没定位，请在下面「街道位置」先定位","This unit's street isn't placed yet — place it under \"Street positions\" below"],["每条路只要在地图上点两下（门牌最小号那头、最大号那头），那条路的单位就会自动排上去。已经先从 OpenStreetMap 定位了一部分，位置不对可以重新定位。","Tap a street twice on the map (lowest-number end, then highest-number end) and its units are laid out automatically. Some streets were pre-placed from OpenStreetMap; re-place any that look wrong."],["先放大到看得清楚那条路再点，比较准。","Zoom in until you can see the street clearly, then tap."],
+["输入 listing ID、门牌 / 地址或项目名称，马上找到 owner 电话、售价和完整资料。","Type a listing ID, unit / address or project to get the owner's phone, price and full details."],
+["例如 WL-0012、21-08 或项目名称","e.g. WL-0012, 21-08 or project name"],
+["把买家要找什么贴进大格，AI 自动读，从你的 listing 里找出符合的单位。","Paste what the buyer wants into the big box. AI reads it and finds matching units from your listings."],
+["把买家的要求直接贴进来，例如：\n客户要买 Puchong 的 link factory，2m 以下，built-up 最少 3000sf，要 3 phase","Paste the buyer's requirement here, e.g.:\nBuyer wants a link factory in Puchong, below 2m, built-up at least 3000sf, 3 phase"],
+["在手机上：点大格，再按键盘上的 🎤 就可以用讲的。","On phone: tap the big box, then tap 🎤 on the keyboard to speak."],
+["按麦克风讲买家的需求，讲完再按一次停。","Tap the mic and say what the buyer wants; tap again to stop."],
+["麦克风没开权限。可以点大格，用键盘上的 🎤 讲。","Mic permission is off. Tap the big box and use 🎤 on the keyboard."],
+["每个格子是一个单位。搜寻门牌或 Listing ID，地图会放大到那个单位。","Each box is one unit. Search a unit no. or Listing ID and the map zooms to it."],
+["格子按门牌排（单号一排、双号一排），不是真实比例。点格子看资料和 Google Maps。","Boxes follow unit numbers (odd on one side, even on the other), not to scale. Tap a box for details and Google Maps."],
+["资料只存在这个 CRM 里，请不要截图外传。","Owner details stay in this CRM — please don't screenshot or share."],
+["Owner 资料只存在这个 CRM 里，请不要截图外传。","Owner details stay in this CRM — please don't screenshot or share."],
+["同一个 Listing ID（或同地区同地址）的资料会更新，不会重复","Same Listing ID (or same area + address) is updated, not duplicated"],
+["把 Excel 或 CSV 拖进来，或","Drag an Excel or CSV here, or"],["点这里选文件","tap to choose a file"],
+["贴好要求、按找 Match，再按「存这个买家」，以后一按就重新配对。","Paste a requirement, tap Find Match, then \"Save this buyer\" to re-match any time."],
+["试试放宽预算、多选几个类型，或勾「也找还没说要卖的单位」。","Try a wider budget or more property types."],
+["试试放宽价钱，或换一个 Project / 类型。","Try a wider price range or another project / type."],
+["试试 listing ID、门牌号码或项目名称的一部分。","Try part of a listing ID, unit number or project name."],
+["，点进去看 owner 和完整资料",", tap for owner and full details"],["，有价钱的才会出现在价钱筛选里",", only units with a price show in the price filter"],
+["最符合：已经在卖 / 出租，价钱对","Best: already for sale / rent, price fits"],["在卖，但价钱还不知道","For sale, price unknown"],["还没说要卖，可以去问屋主","Not yet for sale — ask the owner"],
+["点一个买家，马上重新配对。","Tap a buyer to re-match now."],["下一步做。告诉 Wilson Yap 这里要记什么。","Coming next. Tell Wilson Yap what to track here."],
+["下一步做：买家需求自动配对 listing。","Coming next."],
+["地址要写成「No. 23, Jalan …」才能放上地图。","Addresses must look like \"No. 23, Jalan …\" to appear on the map."],
+["个 listing 的地址格式认不出，没有放上地图。"," listings have an address the map can't read."],
+["这个地区还没有可以画的单位","No units to draw in this area yet"],
+["，可以问屋主",", ask the owner"],["还没确定要卖","Not confirmed for sale"],["价钱未知，要问屋主","Price unknown — ask owner"],["比预算低一点","Slightly under budget"],
+["有 correct number","Has correct number"],["在预算内","Within budget"],["有价钱","Has price"],
+["AI 帮我找 Match","AI Find Match"],["AI 在读…","AI reading…"],["存这个买家","Save this buyer"],["已存的买家","Saved buyers"],["还没有存买家","No saved buyers yet"],
+["AI 理解成：「","AI understood: \""],["」","\""],["读到：","read:"],["已存 ","Saved "],["系统 ","System "],
+["按一下讲话","Tap to speak"],["在听… 按一下停","Listening… tap to stop"],["按着讲买家需求","Speak buyer requirement"],
+["请先把买家要求贴进大格","Paste the buyer's requirement first"],["先按「AI 帮我找 Match」","Tap \"AI Find Match\" first"],["买家已存","Buyer saved"],["存不到：","Couldn't save: "],
+["麦克风开不了，请再试一次","Mic couldn't start, please try again"],
+["全部 Project","All projects"],["全部类型","All types"],["全部地区","All areas"],["价钱 RM 从","Price RM from"],["例如 1.5m","e.g. 1.5m"],["例如 3m","e.g. 3m"],
+["选类别","Category"],["未分类","Uncategorised"],["屋主自住","Owner occupied"],["已有租客","Has tenant"],["已经卖了","Already sold"],["售价","Selling price"],["租金","Rental price"],
+["新增一个 listing","Add a listing"],["新增 listing","Add listing"],["搜寻 listing","Search listings"],["搜寻单位","Search unit"],["Zoom 到这个单位","Zoom to this unit"],["例如 23、BK1-18-23","e.g. 23, BK1-18-23"],
+["文件里没写类别的，当作","If the file has no category, treat as"],["确认上传","Confirm upload"],["对到的栏位：","Matched columns: "],["其他栏位放进备注：","Other columns go into notes: "],["文件内重复跳过","Duplicates in file skipped"],
+["没类别","No category"],["没地区","No area"],["上传中","Uploading"],["已上传","Uploaded"],["读不到这个文件，请用 .xlsx 或 .csv","Can't read this file — use .xlsx or .csv"],["文件里没有资料","The file has no data"],
+["读取 Excel 的工具没载入，请重新打开页面","Excel reader didn't load — please reopen the page"],
+["在 Google Maps 打开","Open in Google Maps"],["Address（门牌 / 地址）","Address"],["项目 / Taman","Project / Taman"],["价钱 (RM)","Price (RM)"],
+["其他号码","Other numbers"],["不要打","Do not call"],["没有电话","No phone"],["对的号码","Correct number"],["用逗号分开","Separate with commas"],["加 owner","Add owner"],
+["清除标记","Clear mark"],["标记失败：","Mark failed: "],["已标记","Marked"],["已复制电话","Phone copied"],["已选取，请手动复制","Selected — copy manually"],
+["确定删除？","Delete?"],["删除失败：","Delete failed: "],["删除失败","Delete failed"],["已删除","Deleted"],["保存失败：","Save failed: "],["已保存","Saved"],["已新增","Added"],
+["确定移除所有示例资料？再按一次","Remove all sample data? Tap again"],["示例资料已移除","Sample data removed"],["个示例资料"," sample items"],["移除失败","Remove failed"],
+["连接中…","Connecting…"],["资料库没有回应","Database not responding"],["请在 Claude 里打开","Open in Claude"],["请登录后才能看资料","Sign in to see the data"],["资料库错误：","Database error: "],["资料库暂时不能用","Database unavailable"],["还没连上资料库","Not connected to the database yet"],
+["找不到这个单位","Unit not found"],["没有符合的 listing","No matching listings"],["暂时没有符合的 listing","No matching listings yet"],["没有找到","Nothing found"],
+["每个点是一个单位。搜寻门牌或 Listing ID，地图会飞到那个单位。","Each dot is one unit. Search a unit no. or Listing ID and the map flies to it."],
+["道路和厂房轮廓来自 OpenStreetMap。单位点是按街道和门牌号排出来的大概位置：单号一边，双号一边。放大就会看到门牌号，点一下看 owner 资料。位置不对，可以在下面「街道位置」调整。","Roads and buildings from OpenStreetMap. Unit dots are approximate, laid out along each street by unit number (odd one side, even the other). Zoom in to see numbers; tap one for owner details. Fix positions under \"Street positions\" below."],["地图底图载入不了，单位点还是可以用。","Base map couldn't load; unit dots still work."],["号码方向对调","Reverse numbering"],["看这个单位的卫星图","Satellite view of this unit"],["不显示在地图","Hidden from map"],["恢复显示","Show again"],["不显示","Hide"],["已对调号码方向","Numbering reversed"],["已定位（手动）","Placed (manual)"],["Google 卫星图","Google satellite"],
+["每条路只要在地图上点两下（门牌最小号那头、最大号那头），那条路的单位就会自动排上去。已经先从 OpenStreetMap 定位了一部分，位置不对可以重新定位。","Tap a street twice on the map (lowest-number end, then highest-number end) and its units are laid out automatically. Some streets were pre-placed from OpenStreetMap; re-place any that look wrong."],
+["先放大到看得清楚那条路再点，比较准。","Zoom in until you can see the street clearly, then tap."],
+["这个单位的街道还没定位，请在下面「街道位置」先定位","This unit's street isn't placed yet — place it under \"Street positions\" below"],
+["地图工具载入不了，请检查网络，或先用格子图。","Map couldn't load — check your connection or use Grid view."],
+["地图图片载入不了（可能被网络挡住）。可以换「街道图」，或按「格子图」。","Map images couldn't load (maybe blocked). Try \"Streets\" or Grid view."],
+["这个地区没有可以定位的街道。","No streets to place in this area."],
+["街道位置","Street positions"],["真地图","Map"],["格子图","Grid"],["卫星图","Satellite"],["街道图","Streets"],["重新定位","Re-place"],["单双号对调","Swap odd/even"],["已对调单双号","Odd/even swapped"],["还没定位","Not placed"],["已定位","Placed"],["定位","Place"],
+["（没有单号）","(no odd numbers)"],["（没有双号）","(no even numbers)"],
+["买 (For Sale)","Buy"],["租 (For Rent)","Rent"],
+["类别","Category"],["地区","Area"],["类型","Type"],["状态","Status"],["备注","Notes"],["名字","Name"],["公司","Company"],["移除","Remove"],["编辑","Edit"],["删除","Delete"],["取消","Cancel"],["保存","Save"],["清除","Clear"],["标记","Mark"],["复制","Copy"],["关闭","Close"],["放大","Zoom in"],["缩小","Zoom out"],["不要","No"],
+["[待填]","[TBC]"],["卫星图看这一排","Satellite view of this row"],["到","to"],["待填","TBC"],["买","Buy"],["租","Rent"],["以上","up"],["已上线","Live"],["打开网站","Open website"],["⬇ Download Excel（全部资料）","⬇ Download Excel (all data)"],["Vercel 后台","Vercel dashboard"],["iProperty 盘源","iProperty listings"],["Facebook 影片","Facebook videos"],["放在哪里","Hosted on"],["网站","Websites"],["内容","Sections"],["盘源","Listings"],["影片","Videos"],
+];
+const I18N_ZH=[["Find any listing.","找到每一个盘源。"],["Know every detail.","资料一目了然。"],["Find listing","找 Listing"],["Private ·","内部使用 ·"],
+["Upload listing（Excel / CSV）","上传 Listing（Excel / CSV）"],["Filter","筛选"],["Buyer Matching","买家配对"],["Marketing","市场推广"],["Mapping","地图"],["soon","即将"],
+["Buyer ","买家 "],["Matching","配对"]];
+let LANG="zh";try{LANG=localStorage.getItem("wolfLang")||"zh"}catch(e){}
+const ORIG=new WeakMap();
+function trText(t){if(!t||!/\S/.test(t))return t;
+  if(LANG==="zh"){const k=t.trim();const p=I18N_ZH.find(([e])=>e===k);return p?t.replace(k,p[1]):t}
+  let o=t;for(const [re,r] of I18N_RX)o=o.replace(re,r);for(const [z,e] of I18N_EN)if(o.includes(z))o=o.split(z).join(e);return o}
+const SKIP="script,style,textarea,[data-noi18n],.oname,.coname,.rname,.oic,.num,.mclean,dd,.ref";
+function trNode(n){
+  if(n.nodeType===3){const p=n.parentElement;if(!p||p.closest(SKIP))return;if(!ORIG.has(n)||n.nodeValue!==ORIG.get(n).out)ORIG.set(n,{src:n.nodeValue});const v=trText(ORIG.get(n).src);ORIG.get(n).out=v;if(n.nodeValue!==v)n.nodeValue=v;return}
+  if(n.nodeType!==1||n.closest(SKIP.replace("textarea,","")))return;
+  for(const a of ["placeholder","aria-label","title"]){if(!n.hasAttribute(a))continue;const k="_i18n_"+a;if(!n[k]||n.getAttribute(a)!==n[k].out)n[k]={src:n.getAttribute(a)};const v=trText(n[k].src);n[k].out=v;if(n.getAttribute(a)!==v)n.setAttribute(a,v)}
+  n.childNodes.forEach(trNode)}
+let trBusy=false;
+const mo=new MutationObserver(ms=>{if(trBusy)return;trBusy=true;try{ms.forEach(m=>{if(m.type==="characterData")trNode(m.target);else m.addedNodes.forEach(trNode)})}finally{trBusy=false}});
+function applyLang(){trBusy=true;try{trNode(document.body)}finally{trBusy=false}document.documentElement.lang=LANG==="en"?"en":"zh";$("langBtn").querySelectorAll("span").forEach(s=>s.classList.toggle("on",s.dataset.l===LANG))}
+$("langBtn").onclick=e=>{const t=e.target.closest("span");const nl=t?t.dataset.l:(LANG==="en"?"zh":"en");if(nl===LANG)return;LANG=nl;try{localStorage.setItem("wolfLang",LANG)}catch(e){}applyLang()};
+mo.observe(document.body,{childList:true,subtree:true,characterData:true});applyLang();
+})();
+</script>
+
+</body></html>
